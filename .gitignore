@@ -1,0 +1,7 @@
+# Build and output directories
+/build/
+/build.ninja
+
+# CMake build files
+CMakeFiles/
+CMakeCache.txt
