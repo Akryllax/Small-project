@@ -14,7 +14,11 @@
 namespace Akr {
 class Core : public ITickable {
  public:
-  Core() : frameCount_(0){};
+  static Core& GetInstance() {
+    // Ensure that there is only one instance created.
+    static Core instance;
+    return instance;
+  }
 
   template <typename T>
   void AddDataLayer(std::shared_ptr<T> dataLayer) {
@@ -37,20 +41,16 @@ class Core : public ITickable {
   template <typename T>
   std::shared_ptr<T const> GetDataLayer() const {
     auto it = dataLayerMap_.find(typeid(T));
+    std::shared_ptr<T const> typedLayer;
 
     if (it == dataLayerMap_.end()) {
-      throw std::out_of_range("Data layer not found.");
-    }
-
-    std::shared_ptr<T const> typedLayer =
-        std::dynamic_pointer_cast<T const>(it->second);
-
-    if (typedLayer) {
-      return typedLayer;
+      typedLayer = std::make_shared<T>();
+      AddDataLayer(typedLayer);
     } else {
-      throw std::runtime_error(
-          "Data layer found but is not of the expected type.");
+      std::dynamic_pointer_cast<T const>(it->second);
     }
+
+    return typedLayer;
   }
 
   void Tick(const std::chrono::milliseconds delta) override {
@@ -71,5 +71,8 @@ class Core : public ITickable {
 
  private:
   std::map<std::type_index, std::shared_ptr<ITickable>> dataLayerMap_;
+
+ private:
+  Core() : frameCount_(0){};
 };
 }  // namespace Akr

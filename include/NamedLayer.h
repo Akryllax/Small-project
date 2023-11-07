@@ -8,10 +8,10 @@
 #include <vector>
 
 namespace Akr {
-class NameLayer : public DataLayer, public std::vector<Entity> {
+class NamedLayer : public DataLayer, public std::vector<Entity> {
  public:
   void Tick(const std::chrono::milliseconds delta) override {
-    std::cout << "NameLayer" << "::Tick()" << std::endl;
+    std::cout << "NamedLayer" << "::Tick()" << std::endl;
   }
 };
 }  // namespace Akr
