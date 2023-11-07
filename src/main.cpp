@@ -39,6 +39,7 @@ int _allegro_main() {
   // Initialize the font add-on.
   al_init_font_addon();
   al_init_ttf_addon();
+  al_init_primitives_addon();
 
   // Create the display.
   display = al_create_display(800, 600);
@@ -65,6 +66,8 @@ int _allegro_main() {
   // Render "Hello World!" at coordinates (100, 200) in white color.
   al_draw_text(font, al_map_rgb(255, 255, 255), 100, 200, ALLEGRO_ALIGN_LEFT,
                "Hello World!");
+
+  al_draw_line(0, 0, 500, 100, al_map_rgb(255,0,0), 5);
 
   al_flip_display();
 
