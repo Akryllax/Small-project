@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <typeindex>
@@ -16,7 +17,7 @@ class Core : public ITickable {
   Core() : frameCount_(0){};
 
   template <typename T>
-  void AddDataLayer(T* dataLayer) {
+  void AddDataLayer(std::shared_ptr<T> dataLayer) {
     std::cout << "Added data layer";
 
     auto it = dataLayerMap_.find(std::type_index(typeid(T)));
@@ -34,17 +35,18 @@ class Core : public ITickable {
   }
 
   template <typename T>
-  T const& GetDataLayer() const {
+  std::shared_ptr<T const> GetDataLayer() const {
     auto it = dataLayerMap_.find(typeid(T));
 
     if (it == dataLayerMap_.end()) {
       throw std::out_of_range("Data layer not found.");
     }
 
-    T const* typedLayer = dynamic_cast<T const*>(&it->second);
+    std::shared_ptr<T const> typedLayer =
+        std::dynamic_pointer_cast<T const>(it->second);
 
     if (typedLayer) {
-      return *typedLayer;
+      return typedLayer;
     } else {
       throw std::runtime_error(
           "Data layer found but is not of the expected type.");
@@ -68,6 +70,6 @@ class Core : public ITickable {
   uint64_t frameCount_;
 
  private:
-  std::map<std::type_index, ITickable*> dataLayerMap_;
+  std::map<std::type_index, std::shared_ptr<ITickable>> dataLayerMap_;
 };
 }  // namespace Akr

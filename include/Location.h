@@ -1,4 +1,5 @@
 #include "Vector2D.h"
+#include <memory>
 #include <stdexcept>
 #include <vector>
 
@@ -25,25 +26,24 @@ class Location {
     position_ = position;
   }
 
-  void setPosition(long x, long y)
-  {
-    setPosition({x,y});
+  void setPosition(long x, long y) { setPosition({x, y}); }
+
+  std::shared_ptr<Location> getParent() const { return parent_; }
+
+  void setParent(std::shared_ptr<Location> parent) { parent_ = parent; }
+
+  void addChild(std::shared_ptr<Location> child) { children_.push_back(child); }
+
+  std::vector<std::shared_ptr<Location>> const& getChildren() const {
+    return children_;
   }
-
-  Location* getParent() const { return parent_; }
-
-  void setParent(Location* parent) { parent_ = parent; }
-
-  void addChild(Location* child) { children_.push_back(child); }
-
-  std::vector<Location*> const& getChildren() const { return children_; }
 
   // Add other methods or properties as needed.
 
  private:
   Vector2D<long> position_;
-  Location* parent_;
-  std::vector<Location*> children_;
+  std::shared_ptr<Location> parent_;
+  std::vector<std::shared_ptr<Location>> children_;
 };
 
 }  // namespace Akr

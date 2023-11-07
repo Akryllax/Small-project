@@ -4,12 +4,13 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <memory>
 #include <thread>
 
 int _initCore(Akr::Core& coreInstance) {
-  coreInstance.AddDataLayer(new Akr::NameLayer());
-  coreInstance.AddDataLayer(new Akr::LocationLayer());
-  coreInstance.AddDataLayer(new Akr::NameLayer());
+  coreInstance.AddDataLayer(std::make_shared<Akr::NameLayer>());
+  coreInstance.AddDataLayer(std::make_shared<Akr::LocationLayer>());
+  coreInstance.AddDataLayer(std::make_shared<Akr::NameLayer>());
 
   return 0;
 }
@@ -42,7 +43,8 @@ int main(int argc, char** argv) {
       auto now_time = std::chrono::system_clock::to_time_t(now);
       auto timeinfo = std::localtime(&now_time);
       std::cout << "[" << std::put_time(timeinfo, "%T")
-                << " | FrameNumber: " << coreInstance.GetFrameCount() << "]" << std::endl;
+                << " | FrameNumber: " << coreInstance.GetFrameCount() << "]"
+                << std::endl;
 
       // Update the applicationEpoch to the time of the last frame
       applicationEpoch = currentTime;
