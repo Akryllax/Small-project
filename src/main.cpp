@@ -7,7 +7,7 @@
 #include <memory>
 #include <thread>
 
-int _initCore(Akr::Core& coreInstance) {
+inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer(std::make_shared<Akr::NameLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::LocationLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::NameLayer>());
@@ -15,7 +15,7 @@ int _initCore(Akr::Core& coreInstance) {
   return 0;
 }
 
-int _coreLoop(Akr::Core& coreInstance, const std::chrono::milliseconds delta) {
+inline int _coreLoop(Akr::Core& coreInstance, const std::chrono::milliseconds delta) {
   coreInstance.Tick(delta);
 
   return 0;
