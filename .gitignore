@@ -5,3 +5,4 @@
 # CMake build files
 CMakeFiles/
 CMakeCache.txt
+.cache/

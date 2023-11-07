@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add your source files here
-add_executable(dataGen ${CMAKE_SOURCE_DIR}/src/main.cpp)
+add_executable(dataGen ${CMAKE_SOURCE_DIR}/src/main.cpp ${CMAKE_SOURCE_DIR}/src/UniqueIdentifier.cpp)
 
 # Include directories
 target_include_directories(dataGen PRIVATE ${CMAKE_SOURCE_DIR}/include)
@@ -18,3 +18,6 @@ set_target_properties(dataGen PROPERTIES
 
 # Include the "ut" (unit test) directory
 add_subdirectory(ut)
+
+# Enable the generation of compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
