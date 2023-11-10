@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "LocationLayer.h"
 #include "NamedLayer.h"
+#include "timer.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
@@ -65,36 +66,24 @@ int _allegro_main() {
     return -1;
   }
   auto mainTimer = al_create_timer(1.0 / FPS);
+  al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
   al_start_timer(mainTimer);
 
   al_register_event_source(event_queue, al_get_display_event_source(display));
-  al_clear_to_color(al_map_rgb(0, 0, 0));
-
-  // Render "Hello World!" at coordinates (100, 200) in white color.
-  al_draw_text(font, al_map_rgb(255, 255, 255), 100, 200, ALLEGRO_ALIGN_LEFT,
-               "Hello World!");
-
-  // Button but1(50, 50, 100, 30, "Button");
-  // but1.draw();
-
-  // al_draw_line(0, 0, 500, 100, al_map_rgb(255, 0, 0), 5);
-
-  al_flip_display();
 
   bool quit = false;
 
   auto applicationEpoch = std::chrono::high_resolution_clock::now();
-  auto previousTicks = std::chrono::high_resolution_clock::now();
+  auto previousTick = applicationEpoch;
 
   while (!quit) {
+    ALLEGRO_EVENT event;
+    al_wait_for_event(event_queue, &event);
+
     auto currentTime = std::chrono::high_resolution_clock::now();
     std::chrono::milliseconds lastTick =
         std::chrono::duration_cast<std::chrono::milliseconds>(currentTime -
                                                               applicationEpoch);
-
-    ALLEGRO_EVENT event;
-    al_wait_for_event(event_queue, &event);
-
     if (event.type == ALLEGRO_EVENT_TIMER) {
       // Print frame count and time
       auto now = std::chrono::system_clock::now();
@@ -102,12 +91,28 @@ int _allegro_main() {
       auto timeinfo = std::localtime(&now_time);
 
       std::cout << "[" << std::put_time(timeinfo, "%T") << "]" << std::endl;
-    }
-    else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+
+      al_clear_to_color(al_map_rgb(0, 0, 0));
+
+      // Render "Hello World!" at coordinates (100, 200) in white color.
+      al_draw_text(font, al_map_rgb(255, 255, 255),
+                   100.0 + std::chrono::duration_cast<std::chrono::milliseconds>(
+                             currentTime - applicationEpoch)
+                                 .count() *
+                             (50  / 1000.0),
+                   200, ALLEGRO_ALIGN_LEFT, "Hello World!");
+
+      // Button but1(50, 50, 100, 30, "Button");
+      // but1.draw();
+
+      // al_draw_line(0, 0, 500, 100, al_map_rgb(255, 0, 0), 5);
+
+      al_flip_display();
+    } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
       quit = true;
     }
 
-    previousTicks = currentTime;
+    previousTick = currentTime;
   }
 
   al_destroy_font(font);
