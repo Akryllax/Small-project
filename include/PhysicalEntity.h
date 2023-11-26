@@ -2,15 +2,17 @@
 
 #include "Entity.h"
 #include "Location.h"
+#include "box2d/box2d.h"
 
 namespace Akr {
-class PhsysicalEntity : public Entity {
+class PhysicalEntity : public Entity {
  public:
-    PhsysicalEntity(UniqueIdentifier identifier) : Entity(identifier) {};
+  PhysicalEntity(std::string const& name) : Entity(name){};
+
  private:
   Location location_;
 
-
+ public:
   Location& GetLocation() { return location_; }
 };
 }  // namespace Akr

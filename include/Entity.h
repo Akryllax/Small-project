@@ -1,15 +1,15 @@
 #pragma once
 
 #include "Core.h"
-#include "UniqueIdentifier.h"
+#include <memory>
 
 namespace Akr {
 class NamedLayer;
 class Entity {
  public:
-  Entity(UniqueIdentifier identifier) : identifier(identifier) {}
+  Entity(std::string const& identifier) : name(identifier){};
 
  public:
-  const UniqueIdentifier identifier;
+  std::string const name;
 };
 }  // namespace Akr

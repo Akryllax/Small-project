@@ -1,7 +1,12 @@
 #include "Button.h"
 #include "Core.h"
+#include "Location.h"
 #include "LocationLayer.h"
 #include "NamedLayer.h"
+#include "Ship.h"
+#include "Vector2D.h"
+#include "World.h"
+#include "box2d/b2_body.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -16,22 +21,85 @@
 
 float const FPS = 60;
 
+Akr::TestShip* testShip;
+Akr::World* world;
+b2Body* groundBody;
+b2Body* body;
+
 inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::LocationLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
 
+  world = new Akr::World();
+  auto boxWorld = world->getBox2DWorld();
+
+  b2BodyDef groundBodyDef;
+  groundBodyDef.position.Set(0, -10);
+
+  groundBody = boxWorld->CreateBody(&groundBodyDef);
+  b2PolygonShape groundBox;
+  groundBox.SetAsBox(50.0f, 10.0f);
+
+  b2BodyDef bodyDef;
+  bodyDef.type = b2_dynamicBody;
+  bodyDef.position.Set(0.0f, 60.0f);
+  body = boxWorld->CreateBody(&bodyDef);
+
+  b2PolygonShape dynamicBox;
+  dynamicBox.SetAsBox(1.0f, 1.0f);
+
+  b2FixtureDef fixtureDef;
+  fixtureDef.shape = &dynamicBox;
+  fixtureDef.density = 1.0f;
+  fixtureDef.friction = 0.3f;
+
+  body->CreateFixture(&fixtureDef);
+  groundBody->CreateFixture(&groundBox, 0.0f);
+
+  testShip = new Akr::TestShip("test1");
+
   return 0;
 }
 
 inline int _coreLoop(Akr::Core& coreInstance,
-                     const std::chrono::milliseconds delta) {
+                     std::chrono::milliseconds const delta) {
   coreInstance.Tick(delta);
 
   return 0;
 }
 
-int _allegro_main() {
+void _allegroStableTick(Akr::Core& coreInstance,
+                        std::chrono::milliseconds const delta) {
+  coreInstance.Tick(delta);
+  world->getBox2DWorld()->Step(delta.count() * 0.001, 6, 2);
+
+  // Print frame count and time
+  auto now = std::chrono::system_clock::now();
+  auto now_time = std::chrono::system_clock::to_time_t(now);
+  auto timeinfo = std::localtime(&now_time);
+
+  std::cout << "Frame " << coreInstance.GetFrameCount() << ":\t["
+            << std::put_time(timeinfo, "%T") << "] - " << std::endl;
+
+  al_clear_to_color(al_map_rgb(0, 0, 0));
+
+  std::cout << "Delta in SEC: " << delta.count() * 0.001 << std::endl;
+  std::cout << "BodyPos: x: " << body->GetPosition().x
+            << ", y: " << body->GetPosition().x << std::endl;
+
+  testShip->GetLocation().setPosition(body->GetPosition().x,
+                                      body->GetPosition().y);
+  testShip->Render();
+  // testShip->GetLocation().setPosition(
+  //     testShip->GetLocation().getPosition() +
+  //     Akr::Vector2D<float>(1 * delta.count() * 0.001,
+  //                          1 * delta.count() * 0.001));
+
+  al_flip_display();
+}
+
+int _allegro_main(Akr::Core& coreInstance) {
   ALLEGRO_DISPLAY* display = nullptr;
   ALLEGRO_EVENT_QUEUE* event_queue = nullptr;
   ALLEGRO_FONT* font = nullptr;
@@ -85,29 +153,15 @@ int _allegro_main() {
         std::chrono::duration_cast<std::chrono::milliseconds>(currentTime -
                                                               applicationEpoch);
     if (event.type == ALLEGRO_EVENT_TIMER) {
-      // Print frame count and time
-      auto now = std::chrono::system_clock::now();
-      auto now_time = std::chrono::system_clock::to_time_t(now);
-      auto timeinfo = std::localtime(&now_time);
+      auto currentTime = std::chrono::high_resolution_clock::now();
+      std::chrono::milliseconds lastTick =
+          std::chrono::duration_cast<std::chrono::milliseconds>(
+              currentTime - applicationEpoch);
+      // Update the applicationEpoch to the t            ime of the last frame
+      applicationEpoch = currentTime;
 
-      std::cout << "[" << std::put_time(timeinfo, "%T") << "]" << std::endl;
+      _allegroStableTick(coreInstance, lastTick);
 
-      al_clear_to_color(al_map_rgb(0, 0, 0));
-
-      // Render "Hello World!" at coordinates (100, 200) in white color.
-      al_draw_text(font, al_map_rgb(255, 255, 255),
-                   100.0 + std::chrono::duration_cast<std::chrono::milliseconds>(
-                             currentTime - applicationEpoch)
-                                 .count() *
-                             (50  / 1000.0),
-                   200, ALLEGRO_ALIGN_LEFT, "Hello World!");
-
-      // Button but1(50, 50, 100, 30, "Button");
-      // but1.draw();
-
-      // al_draw_line(0, 0, 500, 100, al_map_rgb(255, 0, 0), 5);
-
-      al_flip_display();
     } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
       quit = true;
     }
@@ -123,10 +177,9 @@ int _allegro_main() {
 }
 
 int main(int argc, char** argv) {
-  _allegro_main();
-
-  // auto coreInstance = Akr::Core::GetInstance();
-  // _initCore(coreInstance);
+  auto coreInstance = Akr::Core::GetInstance();
+  _initCore(coreInstance);
+  _allegro_main(coreInstance);
 
   // auto applicationEpoch = std::chrono::high_resolution_clock::now();
   // std::chrono::milliseconds targetFrameTime(1000 / 30);  // 30 FPS
