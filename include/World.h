@@ -10,8 +10,8 @@ class World {
   b2Vec2 gravity;
 
  public:
-  World() : world(gravity) { this->gravity = b2Vec2(0.0, 10.0); };
+  World() : world(gravity), gravity(b2Vec2(0.0, 10.0)) {};
 
-  b2World& getBox2DWorld() { return this->world; }
+  b2World& GetBox2DWorld() { return this->world; }
 };
 }  // namespace Akr

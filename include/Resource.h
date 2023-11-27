@@ -3,7 +3,6 @@
 #include <allegro5/allegro_image.h>
 #include <filesystem>  // For cross-platform path handling
 #include <iostream>
-#include <stdexcept>  // For std::runtime_error
 #include <string>
 #include <unistd.h>  // For readlink
 
@@ -28,8 +27,7 @@ class Resource {
 
   static std::string getExecutablePath() {
     // Get the path to the directory containing the executable
-    std::string const executablePath =
-        std::filesystem::path(getExecutableFullPath()).parent_path();
+    std::string const executablePath = std::filesystem::path(getExecutableFullPath()).parent_path();
     return executablePath;
   }
 

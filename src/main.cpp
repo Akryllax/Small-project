@@ -15,18 +15,17 @@
 #include <memory>
 
 float const FPS = 60;
+std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
+    applicationEpoch;
+bool quit = false;
+
+Akr::TestShip* testShip;
 
 inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::LocationLayer>();
   coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::PhysicsLayer>();
-
-  return 0;
-}
-
-inline int _coreLoop(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
-  coreInstance.Tick(delta);
 
   return 0;
 }
@@ -44,7 +43,76 @@ void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const
 
   al_clear_to_color(al_map_rgb(0, 0, 0));
 
+  if(testShip) testShip->Render();
+
   al_flip_display();
+}
+
+void handleFrame(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, Akr::Core& coreInstance) {
+  ALLEGRO_EVENT event;
+  al_wait_for_event(event_queue, &event);
+
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  std::chrono::milliseconds lastTick =
+      std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
+
+  if (event.type == ALLEGRO_EVENT_TIMER) {
+    // Update the applicationEpoch to the time of the last frame
+    applicationEpoch = currentTime;
+    _allegroStableTick(coreInstance, lastTick);
+  } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+    // Handle display close event
+    quit = true;
+  }
+}
+
+void cleanupAllegro(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_FONT* font) {
+  al_destroy_font(font);
+  al_destroy_event_queue(event_queue);
+  al_destroy_display(display);
+}
+
+void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_queue, ALLEGRO_FONT*& font) {
+  // Initialize Allegro.
+  if (!al_init()) {
+    std::cerr << "Failed to initialize Allegro." << std::endl;
+    exit(-1);
+  }
+
+  // Initialize the font add-on.
+  al_init_font_addon();
+  al_init_ttf_addon();
+  al_init_primitives_addon();
+  al_init_image_addon();
+
+  // Create the display.
+  display = al_create_display(800, 600);
+  if (!display) {
+    std::cerr << "Failed to create Allegro display." << std::endl;
+    exit(-1);
+  }
+
+  // Load a font.
+  font = al_load_ttf_font("/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf", 36, 0);
+  if (!font) {
+    std::cerr << "Failed to load font." << std::endl;
+    exit(-1);
+  }
+
+  // Create an event queue and a timer.
+  event_queue = al_create_event_queue();
+  if (!event_queue) {
+    std::cerr << "Failed to create event queue." << std::endl;
+    exit(-1);
+  }
+
+  auto mainTimer = al_create_timer(1.0 / FPS);
+  al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
+  al_start_timer(mainTimer);
+
+  al_register_event_source(event_queue, al_get_display_event_source(display));
+
+  testShip = new Akr::TestShip("a");
 }
 
 int _allegro_main(Akr::Core& coreInstance) {
@@ -52,71 +120,16 @@ int _allegro_main(Akr::Core& coreInstance) {
   ALLEGRO_EVENT_QUEUE* event_queue = nullptr;
   ALLEGRO_FONT* font = nullptr;
 
-  // Initialize Allegro.
-  if (!al_init()) {
-    return -1;
-  }
+  initializeAllegro(display, event_queue, font);
 
-  // Initialize the font add-on.
-  al_init_font_addon();
-  al_init_ttf_addon();
-  al_init_primitives_addon();
-
-  // Create the display.
-  display = al_create_display(800, 600);
-  if (!display) {
-    return -1;
-  }
-
-  // Load a font (replace "your_font_file.ttf" with the path to a TTF font
-  // file).
-  font = al_load_ttf_font("/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf", 36, 0);
-  if (!font) {
-    return -1;
-  }
-
-  // Create an event queue.
-  event_queue = al_create_event_queue();
-  if (!event_queue) {
-    return -1;
-  }
-  auto mainTimer = al_create_timer(1.0 / FPS);
-  al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
-  al_start_timer(mainTimer);
-
-  al_register_event_source(event_queue, al_get_display_event_source(display));
-
-  bool quit = false;
-
-  auto applicationEpoch = std::chrono::high_resolution_clock::now();
-  auto previousTick = applicationEpoch;
+  applicationEpoch = std::chrono::high_resolution_clock::now();
+  quit = false;
 
   while (!quit) {
-    ALLEGRO_EVENT event;
-    al_wait_for_event(event_queue, &event);
-
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::milliseconds lastTick =
-        std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
-    if (event.type == ALLEGRO_EVENT_TIMER) {
-      auto currentTime = std::chrono::high_resolution_clock::now();
-      std::chrono::milliseconds lastTick =
-          std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
-      // Update the applicationEpoch to the t            ime of the last frame
-      applicationEpoch = currentTime;
-
-      _allegroStableTick(coreInstance, lastTick);
-
-    } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-      quit = true;
-    }
-
-    previousTick = currentTime;
+    handleFrame(display, event_queue, coreInstance);
   }
 
-  al_destroy_font(font);
-  al_destroy_event_queue(event_queue);
-  al_destroy_display(display);
+  cleanupAllegro(display, event_queue, font);
 
   return 0;
 }

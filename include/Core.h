@@ -95,15 +95,15 @@ class Core : public ITickable {
    * @return Shared pointer to the data layer.
    */
   template <typename T, std::enable_if_t<IsDerivedFromDataLayer<T>::value, int> = 0>
-  std::shared_ptr<T const> GetDataLayer() const {
+  std::shared_ptr<T> GetDataLayer() {
     auto it = dataLayerMap_.find(typeid(T));
-    std::shared_ptr<T const> typedLayer;
+    std::shared_ptr<T> typedLayer;
 
     if (it == dataLayerMap_.end()) {
       typedLayer = std::make_shared<T>();
       AddDataLayer(typedLayer);
     } else {
-      std::dynamic_pointer_cast<T const>(it->second);
+      std::dynamic_pointer_cast<T>(it->second);
     }
 
     return typedLayer;
