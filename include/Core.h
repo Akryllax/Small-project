@@ -53,7 +53,7 @@ class Core : public ITickable {
     return typedLayer;
   }
 
-  void Tick(const std::chrono::milliseconds delta) override {
+  void Tick(std::chrono::milliseconds const delta) override {
     for (auto& entry : dataLayerMap_) {
       std::cout << entry.first.name() << std::endl;
       std::cout << entry.second << std::endl;
@@ -70,7 +70,7 @@ class Core : public ITickable {
   uint64_t frameCount_;
 
  private:
-  std::map<std::type_index, std::shared_ptr<ITickable>> dataLayerMap_;
+  std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_;
 
  private:
   Core() : frameCount_(0){};

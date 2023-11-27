@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector2D.h"
+#include "box2d/b2_math.h"
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -11,16 +11,14 @@ class Location {
  public:
   Location() : position_(0, 0), parent_(nullptr) {}
 
-  Location(Vector2D<float> const& position)
-      : position_(position), parent_(nullptr) {}
+  Location(b2Vec2 const& position) : position_(position), parent_(nullptr) {}
 
-  Location(long x, long y)
-      : position_(Vector2D<float>(x, y)), parent_(nullptr) {}
+  Location(long x, long y) : position_(b2Vec2(x, y)), parent_(nullptr) {}
 
-  Vector2D<float> const& getPosition() const { return position_; }
+  b2Vec2 const& getPosition() const { return position_; }
 
-  void setPosition(Vector2D<float> const& position) {
-    if (position == Vector2D<float>(0, 0)) {
+  void setPosition(b2Vec2 const& position) {
+    if (position == b2Vec2(0, 0)) {
       if (parent_ != nullptr) {
         // Position (0,0) is reserved for the root, so it cannot be set if there
         // is a parent.
@@ -53,7 +51,7 @@ class Location {
   // Add other methods or properties as needed.
 
  private:
-  Vector2D<float> position_;
+  b2Vec2 position_;
   std::shared_ptr<Location> parent_;
   std::vector<std::shared_ptr<Location>> children_;
 };

@@ -1,63 +1,26 @@
 #include "Button.h"
 #include "Core.h"
-#include "Location.h"
 #include "LocationLayer.h"
 #include "NamedLayer.h"
-#include "Ship.h"
-#include "Vector2D.h"
-#include "World.h"
-#include "box2d/b2_body.h"
+#include "PhysicsLayer.h"
+#include "TestShip.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
 #include <chrono>
-#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <memory>
-#include <thread>
 
 float const FPS = 60;
-
-Akr::TestShip* testShip;
-Akr::World* world;
-b2Body* groundBody;
-b2Body* body;
 
 inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::LocationLayer>());
   coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
-
-  world = new Akr::World();
-  auto boxWorld = world->getBox2DWorld();
-
-  b2BodyDef groundBodyDef;
-  groundBodyDef.position.Set(0, -10);
-
-  groundBody = boxWorld->CreateBody(&groundBodyDef);
-  b2PolygonShape groundBox;
-  groundBox.SetAsBox(50.0f, 10.0f);
-
-  b2BodyDef bodyDef;
-  bodyDef.type = b2_dynamicBody;
-  bodyDef.position.Set(0.0f, 60.0f);
-  body = boxWorld->CreateBody(&bodyDef);
-
-  b2PolygonShape dynamicBox;
-  dynamicBox.SetAsBox(1.0f, 1.0f);
-
-  b2FixtureDef fixtureDef;
-  fixtureDef.shape = &dynamicBox;
-  fixtureDef.density = 1.0f;
-  fixtureDef.friction = 0.3f;
-
-  body->CreateFixture(&fixtureDef);
-  groundBody->CreateFixture(&groundBox, 0.0f);
-
-  testShip = new Akr::TestShip("test1");
+  coreInstance.AddDataLayer(std::make_shared<Akr::PhysicsLayer>());
 
   return 0;
 }
@@ -72,7 +35,6 @@ inline int _coreLoop(Akr::Core& coreInstance,
 void _allegroStableTick(Akr::Core& coreInstance,
                         std::chrono::milliseconds const delta) {
   coreInstance.Tick(delta);
-  world->getBox2DWorld()->Step(delta.count() * 0.001, 6, 2);
 
   // Print frame count and time
   auto now = std::chrono::system_clock::now();
@@ -83,18 +45,6 @@ void _allegroStableTick(Akr::Core& coreInstance,
             << std::put_time(timeinfo, "%T") << "] - " << std::endl;
 
   al_clear_to_color(al_map_rgb(0, 0, 0));
-
-  std::cout << "Delta in SEC: " << delta.count() * 0.001 << std::endl;
-  std::cout << "BodyPos: x: " << body->GetPosition().x
-            << ", y: " << body->GetPosition().x << std::endl;
-
-  testShip->GetLocation().setPosition(body->GetPosition().x,
-                                      body->GetPosition().y);
-  testShip->Render();
-  // testShip->GetLocation().setPosition(
-  //     testShip->GetLocation().getPosition() +
-  //     Akr::Vector2D<float>(1 * delta.count() * 0.001,
-  //                          1 * delta.count() * 0.001));
 
   al_flip_display();
 }
@@ -181,35 +131,5 @@ int main(int argc, char** argv) {
   _initCore(coreInstance);
   _allegro_main(coreInstance);
 
-  // auto applicationEpoch = std::chrono::high_resolution_clock::now();
-  // std::chrono::milliseconds targetFrameTime(1000 / 30);  // 30 FPS
-
-  // while (true) {
-  //   auto currentTime = std::chrono::high_resolution_clock::now();
-  //   std::chrono::milliseconds lastTick =
-  //       std::chrono::duration_cast<std::chrono::milliseconds>(currentTime -
-  //                                                             applicationEpoch);
-
-  //   // Call the core loop only when it's time for the next frame
-  //   if (lastTick >= targetFrameTime) {
-  //     _coreLoop(coreInstance, lastTick);
-
-  //     // Print frame count and time
-  //     auto now = std::chrono::system_clock::now();
-  //     auto now_time = std::chrono::system_clock::to_time_t(now);
-  //     auto timeinfo = std::localtime(&now_time);
-  //     std::cout << "[" << std::put_time(timeinfo, "%T")
-  //               << " | FrameNumber: " << coreInstance.GetFrameCount() << "]"
-  //               << std::endl;
-
-  //     // Update the applicationEpoch to the time of the last frame
-  //     applicationEpoch = currentTime;
-  //   }
-
-  //   // Sleep for the remaining time until the next frame
-  //   std::this_thread::sleep_for(targetFrameTime - lastTick);
-  // }
-
-  // std::cout << "Hello, dataGen!" << std::endl;
   return 0;
 }
