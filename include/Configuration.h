@@ -11,43 +11,47 @@ class Configuration {
   Configuration() = default;
 
  public:
-  static Configuration instance;
+  static inline Configuration& GetInstance()
+  {
+    static Configuration instance;
+    return instance;
+  };
 
   static bool load() {
     // Get the path to the config file
     std::string configFilePath = getConfigFilePath();
 
-    instance.config = al_load_config_file(configFilePath.c_str());
-    if (!instance.config) {
-      instance.config = al_create_config();
+    GetInstance().config = al_load_config_file(configFilePath.c_str());
+    if (!GetInstance().config) {
+      GetInstance().config = al_create_config();
     }
 
-    return instance.config != nullptr;
+    return GetInstance().config != nullptr;
   };
 
   static bool save() {
-    if (instance.config) {
+    if (GetInstance().config) {
       // Get the path to the config file
       std::string configFilePath = getConfigFilePath();
 
-      return al_save_config_file(configFilePath.c_str(), instance.config);
+      return al_save_config_file(configFilePath.c_str(), GetInstance().config);
     }
     return false;
   }
 
   static std::string getValue(std::string_view const& key,
                               std::string defaultValue = "") {
-    if (instance.config) {
+    if (GetInstance().config) {
       char const* value =
-          al_get_config_value(instance.config, nullptr, key.data());
+          al_get_config_value(GetInstance().config, nullptr, key.data());
       return value ? value : defaultValue.c_str();
     }
     return defaultValue;
   }
 
   static void setValue(std::string_view const& key, std::string const& value) {
-    if (instance.config) {
-      al_set_config_value(instance.config, nullptr, key.data(), value.c_str());
+    if (GetInstance().config) {
+      al_set_config_value(GetInstance().config, nullptr, key.data(), value.c_str());
     }
   }
 

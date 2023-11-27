@@ -74,6 +74,42 @@ add_custom_command(
 )
 ##                          BOX2D UT                        ##
 ##############################################################
+
+##############################################################
+##                          CONFG UT                        ##
+# Add your test source files here
+add_executable(${PROJECT_NAME}_conf
+    ${CMAKE_SOURCE_DIR}/ut/test_conf.cpp
+)
+
+# Include allegro and allegro_ttf libraries
+target_link_libraries(${PROJECT_NAME}_conf
+    GTest::GTest
+    GTest::Main
+    ${ALLEGRO_LIBRARY_PATH}/liballegro.so
+    ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
+    ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
+    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
+    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
+    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
+)
+
+# Include directories
+target_include_directories(${PROJECT_NAME}_conf PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${ALLEGRO_INCLUDE_DIR}
+    ${ALLEGRO_TTF_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}_conf POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res
+    ${CMAKE_SOURCE_DIR}/build/ut/res
+)
+##                          CONFG UT                        ##
+##############################################################
 include(CTest)
 include(GoogleTest)
 
