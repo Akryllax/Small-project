@@ -27,11 +27,7 @@ target_link_libraries(dataGen
     ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
     ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
     ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
-    ${CMAKE_SOURCE_DIR}/lib/libbox2d.a
-    ${CMAKE_SOURCE_DIR}/lib/libglad.a
-    ${CMAKE_SOURCE_DIR}/lib/libglfw.a
-    ${CMAKE_SOURCE_DIR}/lib/libimgui.a
-    ${CMAKE_SOURCE_DIR}/lib/libsajson.a
+    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
 )
 
 # Include directories
