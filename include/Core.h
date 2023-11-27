@@ -103,7 +103,7 @@ class Core : public ITickable {
       typedLayer = std::make_shared<T>();
       AddDataLayer(typedLayer);
     } else {
-      std::dynamic_pointer_cast<T>(it->second);
+      typedLayer = std::dynamic_pointer_cast<T>(it->second);
     }
 
     return typedLayer;
@@ -133,13 +133,14 @@ class Core : public ITickable {
    * @return Current frame count.
    */
   inline uint64_t GetFrameCount() const { return frameCount_; }
+  inline size_t GetLayerCount() const { return this->dataLayerMap_.size(); }
 
  private:
   uint64_t frameCount_;  ///< Frame count variable.
 
  private:
   std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_;  ///< Map to store data layers.
-
+  
  private:
   /**
    * @brief Private constructor for singleton pattern.

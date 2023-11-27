@@ -24,7 +24,6 @@ Akr::TestShip* testShip;
 inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::LocationLayer>();
-  coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::PhysicsLayer>();
 
   return 0;
