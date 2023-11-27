@@ -29,6 +29,13 @@ target_include_directories(${PROJECT_NAME}_core PRIVATE
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
 )
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}_core POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res
+    ${CMAKE_SOURCE_DIR}/build/ut/res
+)
 ##                           CORE UT                        ##
 ##############################################################
 
@@ -57,6 +64,13 @@ target_include_directories(${PROJECT_NAME}_box2d PRIVATE
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}_box2d POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/res
+    ${CMAKE_SOURCE_DIR}/build/ut/res
 )
 ##                          BOX2D UT                        ##
 ##############################################################
