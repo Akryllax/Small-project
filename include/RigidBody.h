@@ -4,15 +4,12 @@
 namespace Akr {
 class RigidBody : public Entity {
  public:
-  RigidBody(std::shared_ptr<b2Body> body, std::string const& name)
-      : Entity(name), body(body){};
+  RigidBody(std::shared_ptr<b2Body> body, std::string const& name) : Entity(name), body(body){};
 
  protected:
   std::shared_ptr<b2Body> body;
 
  public:
-  void attachBody(std::shared_ptr<b2Body> targetBody) {
-    this->body = targetBody;
-  }
+  void attachBody(std::shared_ptr<b2Body> targetBody) { this->body = targetBody; }
 };
 }  // namespace Akr

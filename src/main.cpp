@@ -17,23 +17,21 @@
 float const FPS = 60;
 
 inline int _initCore(Akr::Core& coreInstance) {
-  coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
-  coreInstance.AddDataLayer(std::make_shared<Akr::LocationLayer>());
-  coreInstance.AddDataLayer(std::make_shared<Akr::NamedLayer>());
-  coreInstance.AddDataLayer(std::make_shared<Akr::PhysicsLayer>());
+  coreInstance.AddDataLayer<Akr::NamedLayer>();
+  coreInstance.AddDataLayer<Akr::LocationLayer>();
+  coreInstance.AddDataLayer<Akr::NamedLayer>();
+  coreInstance.AddDataLayer<Akr::PhysicsLayer>();
 
   return 0;
 }
 
-inline int _coreLoop(Akr::Core& coreInstance,
-                     std::chrono::milliseconds const delta) {
+inline int _coreLoop(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
   coreInstance.Tick(delta);
 
   return 0;
 }
 
-void _allegroStableTick(Akr::Core& coreInstance,
-                        std::chrono::milliseconds const delta) {
+void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
   coreInstance.Tick(delta);
 
   // Print frame count and time
@@ -41,8 +39,8 @@ void _allegroStableTick(Akr::Core& coreInstance,
   auto now_time = std::chrono::system_clock::to_time_t(now);
   auto timeinfo = std::localtime(&now_time);
 
-  std::cout << "Frame " << coreInstance.GetFrameCount() << ":\t["
-            << std::put_time(timeinfo, "%T") << "] - " << std::endl;
+  std::cout << "Frame " << coreInstance.GetFrameCount() << ":\t[" << std::put_time(timeinfo, "%T") << "] - "
+            << std::endl;
 
   al_clear_to_color(al_map_rgb(0, 0, 0));
 
@@ -72,8 +70,7 @@ int _allegro_main(Akr::Core& coreInstance) {
 
   // Load a font (replace "your_font_file.ttf" with the path to a TTF font
   // file).
-  font = al_load_ttf_font("/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf",
-                          36, 0);
+  font = al_load_ttf_font("/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf", 36, 0);
   if (!font) {
     return -1;
   }
@@ -100,13 +97,11 @@ int _allegro_main(Akr::Core& coreInstance) {
 
     auto currentTime = std::chrono::high_resolution_clock::now();
     std::chrono::milliseconds lastTick =
-        std::chrono::duration_cast<std::chrono::milliseconds>(currentTime -
-                                                              applicationEpoch);
+        std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
     if (event.type == ALLEGRO_EVENT_TIMER) {
       auto currentTime = std::chrono::high_resolution_clock::now();
       std::chrono::milliseconds lastTick =
-          std::chrono::duration_cast<std::chrono::milliseconds>(
-              currentTime - applicationEpoch);
+          std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
       // Update the applicationEpoch to the t            ime of the last frame
       applicationEpoch = currentTime;
 

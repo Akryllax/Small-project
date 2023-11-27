@@ -18,7 +18,8 @@ class TestShip : public PhysicalEntity, public IRenderable {
 
  public:
   void Render() override {
-    al_draw_bitmap(bitmapResource->getBitmap(), this->GetLocation().getPosition().x, this->GetLocation().getPosition().y, 0);
+    al_draw_bitmap(bitmapResource->getBitmap(), this->GetLocation().getPosition().x,
+                   this->GetLocation().getPosition().y, 0);
   }
 };
 }  // namespace Akr
