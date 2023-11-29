@@ -7,13 +7,14 @@
 namespace Akr {
 class RigidBody : public Entity {
  public:
-  RigidBody(b2Body* body, std::string const& name) : Entity(name){};
+  RigidBody(std::string const& name) : Entity(name){};
 
  protected:
   b2Body* body;
 
- public:
   void attachBody(b2Body* targetBody) { this->body = targetBody; }
+
+ public:
   b2Body* GetBody() {
     assert(body);
     return this->body;

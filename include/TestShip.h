@@ -2,6 +2,7 @@
 #include "PhysicsLayer.h"
 #include "RigidBody.h"
 #include "bitmap_draw.h"
+#include "box2d/b2_body.h"
 #include <allegro5/allegro.h>
 #include <cassert>
 #include <memory>
@@ -11,9 +12,8 @@ class TestShip : public RigidBody, public IRenderable {
   b2BodyDef starshipDef;
 
  public:
-  TestShip(std::string const& name)
-      : RigidBody(Akr::Core::GetInstance().GetDataLayer<Akr::PhysicsLayer>()->GetBox2DWorld().CreateBody(&starshipDef),
-                  name) {
+  TestShip(std::string const& name) : RigidBody(name) {
+    starshipDef.type = b2_dynamicBody;
     bitmapResource = std::make_shared<BitmapResource>("1.png");
     bitmapResource->load();
     assert(body);
