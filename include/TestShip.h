@@ -11,20 +11,19 @@ namespace Akr {
 class TestShip : public RigidBody, public IRenderable {
   b2BodyDef starshipDef;
 
- public:
-  TestShip(std::string const& name) : RigidBody(name) {
+public:
+  TestShip(std::string const& name)
+      : RigidBody(name, &(Core::GetDataLayer<PhysicsLayer>()->GetBox2DWorld())) {
     starshipDef.type = b2_dynamicBody;
-    bitmapResource = std::make_shared<BitmapResource>("1.png");
-    bitmapResource->load();
+    setBitmapResource(std::make_shared<BitmapResource>("1.png"));
+    GetBitmapResource()->load();
     assert(body);
   }
 
- public:
   ~TestShip() override = default;
 
- public:
   void Render() override {
-    al_draw_bitmap(bitmapResource->getBitmap(), this->GetBody()->GetPosition().x, this->GetBody()->GetPosition().y, 0);
+    al_draw_bitmap(GetBitmapResource()->getBitmap(), this->GetBody()->GetPosition().x, this->GetBody()->GetPosition().y, 0);
   }
 };
 

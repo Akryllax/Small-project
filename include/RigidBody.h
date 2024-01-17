@@ -2,22 +2,30 @@
 
 #include "Entity.h"
 #include "box2d/b2_body.h"
+#include "box2d/b2_world.h"
 #include <cassert>
-#include <memory>
+
 namespace Akr {
 class RigidBody : public Entity {
  public:
-  RigidBody(std::string const& name) : Entity(name){};
+  RigidBody(std::string const& name, b2World* world) : Entity(name) {
+    // Define the body here and attach it to the world
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    body = world->CreateBody(&bodyDef);
+  }
+
+  private:
+  RigidBody(const RigidBody& body) = delete;
 
  protected:
   b2Body* body;
-
-  void attachBody(b2Body* targetBody) { this->body = targetBody; }
 
  public:
   b2Body* GetBody() {
     assert(body);
     return this->body;
-  };
+  }
 };
-}  // namespace Akr
+
+};  // namespace Akr

@@ -7,11 +7,9 @@
 
 namespace Akr {
 class LocationLayer : public DataLayer {
- protected:
+protected:
   std::unordered_map<std::string, Location> locationVector;
 
-  void Tick(const std::chrono::milliseconds delta) override {
-    std::cout << "LocationLayer" << "::Tick()" << std::endl;
-  }
+  void Tick(std::chrono::milliseconds const delta) override { spdlog::trace("LocationLayer::Tick()"); }
 };
 }  // namespace Akr

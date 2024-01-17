@@ -6,12 +6,26 @@
 #include "box2d/box2d.h"
 #include <gtest/gtest.h>
 #include <memory>
+#include "Logger.h"
+
+class Box2DIntegration : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Remove existing config file before each test
+        Akr::Logger::init("Box2DIntegration.log");
+    }
+
+    void TearDown() override {
+    }
+
+    Box2DIntegration() = default;
+};
 
 TEST(Box2DIntegration, BasicTest) {
-  auto core1 = &Akr::Core::GetInstance();
-  auto core2 = &Akr::Core::GetInstance();
+  auto& core1 = Akr::Core::GetInstance();
+  auto& core2 = Akr::Core::GetInstance();
 
-  ASSERT_EQ(core1, core2);
+  ASSERT_EQ(&core1, &core2);
 }
 
 TEST(Box2DIntegration, WorldCreation_Bare_Ok) {
@@ -48,7 +62,7 @@ TEST(Box2DIntegration, WorldCreation_Bare_Ok) {
 
   auto pos1 = body->GetPosition();
 
-  std::cout << "Before applying force - pos1: (" << pos1.x << ", " << pos1.y << ")" << std::endl;
+  spdlog::trace("Before applying force - pos1: ({}, {})", pos1.x, pos1.y);
 
   body->ApplyForce(b2Vec2(0, 20), b2Vec2(0, 0), true);
   ASSERT_NE(body, nullptr);
@@ -62,7 +76,7 @@ TEST(Box2DIntegration, WorldCreation_Bare_Ok) {
 
   auto pos2 = body->GetPosition();
 
-  std::cout << "After applying force - pos2: (" << pos2.x << ", " << pos2.y << ")" << std::endl;
+  spdlog::trace( "After applying force - pos2: ({}, {})", pos2.x, pos2.y);
 
   ASSERT_NE(pos1, pos2);
 }

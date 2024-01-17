@@ -5,11 +5,25 @@ project(dataGen)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# find_package(fmt CONFIG REQUIRED)
+# find_package(spdlog CONFIG REQUIRED)
+
 # Add allegro and allegro_ttf library paths
-set(ALLEGRO_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+if(EXISTS "/etc/wsl")
+    set(ALLEGRO_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu/")
+else()
+    set(ALLEGRO_LIBRARY_PATH "/usr/lib/")
+    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/")
+endif()
+
+
 set(ALLEGRO_INCLUDE_DIR "/usr/include/allegro5")
-set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu/")
 set(ALLEGRO_TTF_INCLUDE_DIR "/usr/include/allegro5")
+
+set(FMT_INCLUDE_DIR "/usr/include/fmt")
+set(SPDLOG_INCLUDE_DIR "/usr/include/spdlog")
+set(SPDLOG_LIB_PATH "/usr/lib/cmake/spdlog")
 
 # Link to allegro and allegro_ttf libraries
 link_directories("${ALLEGRO_LIBRARY_PATH}" "${ALLEGRO_TTF_LIBRARY_PATH}")
@@ -28,6 +42,7 @@ target_link_libraries(dataGen
     ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
     ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
     ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
+    fmt
 )
 
 # Include directories
@@ -36,6 +51,8 @@ target_include_directories(dataGen PRIVATE
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+    ${SPDLOG_INCLUDE_DIR}
+    ${FMT_INCLUDE_DIR}
 )
 
 # # Add Box2D as a submodule

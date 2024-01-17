@@ -13,6 +13,7 @@
 #include <memory>
 #include <type_traits>
 #include <typeindex>
+#include "spdlog/spdlog.h"
 
 namespace Akr {
 
@@ -29,7 +30,7 @@ struct IsDerivedFromDataLayer {
  * functionality. It inherits from ITickable.
  */
 class Core : public ITickable {
- public:
+public:
   /**
    * @brief Virtual destructor of the class
    */
@@ -40,9 +41,8 @@ class Core : public ITickable {
    *
    * @return Reference to the Core instance.
    */
-  static Core& GetInstance() {
-    // Ensure that there is only one instance created.
-    static Core instance;
+  [[nodiscard("Don't forget about me")]] static Core& GetInstance() {
+    static Core instance;  // Define and initialize the static member
     return instance;
   }
 
@@ -58,8 +58,6 @@ class Core : public ITickable {
    */
   template <typename T, std::enable_if_t<IsDerivedFromDataLayer<T>::value, int> = 0>
   void AddDataLayer(std::shared_ptr<T> dataLayer) {
-    std::cout << "Added data layer";
-
     if (auto it = dataLayerMap_.find(std::type_index(typeid(T))); it != dataLayerMap_.end()) {
       std::cout << ", OVERRIDING an existing layer";
       // You can choose to update the existing layer here if needed.
@@ -68,7 +66,7 @@ class Core : public ITickable {
       dataLayerMap_[std::type_index(typeid(T))] = dataLayer;  // Use std::type_index
     }
 
-    std::cout << ", new size: " << dataLayerMap_.size() << std::endl;
+    spdlog::trace("Added data layer, new size: {}", dataLayerMap_.size());
   }
 
   /**
@@ -95,13 +93,13 @@ class Core : public ITickable {
    * @return Shared pointer to the data layer.
    */
   template <typename T, std::enable_if_t<IsDerivedFromDataLayer<T>::value, int> = 0>
-  std::shared_ptr<T> GetDataLayer() {
-    auto it = dataLayerMap_.find(typeid(T));
+  static std::shared_ptr<T> GetDataLayer() {
+    auto it = GetInstance().dataLayerMap_.find(typeid(T));
     std::shared_ptr<T> typedLayer;
 
-    if (it == dataLayerMap_.end()) {
+    if (it == GetInstance().dataLayerMap_.end()) {
       typedLayer = std::make_shared<T>();
-      AddDataLayer(typedLayer);
+      GetInstance().AddDataLayer(typedLayer);
     } else {
       typedLayer = std::dynamic_pointer_cast<T>(it->second);
     }
@@ -118,8 +116,7 @@ class Core : public ITickable {
    */
   void Tick(std::chrono::milliseconds const delta) override {
     for (auto const& [type, dataLayer] : dataLayerMap_) {
-      std::cout << type.name() << std::endl;
-      std::cout << dataLayer << std::endl;
+      spdlog::trace("{}::Tick()", type.name());
 
       dataLayer->Tick(delta);
     }
@@ -135,17 +132,20 @@ class Core : public ITickable {
   inline uint64_t GetFrameCount() const { return frameCount_; }
   inline size_t GetLayerCount() const { return this->dataLayerMap_.size(); }
 
- private:
-  uint64_t frameCount_;  ///< Frame count variable.
+private:
+  uint64_t frameCount_ = 0;  ///< Frame count variable.
 
- private:
   std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_;  ///< Map to store data layers.
-  
- private:
+
   /**
    * @brief Private constructor for singleton pattern.
    */
-  Core() : frameCount_(0){};
+  Core() = default;
+
+  /**
+   * @brief Private deleted constructor for singleton pattern.
+   */
+  Core(Core const& core) = delete;
 };
 
 }  // namespace Akr

@@ -1,0 +1,6 @@
+[
+    {
+        "key": "ctrl+shit+e",
+        "command": "cmake:enableFullFeatureSet && !cmake:hideBuildCommand"
+    }
+]

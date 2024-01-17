@@ -1,14 +1,16 @@
+#pragma once
+
+#include "spdlog/spdlog.h"
 #include "bitmap.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <filesystem>  // For cross-platform path handling
-#include <iostream>
 #include <string>
 #include <unistd.h>  // For readlink
 
 namespace Akr {
 class Resource {
- public:
+public:
   explicit Resource(std::string const& filename) : filename(filename) {}
 
   virtual bool load() = 0;
@@ -16,13 +18,13 @@ class Resource {
 
   std::string const& getFilename() const { return filename; }
 
- protected:
+protected:
   std::string getFullPath() const {
     // Assuming resources are in the "res" folder next to the binary
     return getExecutablePath() + "/res/" + filename;
   }
 
- private:
+private:
   std::string filename;
 
   static std::string getExecutablePath() {
@@ -55,7 +57,7 @@ class Resource {
 class BitmapResource : public Resource {
   ALLEGRO_BITMAP* bitmap;
 
- public:
+public:
   explicit BitmapResource(std::string const& filename) : Resource(filename) {}
 
   ALLEGRO_BITMAP* getBitmap() const { return bitmap; };
@@ -64,7 +66,7 @@ class BitmapResource : public Resource {
     // Initialize Allegro and Allegro Image
     if (!al_init() || !al_init_image_addon()) {
       // Handle initialization failure
-      std::cerr << "Failed to initialize Allegro or Allegro Image" << std::endl;
+      spdlog::error("Failed to initialize Allegro or Allegro Image");
       return false;
     }
 
@@ -82,12 +84,12 @@ class BitmapResource : public Resource {
     al_destroy_bitmap(bitmap);
   }
 
- private:
+private:
   // Allegro 5 bitmap object or any other specific data for bitmaps
 };
 
 class AudioResource : public Resource {
- public:
+public:
   explicit AudioResource(std::string const& filename) : Resource(filename) {}
 
   bool load() override {
@@ -106,7 +108,7 @@ class AudioResource : public Resource {
     // al_destroy_sample(sample);
   }
 
- private:
+private:
   // Allegro 5 sample object or any other specific data for audio
 };
 };  // namespace Akr

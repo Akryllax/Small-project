@@ -1,8 +1,11 @@
 #include "Button.h"
 #include "Core.h"
+#include "InputLayer.h"
 #include "LocationLayer.h"
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
+#include "RendererLayer.h"
+#include "spdlog/spdlog.h"
 #include "TestShip.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
@@ -10,21 +13,24 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
 #include <chrono>
-#include <iomanip>
-#include <iostream>
 #include <memory>
+#include "Logger.h"
 
 float const FPS = 60;
 std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
     applicationEpoch;
 bool quit = false;
 
-Akr::TestShip* testShip;
+std::shared_ptr<Akr::TestShip> testShip;
 
 inline int _initCore(Akr::Core& coreInstance) {
+  Akr::Logger::init("core.log");
+
   coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::LocationLayer>();
   coreInstance.AddDataLayer<Akr::PhysicsLayer>();
+  coreInstance.AddDataLayer<Akr::InputLayer>();
+  coreInstance.AddDataLayer<Akr::RendererLayer>();
 
   return 0;
 }
@@ -37,12 +43,9 @@ void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const
   auto now_time = std::chrono::system_clock::to_time_t(now);
   auto timeinfo = std::localtime(&now_time);
 
-  std::cout << "Frame " << coreInstance.GetFrameCount() << ":\t[" << std::put_time(timeinfo, "%T") << "] - "
-            << std::endl;
+  spdlog::trace("Frame {}", coreInstance.GetFrameCount());
 
   al_clear_to_color(al_map_rgb(0, 0, 0));
-
-  if(testShip) testShip->Render();
 
   al_flip_display();
 }
@@ -74,7 +77,7 @@ void cleanupAllegro(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, 
 void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_queue, ALLEGRO_FONT*& font) {
   // Initialize Allegro.
   if (!al_init()) {
-    std::cerr << "Failed to initialize Allegro." << std::endl;
+    spdlog::error("Failed to initialize Allegro.");
     exit(-1);
   }
 
@@ -84,24 +87,40 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   al_init_primitives_addon();
   al_init_image_addon();
 
+  // Initialize the event addon for keyboard and mouse input.
+  if (!al_install_keyboard()) {
+    // Handle keyboard initialization failure.
+    fprintf(stderr, "Failed to initialize keyboard addon!\n");
+    al_uninstall_system();
+    exit(-1);
+  }
+
+  if (!al_install_mouse()) {
+    // Handle mouse initialization failure.
+    fprintf(stderr, "Failed to initialize mouse addon!\n");
+    al_uninstall_keyboard();
+    al_uninstall_system();
+    exit(-1);
+  }
+
   // Create the display.
   display = al_create_display(800, 600);
   if (!display) {
-    std::cerr << "Failed to create Allegro display." << std::endl;
+    spdlog::error("Failed to create Allegro display.");
     exit(-1);
   }
 
   // Load a font.
-  font = al_load_ttf_font("/usr/share/fonts/truetype/ubuntu/UbuntuMono-B.ttf", 36, 0);
+  font = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 36, 0);
   if (!font) {
-    std::cerr << "Failed to load font." << std::endl;
+    spdlog::error("Failed to load font.");
     exit(-1);
   }
 
   // Create an event queue and a timer.
   event_queue = al_create_event_queue();
   if (!event_queue) {
-    std::cerr << "Failed to create event queue." << std::endl;
+    spdlog::error("Failed to create event queue.");
     exit(-1);
   }
 
@@ -111,7 +130,8 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
 
   al_register_event_source(event_queue, al_get_display_event_source(display));
 
-  testShip = new Akr::TestShip("a");
+  testShip = std::make_shared<Akr::TestShip>("a");
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 }
 
 int _allegro_main(Akr::Core& coreInstance) {
@@ -134,7 +154,8 @@ int _allegro_main(Akr::Core& coreInstance) {
 }
 
 int main(int argc, char** argv) {
-  auto coreInstance = Akr::Core::GetInstance();
+  auto& coreInstance = Akr::Core::GetInstance();
+  assert(&coreInstance == &Akr::Core::GetInstance());
   _initCore(coreInstance);
   _allegro_main(coreInstance);
 

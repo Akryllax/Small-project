@@ -1,10 +1,10 @@
 #pragma once
 #include <chrono>
-#include <iostream>
+#include "spdlog/spdlog.h"
 
 class ITickable {
  public:
   virtual void Tick(const std::chrono::milliseconds delta) {
-    std::cout << "ITickale" << std::endl;
+    spdlog::trace( "ITickale" );
   };
 };

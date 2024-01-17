@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ITickable.h"
+#include "spdlog/spdlog.h"
 
 namespace Akr {
 class DataLayer : public ITickable {
@@ -11,8 +12,8 @@ class DataLayer : public ITickable {
 
   virtual void Initialize(){};
 
-  void Tick(const std::chrono::milliseconds delta) override {
-    std::cout << typeid(*this).name() << "::Tick()" << std::endl;
+  void Tick(std::chrono::milliseconds const delta) override {
+    spdlog::trace("{}::Tick()", typeid(*this).name());
   };
   virtual void Kill(){};
 };

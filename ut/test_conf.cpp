@@ -1,7 +1,9 @@
 #include "Configuration.h"
+#include "spdlog/spdlog.h"
 #include <gtest/gtest.h>
 #include <filesystem>
 #include <fstream>
+#include "Logger.h"
 
 // Include the Configuration class here
 
@@ -10,6 +12,7 @@ protected:
     void SetUp() override {
         // Remove existing config file before each test
         std::filesystem::remove(configFilePath);
+        Akr::Logger::init("ConfigurationTest.log");
     }
 
     void TearDown() override {
@@ -17,13 +20,14 @@ protected:
         std::filesystem::remove(configFilePath);
     }
 
-    ConfigurationTest() : configFilePath("test_config.ini") {}
+    ConfigurationTest() {}
 
-    const std::string configFilePath;
+    const std::string configFilePath = Configuration::getConfigFilePath();
 };
 
 TEST_F(ConfigurationTest, LoadAndSave) {
     ASSERT_TRUE(Configuration::load());
+    ASSERT_TRUE(Configuration::save());
 
     // Check if the config file has been created
     ASSERT_TRUE(std::filesystem::exists(configFilePath));

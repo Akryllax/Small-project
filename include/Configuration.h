@@ -1,25 +1,18 @@
 #include "config.h"
-#include <any>
 #include <filesystem>  // For cross-platform path handling
 #include <stdexcept>   // For std::runtime_error
 #include <string>
 
 class Configuration {
-  ALLEGRO_CONFIG* config;
-
- private:
-  Configuration() = default;
-
- public:
-  static inline Configuration& GetInstance()
-  {
+public:
+  static inline Configuration& GetInstance() {
     static Configuration instance;
     return instance;
   };
 
   static bool load() {
     // Get the path to the config file
-    std::string configFilePath = getConfigFilePath();
+    static std::string configFilePath = getConfigFilePath();
 
     GetInstance().config = al_load_config_file(configFilePath.c_str());
     if (!GetInstance().config) {
@@ -39,11 +32,9 @@ class Configuration {
     return false;
   }
 
-  static std::string getValue(std::string_view const& key,
-                              std::string defaultValue = "") {
+  static std::string getValue(std::string_view const& key, std::string defaultValue = "") {
     if (GetInstance().config) {
-      char const* value =
-          al_get_config_value(GetInstance().config, nullptr, key.data());
+      char const* value = al_get_config_value(GetInstance().config, nullptr, key.data());
       return value ? value : defaultValue.c_str();
     }
     return defaultValue;
@@ -55,7 +46,6 @@ class Configuration {
     }
   }
 
- private:
   static std::string getConfigFilePath() {
     // Determine the platform-specific directory for config files
     std::string configDir;
@@ -75,12 +65,15 @@ class Configuration {
         std::filesystem::create_directory(configDir);
       } catch (std::exception const& e) {
         // Throw an error if directory creation fails
-        throw std::runtime_error("Failed to create config directory: " +
-                                 std::string(e.what()));
+        throw std::runtime_error("Failed to create config directory: " + std::string(e.what()));
       }
     }
 
     // Append the config file name to the directory
     return configDir + "/config.ini";
   }
+
+private:
+  ALLEGRO_CONFIG* config;
+  Configuration() = default;
 };
