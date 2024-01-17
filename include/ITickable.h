@@ -4,7 +4,5 @@
 
 class ITickable {
  public:
-  virtual void Tick(const std::chrono::milliseconds delta) {
-    spdlog::trace( "ITickale" );
-  };
+  virtual void Tick(const std::chrono::milliseconds delta) {};
 };

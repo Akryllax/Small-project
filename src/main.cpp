@@ -5,7 +5,9 @@
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
 #include "RendererLayer.h"
+#include "box2d/b2_math.h"
 #include "spdlog/spdlog.h"
+#include "Configuration.h"
 #include "TestShip.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
@@ -13,6 +15,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
 #include <chrono>
+#include <cmath>
 #include <memory>
 #include "Logger.h"
 
@@ -24,30 +27,22 @@ bool quit = false;
 std::shared_ptr<Akr::TestShip> testShip;
 
 inline int _initCore(Akr::Core& coreInstance) {
+  Akr::Configuration::load();
   Akr::Logger::init("core.log");
 
+  coreInstance.AddDataLayer<Akr::InputLayer>();
   coreInstance.AddDataLayer<Akr::NamedLayer>();
   coreInstance.AddDataLayer<Akr::LocationLayer>();
-  coreInstance.AddDataLayer<Akr::PhysicsLayer>();
-  coreInstance.AddDataLayer<Akr::InputLayer>();
   coreInstance.AddDataLayer<Akr::RendererLayer>();
+  coreInstance.AddDataLayer<Akr::PhysicsLayer>();
 
   return 0;
 }
 
 void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
-  coreInstance.Tick(delta);
-
-  // Print frame count and time
-  auto now = std::chrono::system_clock::now();
-  auto now_time = std::chrono::system_clock::to_time_t(now);
-  auto timeinfo = std::localtime(&now_time);
-
   spdlog::trace("Frame {}", coreInstance.GetFrameCount());
 
-  al_clear_to_color(al_map_rgb(0, 0, 0));
-
-  al_flip_display();
+  coreInstance.Tick(delta);
 }
 
 void handleFrame(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, Akr::Core& coreInstance) {
@@ -55,13 +50,13 @@ void handleFrame(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, Akr
   al_wait_for_event(event_queue, &event);
 
   auto currentTime = std::chrono::high_resolution_clock::now();
-  std::chrono::milliseconds lastTick =
+  std::chrono::milliseconds deltaTick =
       std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
 
   if (event.type == ALLEGRO_EVENT_TIMER) {
     // Update the applicationEpoch to the time of the last frame
     applicationEpoch = currentTime;
-    _allegroStableTick(coreInstance, lastTick);
+    _allegroStableTick(coreInstance, deltaTick);
   } else if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
     // Handle display close event
     quit = true;
@@ -125,12 +120,16 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   }
 
   auto mainTimer = al_create_timer(1.0 / FPS);
+  spdlog::trace("[main] Setting FPS to {}", FPS);
   al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
   al_start_timer(mainTimer);
 
   al_register_event_source(event_queue, al_get_display_event_source(display));
 
   testShip = std::make_shared<Akr::TestShip>("a");
+  testShip->GetBody()->SetTransform(b2Vec2(200,200), 0);
+  testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
+  testShip->GetBody()->SetLinearVelocity(b2Vec2(25,25));
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 }
 
@@ -144,6 +143,7 @@ int _allegro_main(Akr::Core& coreInstance) {
   applicationEpoch = std::chrono::high_resolution_clock::now();
   quit = false;
 
+  spdlog::trace("[main] Entering main.cpp loop", FPS);
   while (!quit) {
     handleFrame(display, event_queue, coreInstance);
   }

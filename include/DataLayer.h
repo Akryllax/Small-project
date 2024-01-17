@@ -12,9 +12,7 @@ class DataLayer : public ITickable {
 
   virtual void Initialize(){};
 
-  void Tick(std::chrono::milliseconds const delta) override {
-    spdlog::trace("{}::Tick()", typeid(*this).name());
-  };
+  void Tick(std::chrono::milliseconds const delta) override {};
   virtual void Kill(){};
 };
 }  // namespace Akr

@@ -66,7 +66,7 @@ public:
       dataLayerMap_[std::type_index(typeid(T))] = dataLayer;  // Use std::type_index
     }
 
-    spdlog::trace("Added data layer, new size: {}", dataLayerMap_.size());
+    spdlog::info("Added data layer, new size: {}", dataLayerMap_.size());
   }
 
   /**
@@ -115,13 +115,13 @@ public:
    * @param delta Time difference since the last tick.
    */
   void Tick(std::chrono::milliseconds const delta) override {
+    spdlog::trace("--- Akr::Core::Tick() start ---");
     for (auto const& [type, dataLayer] : dataLayerMap_) {
-      spdlog::trace("{}::Tick()", type.name());
-
       dataLayer->Tick(delta);
     }
 
     frameCount_++;
+    spdlog::trace("### Akr::Core::Tick() end ###");
   }
 
   /**

@@ -1,8 +1,12 @@
+#pragma once
+
 #include "config.h"
 #include <filesystem>  // For cross-platform path handling
 #include <stdexcept>   // For std::runtime_error
 #include <string>
 
+namespace Akr
+{
 class Configuration {
 public:
   static inline Configuration& GetInstance() {
@@ -76,4 +80,5 @@ public:
 private:
   ALLEGRO_CONFIG* config;
   Configuration() = default;
+};
 };
