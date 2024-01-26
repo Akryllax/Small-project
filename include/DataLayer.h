@@ -14,5 +14,8 @@ public:
   void Tick(std::chrono::milliseconds const delta) override{};
   virtual void Kill(){};
   virtual size_t GetExecPriority() const { return EXEC_PRIORITY; }
+
+private:
+  DataLayer(const DataLayer& copy) = delete;
 };
 } // namespace Akr

@@ -88,7 +88,7 @@ public:
 
         al_get_mouse_state(&mouseState_);
 
-        Akr::DebugRenderer::DrawText(fmt::format("mousePos: ({}, {})", mouseState_.x, mouseState_.y), b2Vec2(100, 100));
+        Akr::DebugRenderer::DrawText(fmt::format("mousePos: ({}, {})", mouseState_.x, mouseState_.y), b2Vec2(0, 0));
     };
 };
 

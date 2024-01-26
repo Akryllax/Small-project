@@ -1,4 +1,5 @@
 #include "DataLayer.h"
+#include "DebugRenderer.h"
 #include "IRenderable.h"
 #include <memory>
 #include <vector>
@@ -25,6 +26,7 @@ public:
     }
 
   // spdlog::trace("[Renderer] Flip buffers");
+    DebugRenderer::render();
     al_flip_display();  // Assuming double buffering
 
     // spdlog::trace("[Renderer] ## END OF FRAME ## ");

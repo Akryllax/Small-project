@@ -1,6 +1,7 @@
 #include "Button.h"
 #include "Configuration.h"
 #include "Core.h"
+#include "DebugRenderer.h"
 #include "InputLayer.h"
 #include "LocationLayer.h"
 #include "Logger.h"
@@ -144,6 +145,7 @@ int _allegro_main(Akr::Core& coreInstance) {
   ALLEGRO_FONT* font = nullptr;
 
   initializeAllegro(display, event_queue, font);
+  Akr::DebugRenderer::Initialize();
 
   applicationEpoch = std::chrono::high_resolution_clock::now();
   quit = false;
