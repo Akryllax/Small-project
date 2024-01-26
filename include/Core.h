@@ -7,19 +7,19 @@
 
 #include "DataLayer.h"
 #include "ITickable.h"
+#include "box2d/b2_math.h"
+#include "spdlog/spdlog.h"
 #include <cstdint>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
-#include "spdlog/spdlog.h"
 
 namespace Akr {
 
 // Type trait to check if T is derived from DataLayer
-template <typename T>
-struct IsDerivedFromDataLayer {
+template <typename T> struct IsDerivedFromDataLayer {
   static constexpr bool value = std::is_base_of_v<DataLayer, T>;
 };
 
@@ -42,7 +42,7 @@ public:
    * @return Reference to the Core instance.
    */
   [[nodiscard("Don't forget about me")]] static Core& GetInstance() {
-    static Core instance;  // Define and initialize the static member
+    static Core instance; // Define and initialize the static member
     return instance;
   }
 
@@ -63,7 +63,7 @@ public:
       // You can choose to update the existing layer here if needed.
       it->second = dataLayer;
     } else {
-      dataLayerMap_[std::type_index(typeid(T))] = dataLayer;  // Use std::type_index
+      dataLayerMap_[std::type_index(typeid(T))] = dataLayer; // Use std::type_index
     }
 
     spdlog::info("Added data layer, new size: {}", dataLayerMap_.size());
@@ -77,10 +77,7 @@ public:
    *
    * @tparam T Type of the data layer.
    */
-  template <typename T>
-  void AddDataLayer() {
-    AddDataLayer(std::make_shared<T>());
-  }
+  template <typename T> void AddDataLayer() { AddDataLayer(std::make_shared<T>()); }
 
   /**
    * @brief Function template to get a data layer.
@@ -116,12 +113,23 @@ public:
    */
   void Tick(std::chrono::milliseconds const delta) override {
     spdlog::trace("--- Akr::Core::Tick() start ---");
+
+    // Create a vector to store pointers to DataLayer objects
+    std::vector<DataLayer*> dataLayers;
+
+    // Populate the vector with pointers to DataLayer objects
     for (auto const& [type, dataLayer] : dataLayerMap_) {
-      dataLayer->Tick(delta);
+      dataLayers.push_back(dataLayer.get());
     }
 
-    frameCount_++;
-    spdlog::trace("### Akr::Core::Tick() end ###");
+    // Sort the vector based on EXEC_PRIORITY
+    std::sort(dataLayers.begin(), dataLayers.end(),
+              [](DataLayer* a, DataLayer* b) { return a->GetExecPriority() < b->GetExecPriority(); });
+
+    // Call Tick for each DataLayer in sorted order
+    for (DataLayer* dataLayer : dataLayers) {
+      dataLayer->Tick(delta);
+    }
   }
 
   /**
@@ -133,9 +141,9 @@ public:
   inline size_t GetLayerCount() const { return this->dataLayerMap_.size(); }
 
 private:
-  uint64_t frameCount_ = 0;  ///< Frame count variable.
+  uint64_t frameCount_ = 0; ///< Frame count variable.
 
-  std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_;  ///< Map to store data layers.
+  std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_; ///< Map to store data layers.
 
   /**
    * @brief Private constructor for singleton pattern.
@@ -148,4 +156,4 @@ private:
   Core(Core const& core) = delete;
 };
 
-}  // namespace Akr
+} // namespace Akr

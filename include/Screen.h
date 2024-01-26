@@ -1,0 +1,61 @@
+#pragma once
+
+#include "box2d/b2_math.h"
+#include "display.h"
+#include "spdlog.h"
+
+namespace Akr {
+
+/**
+ * @brief Screen class for managing screen properties.
+ */
+class Screen {
+public:
+    /**
+     * @brief Gets the screen size.
+     * @return Screen size as a b2Vec2.
+     */
+    static b2Vec2 getScreenSize() { return screenSize; }
+
+    /**
+     * @brief Updates the screen size based on the current display.
+     */
+    static void updateScreenSize() {
+        auto display = getDisplay();
+
+        if (display) {
+            screenSize.Set(al_get_display_width(display), al_get_display_height(display));
+        }
+    }
+
+    /**
+     * @brief Registers the display.
+     * @param display Pointer to the ALLEGRO_DISPLAY to register.
+     */
+    static void RegisterDisplay(ALLEGRO_DISPLAY* display) {
+        if (currentDisplay_ != nullptr) {
+            spdlog::warn("[{}] Overriding an existing display, old: {}, new: {}", __func__, reinterpret_cast<uintptr_t>(currentDisplay_), reinterpret_cast<uintptr_t>(display));
+        }
+
+        currentDisplay_ = display;
+        updateScreenSize();
+    }
+
+    /**
+     * @brief Gets the registered display.
+     * @return Pointer to the registered ALLEGRO_DISPLAY.
+     */
+    static ALLEGRO_DISPLAY* getDisplay() {
+        if (!currentDisplay_) {
+            spdlog::warn("Trying to get empty screen, it was not registered");
+        }
+
+        return currentDisplay_;
+    };
+
+private:
+    inline static b2Vec2 screenSize = b2Vec2_zero; /**< Screen size as a b2Vec2. */
+    inline static ALLEGRO_DISPLAY* currentDisplay_ = nullptr; /**< Pointer to the registered ALLEGRO_DISPLAY. */
+};
+
+} // namespace Akr

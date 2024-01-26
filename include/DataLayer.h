@@ -1,18 +1,18 @@
 #pragma once
 
 #include "ITickable.h"
-#include "spdlog/spdlog.h"
 
 namespace Akr {
 class DataLayer : public ITickable {
- public:
-  constexpr static size_t EXEC_PRIORITY = 1;
+public:
+  constexpr static size_t EXEC_PRIORITY = 100;
   DataLayer() = default;
   virtual ~DataLayer() = default;
 
   virtual void Initialize(){};
 
-  void Tick(std::chrono::milliseconds const delta) override {};
+  void Tick(std::chrono::milliseconds const delta) override{};
   virtual void Kill(){};
+  virtual size_t GetExecPriority() const { return EXEC_PRIORITY; }
 };
-}  // namespace Akr
+} // namespace Akr

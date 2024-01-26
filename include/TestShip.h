@@ -24,10 +24,10 @@ public:
   ~TestShip() override = default;
 
   void Render() override {
-    spdlog::trace("[TestShip] Rendering TestShip (Name: {})", this->name);
+    // spdlog::trace("[TestShip] Rendering TestShip (Name: {})", this->name);
 
-    spdlog::info("rendering test ship, at pos: ({},{}), bitmap addr: {}", this->GetBody()->GetPosition().x,
-                 this->GetBody()->GetPosition().y, GetBitmapResource() != nullptr);
+    // spdlog::info("rendering test ship, at pos: ({},{}), bitmap addr: {}", this->GetBody()->GetPosition().x,
+    //              this->GetBody()->GetPosition().y, GetBitmapResource() != nullptr);
 
     ALLEGRO_BITMAP* bitmap = GetBitmapResource()->getBitmap();
     float const cx = al_get_bitmap_width(bitmap) / 2.0f;   // X coordinate of the center of the bitmap

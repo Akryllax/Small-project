@@ -1,14 +1,16 @@
 #include "Button.h"
+#include "Configuration.h"
 #include "Core.h"
 #include "InputLayer.h"
 #include "LocationLayer.h"
+#include "Logger.h"
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
 #include "RendererLayer.h"
+#include "Screen.h"
+#include "TestShip.h"
 #include "box2d/b2_math.h"
 #include "spdlog/spdlog.h"
-#include "Configuration.h"
-#include "TestShip.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -17,7 +19,6 @@
 #include <chrono>
 #include <cmath>
 #include <memory>
-#include "Logger.h"
 
 float const FPS = 60;
 std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
@@ -36,11 +37,13 @@ inline int _initCore(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer<Akr::RendererLayer>();
   coreInstance.AddDataLayer<Akr::PhysicsLayer>();
 
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->AddController(std::make_shared<Akr::UIInputControler>());
+
   return 0;
 }
 
 void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
-  spdlog::trace("Frame {}", coreInstance.GetFrameCount());
+  // spdlog::trace("Frame {}", coreInstance.GetFrameCount());
 
   coreInstance.Tick(delta);
 }
@@ -104,6 +107,8 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
     spdlog::error("Failed to create Allegro display.");
     exit(-1);
   }
+  Akr::Screen::RegisterDisplay(display);
+  Akr::Screen::updateScreenSize();
 
   // Load a font.
   font = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 36, 0);
@@ -127,9 +132,9 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   al_register_event_source(event_queue, al_get_display_event_source(display));
 
   testShip = std::make_shared<Akr::TestShip>("a");
-  testShip->GetBody()->SetTransform(b2Vec2(200,200), 0);
+  testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
-  testShip->GetBody()->SetLinearVelocity(b2Vec2(25,25));
+  testShip->GetBody()->SetLinearVelocity(b2Vec2(25, 25));
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 }
 

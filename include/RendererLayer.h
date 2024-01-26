@@ -13,19 +13,21 @@ public:
   }
 
   void Tick(std::chrono::milliseconds const delta) override {
-    spdlog::trace("[Renderer] -- START OF FRAME --");
-    spdlog::trace("[Renderer] Clearing screen");
+    spdlog::trace("RendererLayer::Tick()");
+
+    // spdlog::trace("[Renderer] -- START OF FRAME --");
+    // spdlog::trace("[Renderer] Clearing screen");
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
-    spdlog::trace("[Renderer] Rendering all renderables");
+    // spdlog::trace("[Renderer] Rendering all renderables");
     for (auto renderable : renderables) {
       renderable->Render();
     }
 
-  spdlog::trace("[Renderer] Flip buffers");
+  // spdlog::trace("[Renderer] Flip buffers");
     al_flip_display();  // Assuming double buffering
 
-    spdlog::trace("[Renderer] ## END OF FRAME ## ");
+    // spdlog::trace("[Renderer] ## END OF FRAME ## ");
   }
 
 private:
