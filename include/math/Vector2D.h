@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cmath>
-namespace Akr {
+namespace Akr::Mathf {
 
 template <typename T>
-class Vector2D {
+class  [[deprecated("Using box2D now")]] Vector2D {
  public:
   T x;
   T y;

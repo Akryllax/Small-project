@@ -28,7 +28,7 @@ bool quit = false;
 
 std::shared_ptr<Akr::TestShip> testShip;
 
-inline int _initCore(Akr::Core& coreInstance) {
+inline int _preAllegroInit(Akr::Core& coreInstance) {
   Akr::Configuration::load();
   Akr::Logger::init("core.log");
 
@@ -135,7 +135,9 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   testShip = std::make_shared<Akr::TestShip>("a");
   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
-  testShip->GetBody()->SetLinearVelocity(b2Vec2(25, 25));
+  testShip->GetBody()->SetLinearVelocity(b2Vec2(5, 5));
+
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().Initialize();
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 }
 
@@ -145,7 +147,6 @@ int _allegro_main(Akr::Core& coreInstance) {
   ALLEGRO_FONT* font = nullptr;
 
   initializeAllegro(display, event_queue, font);
-  Akr::Renderer::DebugRenderer::Initialize();
 
   applicationEpoch = std::chrono::high_resolution_clock::now();
   quit = false;
@@ -162,8 +163,8 @@ int _allegro_main(Akr::Core& coreInstance) {
 
 int main(int argc, char** argv) {
   auto& coreInstance = Akr::Core::GetInstance();
-  assert(&coreInstance == &Akr::Core::GetInstance());
-  _initCore(coreInstance);
+
+  _preAllegroInit(coreInstance);
   _allegro_main(coreInstance);
 
   return 0;

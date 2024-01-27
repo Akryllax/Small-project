@@ -16,8 +16,7 @@ public:
   virtual size_t GetExecPriority() const { return EXEC_PRIORITY; }
 
 private:
-    DataLayer& operator=(const DataLayer&) = delete;
-    DataLayer(const DataLayer&) = delete;
-
+  DataLayer& operator=(DataLayer const&) = delete;
+  DataLayer(DataLayer const&) = delete;
 };
 } // namespace Akr

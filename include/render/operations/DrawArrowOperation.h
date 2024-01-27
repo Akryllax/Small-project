@@ -13,10 +13,11 @@ private:
   ALLEGRO_COLOR color;
 
 public:
-  DrawArrowCommand(b2Vec2 const& _origin, b2Vec2 const& _destination, ALLEGRO_COLOR _color)
-      : origin(_origin), destination(_destination), color(_color) {}
+  DrawArrowCommand(b2Vec2 const& _origin, b2Vec2 const& _destination, ALLEGRO_COLOR _color,
+                   RenderCommandPriority const& _renderPriority = RenderCommandPriority::DEFAULT)
+      : RenderCommand(_renderPriority), origin(_origin), destination(_destination), color(_color)  {}
 
-  void execute(RenderCommandPriority const& renderPriority = RenderCommandPriority::DEFAULT) override {
+  void execute() override {
     al_draw_line(origin.x, origin.y, destination.x, destination.y, color, 2.0);
     auto angle = atan2(destination.y - origin.y, destination.x - origin.x);
     auto arrowSize = 10.0;

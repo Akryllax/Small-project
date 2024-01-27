@@ -17,6 +17,14 @@ else()
     set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    # Disable deprecated warnings for GCC
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # Disable deprecated warnings for Clang
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+endif()
+
 
 set(ALLEGRO_INCLUDE_DIR "/usr/include/allegro5")
 set(ALLEGRO_TTF_INCLUDE_DIR "/usr/include/allegro5")

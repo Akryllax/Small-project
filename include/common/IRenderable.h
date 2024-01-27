@@ -1,21 +1,31 @@
 #pragma once
 
+#include "RenderCommand.h"
 #include "Resource.h"
 #include <memory>
 
 namespace Akr {
 class IRenderable {
-private:
-  std::shared_ptr<BitmapResource> bitmapResource;
-
 public:
   IRenderable() = default;
   virtual ~IRenderable() = default;
 
-  inline void setBitmapResource(std::shared_ptr<BitmapResource> resource) { this->bitmapResource = resource; }
+  [[deprecated("SetBitmapResource is deprecated. Use RendererCommand generator instead.")]] inline void
+  setBitmapResource(std::shared_ptr<BitmapResource> resource) {
+    this->bitmapResource = resource;
+  }
 
-  inline std::shared_ptr<BitmapResource> GetBitmapResource() const { return bitmapResource; }
+  [[deprecated("GetBitmapResource is deprecated. Use RendererCommand generator instead.")]] inline std::shared_ptr<
+      BitmapResource>
+  GetBitmapResource() const {
+    return bitmapResource;
+  }
 
-  virtual void Render() = 0;
+  virtual std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() = 0;
+
+  virtual void render() = 0;
+
+private:
+  std::shared_ptr<BitmapResource> bitmapResource;
 };
-}  // namespace Akr
+} // namespace Akr
