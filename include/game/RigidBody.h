@@ -7,7 +7,7 @@
 
 namespace Akr {
 class RigidBody : public Entity {
- public:
+public:
   RigidBody(std::string const& name, b2World* world) : Entity(name) {
     // Define the body here and attach it to the world
     b2BodyDef bodyDef;
@@ -15,17 +15,18 @@ class RigidBody : public Entity {
     body = world->CreateBody(&bodyDef);
   }
 
-  private:
-  RigidBody(const RigidBody& body) = delete;
+private:
+  RigidBody& operator=(RigidBody const&) = delete;
+  RigidBody(RigidBody const&) = delete;
 
- protected:
+protected:
   b2Body* body;
 
- public:
+public:
   b2Body* GetBody() {
     assert(body);
     return this->body;
   }
 };
 
-};  // namespace Akr
+}; // namespace Akr
