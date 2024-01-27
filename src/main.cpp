@@ -145,7 +145,7 @@ int _allegro_main(Akr::Core& coreInstance) {
   ALLEGRO_FONT* font = nullptr;
 
   initializeAllegro(display, event_queue, font);
-  Akr::DebugRenderer::Initialize();
+  Akr::Renderer::DebugRenderer::Initialize();
 
   applicationEpoch = std::chrono::high_resolution_clock::now();
   quit = false;

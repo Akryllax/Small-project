@@ -26,7 +26,7 @@ public:
     }
 
   // spdlog::trace("[Renderer] Flip buffers");
-    DebugRenderer::render();
+    Akr::Renderer::DebugRenderer::render();
     al_flip_display();  // Assuming double buffering
 
     // spdlog::trace("[Renderer] ## END OF FRAME ## ");

@@ -36,7 +36,7 @@ public:
     al_draw_rotated_bitmap(bitmap, cx, cy, this->GetBody()->GetPosition().x, this->GetBody()->GetPosition().y,
                            this->GetBody()->GetAngle(), 0);
 
-    Akr::DebugRenderer::DrawArrow(this->GetBody()->GetPosition(),
+    Akr::Renderer::DebugRenderer::DrawArrow(this->GetBody()->GetPosition(),
                                   this->GetBody()->GetPosition() + this->GetBody()->GetLinearVelocity());
   }
 };

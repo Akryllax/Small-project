@@ -25,6 +25,22 @@ set(FMT_INCLUDE_DIR "/usr/include/fmt")
 set(SPDLOG_INCLUDE_DIR "/usr/include/spdlog")
 set(SPDLOG_LIB_PATH "/usr/lib/cmake/spdlog")
 
+set(CORE_INCLUDES
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/common
+    ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/include/game
+    ${CMAKE_SOURCE_DIR}/include/input
+    ${CMAKE_SOURCE_DIR}/include/logs
+    ${CMAKE_SOURCE_DIR}/include/math
+    ${CMAKE_SOURCE_DIR}/include/render
+    ${CMAKE_SOURCE_DIR}/include/render/operations
+    ${CMAKE_SOURCE_DIR}/include/sound
+    ${CMAKE_SOURCE_DIR}/include/system
+    ${CMAKE_SOURCE_DIR}/include/ui
+    ${CMAKE_SOURCE_DIR}/include/util
+)
+
 # Link to allegro and allegro_ttf libraries
 link_directories("${ALLEGRO_LIBRARY_PATH}" "${ALLEGRO_TTF_LIBRARY_PATH}")
 
@@ -47,7 +63,7 @@ target_link_libraries(dataGen
 
 # Include directories
 target_include_directories(dataGen PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CORE_INCLUDES}
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
