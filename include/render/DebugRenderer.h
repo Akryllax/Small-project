@@ -2,6 +2,7 @@
 
 #include "CompositeRenderCommand.h"
 #include "DrawArrowOperation.h"
+#include "DrawCrossOperation.h"
 #include "DrawTextCommand.h"
 #include "IRenderable.h"
 #include "RenderCommand.h"
@@ -57,9 +58,16 @@ public:
     addCommand(std::make_shared<DrawTextCommand>(targetString, screenSpacePosition, defaultFont, color));
   }
 
+  void DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0),  // Default color: Red
+                 Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority =
+                     Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT) {
+    spdlog::trace("[DebugRenderer] DebugRenderer::DrawCross");
+    addCommand(std::make_shared<DrawCrossCommand>(_position, _color, _renderPriority));
+  }
+
 private:
   inline static ALLEGRO_FONT* defaultFont = nullptr;
   inline static std::queue<std::shared_ptr<RenderCommand>> commands;
 };
 
-} // namespace Akr::Renderer
+}  // namespace Akr::Renderer

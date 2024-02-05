@@ -23,7 +23,8 @@ public:
 
   virtual std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() = 0;
 
-  virtual void render() = 0;
+  [[deprecated("Please use the RenderCommand flow")]]
+  virtual void render() {};
 
 private:
   std::shared_ptr<BitmapResource> bitmapResource;

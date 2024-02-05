@@ -29,7 +29,7 @@ public:
   }
 
   //IRenderables managment
-  void RegisterRenderable(std::shared_ptr<IRenderable> _renderable)
+  void RegisterRenderable(std::shared_ptr<Akr::IRenderable> _renderable)
   {
     spdlog::trace("[RenderLayer] RendererLayer::RegisterRenderable()");
     renderables_.push_back(_renderable);

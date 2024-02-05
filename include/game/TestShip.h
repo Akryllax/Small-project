@@ -35,8 +35,8 @@ public:
     //              this->GetBody()->GetPosition().y, GetBitmapResource() != nullptr);
 
     ALLEGRO_BITMAP* bitmap = GetBitmapResource()->getBitmap();
-    float const cx = al_get_bitmap_width(bitmap) / 2.0f;  // X coordinate of the center of the bitmap
-    float const cy = al_get_bitmap_height(bitmap) / 2.0f; // Y coordinate of the center of the bitmap
+    float const cx = al_get_bitmap_width(bitmap) / 2.0f;   // X coordinate of the center of the bitmap
+    float const cy = al_get_bitmap_height(bitmap) / 2.0f;  // Y coordinate of the center of the bitmap
 
     al_draw_rotated_bitmap(bitmap, cx, cy, this->GetBody()->GetPosition().x, this->GetBody()->GetPosition().y,
                            this->GetBody()->GetAngle(), 0);
@@ -59,6 +59,9 @@ public:
 
     return compositeCommand;
   };
+
+private:
+  TestShip(TestShip const&) = delete;
 };
 
-} // namespace Akr
+}  // namespace Akr

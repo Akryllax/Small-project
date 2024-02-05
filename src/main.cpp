@@ -20,6 +20,7 @@
 #include <chrono>
 #include <cmath>
 #include <memory>
+#include "UIInputController.h"
 
 float const FPS = 60;
 std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
@@ -27,6 +28,7 @@ std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, s
 bool quit = false;
 
 std::shared_ptr<Akr::TestShip> testShip;
+std::shared_ptr<Akr::UI::Button> testButton;
 
 inline int _preAllegroInit(Akr::Core& coreInstance) {
   Akr::Configuration::load();
@@ -38,7 +40,7 @@ inline int _preAllegroInit(Akr::Core& coreInstance) {
   coreInstance.AddDataLayer<Akr::RendererLayer>();
   coreInstance.AddDataLayer<Akr::PhysicsLayer>();
 
-  Akr::Core::GetDataLayer<Akr::InputLayer>()->AddController(std::make_shared<Akr::UIInputControler>());
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->AddController(std::make_shared<Akr::Input::UIInputControler>());
 
   return 0;
 }
@@ -132,13 +134,21 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
 
   al_register_event_source(event_queue, al_get_display_event_source(display));
 
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().Initialize();
+
+  // Initialize test ship
   testShip = std::make_shared<Akr::TestShip>("a");
   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
   testShip->GetBody()->SetLinearVelocity(b2Vec2(5, 5));
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().Initialize();
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
+
+  // Initialize button
+  // int x, int y, int width, int height,
+  testButton = std::make_shared<Akr::UI::Button>(400,300,200,40, "Test button!");
+
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testButton);
 }
 
 int _allegro_main(Akr::Core& coreInstance) {
