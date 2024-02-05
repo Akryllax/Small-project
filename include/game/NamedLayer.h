@@ -8,6 +8,6 @@
 namespace Akr {
 class NamedLayer : public DataLayer, public std::vector<Entity> {
 public:
-  void Tick(std::chrono::milliseconds const delta) override { spdlog::trace("NamedLayer::Tick()"); }
+  void Tick(std::chrono::milliseconds const& delta) override { spdlog::trace("[NamedLayer] Tick()"); }
 };
 }  // namespace Akr

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InputController.h"
+#include "spdlog.h"
 #include <memory>
 
 namespace Akr {
@@ -16,6 +17,11 @@ public:
   virtual void ReleaseControl() = 0;
 
   virtual void OnEvent() = 0;
+
+  // Process raw input here, will be called in any InputEvent
+  virtual void OnRawInput(std::chrono::milliseconds const& delta){
+    spdlog::trace("[IControllable] OnRawInput() called");
+  };
 
 private:
   std::shared_ptr<Akr::Input::InputController> controller_;

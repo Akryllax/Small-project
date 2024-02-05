@@ -4,5 +4,6 @@
 
 class ITickable {
  public:
-  virtual void Tick(const std::chrono::milliseconds delta) {};
+  virtual void Tick(const std::chrono::milliseconds& delta) {};
+  virtual ~ITickable() = default;
 };

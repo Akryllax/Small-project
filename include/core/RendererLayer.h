@@ -15,7 +15,7 @@ public:
   inline Renderer::DebugRenderer& GetDebugRenderer() { return debugRenderer_; }
   inline Renderer::CoreRenderer& GetCoreRenderer() { return renderer_; }
 
-  void Tick(std::chrono::milliseconds const delta) override {
+  void Tick(std::chrono::milliseconds const& delta) override {
     spdlog::trace("[RenderLayer] RendererLayer::Tick()");
 
     for(auto renderable : renderables_)

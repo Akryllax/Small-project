@@ -17,7 +17,7 @@ public:
      * @brief Executes the physics simulation for the given time delta.
      * @param delta The time delta for the simulation.
      */
-    void Tick(std::chrono::milliseconds const delta) override {
+    void Tick(std::chrono::milliseconds const& delta) override {
         this->GetBox2DWorld().Step(static_cast<float>(delta.count()) * 0.001f, 6, 2);
     }
 

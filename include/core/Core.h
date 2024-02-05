@@ -111,7 +111,7 @@ public:
    *
    * @param delta Time difference since the last tick.
    */
-  void Tick(std::chrono::milliseconds const delta) override {
+  void Tick(std::chrono::milliseconds const& delta) override {
     spdlog::trace("--- Akr::Core::Tick() start ---");
 
     // Create a vector to store pointers to DataLayer objects
@@ -130,6 +130,8 @@ public:
     for (DataLayer* dataLayer : dataLayers) {
       dataLayer->Tick(delta);
     }
+
+    frameCount_++;
   }
 
   /**

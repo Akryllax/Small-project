@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "DataLayer.h"
 #include "DebugRenderer.h"
+#include "IControllable.h"
 #include "IEnableable.h"
 #include "ITickable.h"
 #include "InputController.h"
@@ -34,10 +35,14 @@ public:
    * @brief Executes tick for all input controllers.
    * @param delta Time delta.
    */
-  void Tick(std::chrono::milliseconds const delta) override {
-    spdlog::trace("InputLayer::Tick()");
+  void Tick(std::chrono::milliseconds const& delta) override {
+    spdlog::trace("[InputLayer] Tick()");
     for (auto controller : controllerList) {
       controller->Tick(delta);
+    }
+
+    for (auto rawControllable : rawControllables_) {
+      rawControllable->OnRawInput(delta);
     }
   }
 
@@ -45,7 +50,13 @@ public:
    * @brief Adds an input controller.
    * @param controller Input controller to add.
    */
-  void AddController(std::shared_ptr<Akr::Input::InputController> controller) { this->controllerList.push_back(controller); }
+  void AddController(std::shared_ptr<Akr::Input::InputController> controller) {
+    this->controllerList.push_back(controller);
+  }
+
+  void RegisterRawInputListener(std::shared_ptr<IControllable> controllable) {
+    this->rawControllables_.push_back(controllable);
+  };
 
   /**
    * @brief Gets the mouse screen position.
@@ -55,6 +66,7 @@ public:
 
 private:
   std::vector<std::shared_ptr<Akr::Input::InputController>> controllerList; /**< List of input controllers. */
+  std::vector<std::shared_ptr<Akr::IControllable>> rawControllables_;
 };
 
-} // namespace Akr
+}  // namespace Akr

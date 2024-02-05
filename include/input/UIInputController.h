@@ -11,7 +11,7 @@ class UIInputControler : public Akr::Input::InputController {
 public:
   using InputController::InputController;
 
-  void Tick(std::chrono::milliseconds const delta) override {
+  void Tick(std::chrono::milliseconds const& delta) override {
     InputController::Tick(delta);
 
     al_get_mouse_state(&mouseState_);

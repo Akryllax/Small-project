@@ -7,9 +7,11 @@
 #include "Logger.h"
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
+#include "Random.h"
 #include "RendererLayer.h"
 #include "Screen.h"
 #include "TestShip.h"
+#include "UIInputController.h"
 #include "box2d/b2_math.h"
 #include "spdlog/spdlog.h"
 #include "timer.h"
@@ -20,7 +22,6 @@
 #include <chrono>
 #include <cmath>
 #include <memory>
-#include "UIInputController.h"
 
 float const FPS = 60;
 std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
@@ -28,7 +29,8 @@ std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, s
 bool quit = false;
 
 std::shared_ptr<Akr::TestShip> testShip;
-std::shared_ptr<Akr::UI::Button> testButton;
+std::shared_ptr<Akr::UI::Button> resetShipDbgButton;
+std::shared_ptr<Akr::UI::Button> addRandomImpulseShipDbgButton;
 
 inline int _preAllegroInit(Akr::Core& coreInstance) {
   Akr::Configuration::load();
@@ -46,7 +48,7 @@ inline int _preAllegroInit(Akr::Core& coreInstance) {
 }
 
 void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const delta) {
-  // spdlog::trace("Frame {}", coreInstance.GetFrameCount());
+  spdlog::trace("Frame {}", coreInstance.GetFrameCount());
 
   coreInstance.Tick(delta);
 }
@@ -140,15 +142,35 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   testShip = std::make_shared<Akr::TestShip>("a");
   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
-  testShip->GetBody()->SetLinearVelocity(b2Vec2(5, 5));
+  testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
 
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 
   // Initialize button
   // int x, int y, int width, int height,
-  testButton = std::make_shared<Akr::UI::Button>(400,300,200,40, "Test button!");
+  resetShipDbgButton = std::make_shared<Akr::UI::Button>(0, 400, 200, 40, "Reset ship");
+  resetShipDbgButton->SetOnClick([&]() {
+    spdlog::trace("Reseting ship position!");
+    testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
+  });
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testButton);
+  addRandomImpulseShipDbgButton = std::make_shared<Akr::UI::Button>(0, 450, 200, 40, "Add random impulse");
+  addRandomImpulseShipDbgButton->SetOnClick([&]() {
+    // Generate random impulse values in the range of -80 to 80
+    float impulseX = Akr::Math::Utils::getRandomInRange(-120, 120);
+    float impulseY = Akr::Math::Utils::getRandomInRange(-120, 120);
+
+    spdlog::trace("Adding impulse: (dX: {}, dY: {})", impulseX, impulseY);
+
+    // Apply the random impulse to the ship's body
+    testShip->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
+  });
+
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(resetShipDbgButton);
+
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(addRandomImpulseShipDbgButton);
 }
 
 int _allegro_main(Akr::Core& coreInstance) {
