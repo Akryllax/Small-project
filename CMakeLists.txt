@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(dataGen)
+project(SpaceDissident)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -37,6 +37,7 @@ set(CORE_INCLUDES
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/common
     ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/include/core/initializers
     ${CMAKE_SOURCE_DIR}/include/game
     ${CMAKE_SOURCE_DIR}/include/input
     ${CMAKE_SOURCE_DIR}/include/logs
@@ -49,17 +50,30 @@ set(CORE_INCLUDES
     ${CMAKE_SOURCE_DIR}/include/util
 )
 
+set(CORE_ENGINE_SRC_FILES
+    ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
+)
+
 # Link to allegro and allegro_ttf libraries
 link_directories("${ALLEGRO_LIBRARY_PATH}" "${ALLEGRO_TTF_LIBRARY_PATH}")
 
 # Add your source files here
-add_executable(dataGen
+add_executable(SpaceDissident
     ${CMAKE_SOURCE_DIR}/src/main.cpp
-    ${CMAKE_SOURCE_DIR}/src/UniqueIdentifier.cpp
+    ${CORE_ENGINE_SRC_FILES}
 )
 
+#TODO! PLEASE FIX TO THE NEW MAIN
+# # Add your source files here
+# add_executable(SpaceDissident
+#     ${CMAKE_SOURCE_DIR}/src/newMain.cpp
+#     ${CORE_ENGINE_SRC_FILES}
+# )
+
+
 # Include allegro and allegro_ttf libraries
-target_link_libraries(dataGen
+target_link_libraries(SpaceDissident
     ${ALLEGRO_LIBRARY_PATH}/liballegro.so
     ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
     ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
@@ -70,7 +84,7 @@ target_link_libraries(dataGen
 )
 
 # Include directories
-target_include_directories(dataGen PRIVATE
+target_include_directories(SpaceDissident PRIVATE
     ${CORE_INCLUDES}
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
@@ -83,10 +97,10 @@ target_include_directories(dataGen PRIVATE
 # add_subdirectory(${CMAKE_SOURCE_DIR}/3pp/Box2D)
 
 # # Link against the Box2D library
-# target_link_libraries(dataGen Box2D)
+# target_link_libraries(SpaceDissident Box2D)
 
 # Set the output directory for the binary
-set_target_properties(dataGen PROPERTIES
+set_target_properties(SpaceDissident PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build
 )
 
@@ -98,11 +112,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Custom command to copy files after a successful build
 add_custom_command(
-    TARGET dataGen POST_BUILD
+    TARGET SpaceDissident POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/res
     ${CMAKE_SOURCE_DIR}/build/res
 )
 
 # Create a custom target to ensure the copy command is executed
-add_custom_target(copy_resources ALL DEPENDS dataGen)
+add_custom_target(copy_resources ALL DEPENDS SpaceDissident)

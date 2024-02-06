@@ -8,6 +8,7 @@
 #include "DataLayer.h"
 #include "ITickable.h"
 #include "box2d/b2_math.h"
+#include "events.h"
 #include "spdlog/spdlog.h"
 #include <cstdint>
 #include <iostream>
@@ -19,7 +20,8 @@
 namespace Akr {
 
 // Type trait to check if T is derived from DataLayer
-template <typename T> struct IsDerivedFromDataLayer {
+template <typename T>
+struct IsDerivedFromDataLayer {
   static constexpr bool value = std::is_base_of_v<DataLayer, T>;
 };
 
@@ -34,7 +36,7 @@ public:
   /**
    * @brief Virtual destructor of the class
    */
-  virtual ~Core() = default;
+  ~Core() override = default;
 
   /**
    * @brief Get the singleton instance of the Core class.
@@ -42,7 +44,7 @@ public:
    * @return Reference to the Core instance.
    */
   [[nodiscard("Don't forget about me")]] static Core& GetInstance() {
-    static Core instance; // Define and initialize the static member
+    static Core instance;  // Define and initialize the static member
     return instance;
   }
 
@@ -63,7 +65,7 @@ public:
       // You can choose to update the existing layer here if needed.
       it->second = dataLayer;
     } else {
-      dataLayerMap_[std::type_index(typeid(T))] = dataLayer; // Use std::type_index
+      dataLayerMap_[std::type_index(typeid(T))] = dataLayer;  // Use std::type_index
     }
 
     spdlog::info("Added data layer, new size: {}", dataLayerMap_.size());
@@ -77,7 +79,10 @@ public:
    *
    * @tparam T Type of the data layer.
    */
-  template <typename T> void AddDataLayer() { AddDataLayer(std::make_shared<T>()); }
+  template <typename T>
+  void AddDataLayer() {
+    AddDataLayer(std::make_shared<T>());
+  }
 
   /**
    * @brief Function template to get a data layer.
@@ -143,9 +148,10 @@ public:
   inline size_t GetLayerCount() const { return this->dataLayerMap_.size(); }
 
 private:
-  uint64_t frameCount_ = 0; ///< Frame count variable.
+  uint64_t frameCount_ = 0;  ///< Frame count variable.
 
-  std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_; ///< Map to store data layers.
+  ALLEGRO_EVENT_QUEUE* mainEventQueue_;
+  std::map<std::type_index, std::shared_ptr<DataLayer>> dataLayerMap_;  ///< Map to store data layers.
 
   /**
    * @brief Private constructor for singleton pattern.
@@ -158,4 +164,4 @@ private:
   Core(Core const& core) = delete;
 };
 
-} // namespace Akr
+}  // namespace Akr

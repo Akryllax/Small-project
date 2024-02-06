@@ -7,40 +7,65 @@
 #include <vector>
 
 namespace Akr::Renderer {
+
+/**
+ * @brief CoreRenderer class for managing rendering stages and commands.
+ */
 class CoreRenderer {
 public:
-  CoreRenderer() = default;
+  /**
+   * @brief Constructs a new CoreRenderer object.
+   */
+  CoreRenderer();
 
-  void Initialize() {};
+  /**
+   * @brief Initializes the CoreRenderer.
+   */
+  void Initialize();
 
   // Render stages
-  void earlyFrameRender() { processCommands(earlyRenderCmds); }
+  /**
+   * @brief Renders the early frame.
+   */
+  void earlyFrameRender();
 
-  void mainFrameRender() { processCommands(mainRenderCmds); }
+  /**
+   * @brief Renders the main frame.
+   */
+  void mainFrameRender();
 
-  void lateFrameRender() { processCommands(lateRenderCmds); }
+  /**
+   * @brief Renders the late frame.
+   */
+  void lateFrameRender();
 
-  void render() {
-    // Clear screen
-    al_clear_to_color(al_map_rgb(0, 0, 0)); // Example clear color: black
-
-    // Render stages
-    earlyFrameRender();
-    mainFrameRender();
-    lateFrameRender();
-
-    // Flip buffer
-    al_flip_display();
-  }
+  /**
+   * @brief Renders all stages.
+   */
+  void render();
 
   // Add command to each queue
-  void addEarlyRenderCommand(std::shared_ptr<RenderCommand> const cmd) { earlyRenderCmds.push(cmd); }
+  /**
+   * @brief Adds a render command to the early render queue.
+   * @param cmd The render command to add.
+   */
+  void addEarlyRenderCommand(std::shared_ptr<RenderCommand> const cmd);
 
-  void addMainRenderCommand(std::shared_ptr<RenderCommand> const cmd) { mainRenderCmds.push(cmd); }
+  /**
+   * @brief Adds a render command to the main render queue.
+   * @param cmd The render command to add.
+   */
+  void addMainRenderCommand(std::shared_ptr<RenderCommand> const cmd);
 
-  void addLateRenderCommand(std::shared_ptr<RenderCommand> const cmd) { lateRenderCmds.push(cmd); }
+  /**
+   * @brief Adds a render command to the late render queue.
+   * @param cmd The render command to add.
+   */
+  void addLateRenderCommand(std::shared_ptr<RenderCommand> const cmd);
 
-  // Define a custom comparator for RenderCommand objects
+  /**
+   * @brief Comparator struct for comparing RenderCommand objects.
+   */
   struct RenderCommandComparator {
     bool operator()(std::shared_ptr<RenderCommand> const& lhs, std::shared_ptr<RenderCommand> const& rhs) const {
       return lhs->renderPriority > rhs->renderPriority; // Compare renderPriority values
@@ -54,17 +79,12 @@ private:
     CoreRenderer& operator=(CoreRenderer const&) = delete;
     CoreRenderer(CoreRenderer const&) = delete;
 
-    // Process commands in the specified priority queue
-    void processCommands(PriorityRenderQueue& commandQueue) {
-        while (!commandQueue.empty()) {
-            commandQueue.top()->execute();
-            commandQueue.pop();
-        }
-    }
+  // Process commands in the specified priority queue
+  void processCommands(PriorityRenderQueue& commandQueue);
 
-    PriorityRenderQueue earlyRenderCmds;
-    PriorityRenderQueue mainRenderCmds;
-    PriorityRenderQueue lateRenderCmds;
-
+  PriorityRenderQueue earlyRenderCmds; /**< Priority queue for early render commands. */
+  PriorityRenderQueue mainRenderCmds; /**< Priority queue for main render commands. */
+  PriorityRenderQueue lateRenderCmds; /**< Priority queue for late render commands. */
 };
+
 } // namespace Akr::Renderer

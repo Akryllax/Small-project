@@ -1,3 +1,5 @@
+#pragma once
+
 #include "DataLayer.h"
 #include "ITickable.h"
 #include "Location.h"

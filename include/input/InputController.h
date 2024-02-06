@@ -37,7 +37,6 @@ public:
       } mouseEvent;
     };
 
-
   private:
     static inline EVENT_TYPE GetEventType(ALLEGRO_EVENT_TYPE eventCode) {
       // Check if the event code is in keyboardEvents
@@ -96,4 +95,5 @@ protected:
   ALLEGRO_MOUSE_STATE mouseState_;  /**< State of the mouse. */
   ALLEGRO_KEYBOARD_STATE keyState_; /**< State of the keyboard. */
 };
+
 }  // namespace Akr::Input

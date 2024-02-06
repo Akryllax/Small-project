@@ -22,48 +22,21 @@ namespace Akr::Renderer {
  */
 class DebugRenderer : public IRenderable {
 public:
-  DebugRenderer() = default;
+  DebugRenderer();
   ~DebugRenderer() = default;
 
-  void Initialize() { defaultFont = al_create_builtin_font(); }
-
-  void setDefaultFont(ALLEGRO_FONT* _font) { defaultFont = _font; }
-
-  void addCommand(std::shared_ptr<RenderCommand> cmd) { commands.emplace(cmd); }
-
-  [[deprecated("Please, use the RenderCommand method, plz")]] void render() override {
-    while (!commands.empty()) {
-      commands.front()->execute();
-      commands.pop();
-    }
-  }
-
-  virtual std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override {
-    spdlog::trace("[DebugRenderer] DebugRenderer::GenerateRenderCommand()");
-
-    auto compositeCommand = std::make_shared<CompositeRenderComand>();
-    compositeCommand->QueueCommands(commands);
-
-    return compositeCommand;
-  };
+  void Initialize();
+  void setDefaultFont(ALLEGRO_FONT* _font);
+  void addCommand(std::shared_ptr<RenderCommand> cmd);
+  [[deprecated("Please, use the RenderCommand method, plz")]] void render() override;
+  virtual std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override;
 
   // functions to create render operations
-  void DrawArrow(b2Vec2 const& origin, b2Vec2 const& destination, ALLEGRO_COLOR color = al_map_rgb(255, 0, 0)) {
-    addCommand(std::make_shared<DrawArrowCommand>(origin, destination, color));
-  }
-
-  void DrawText(std::string_view targetString, b2Vec2 screenSpacePosition,
-                ALLEGRO_COLOR color = al_map_rgb(255, 255, 255)) {
-    spdlog::trace("[DebugRenderer] DebugRenderer::DrawText");
-    addCommand(std::make_shared<DrawTextCommand>(targetString, screenSpacePosition, defaultFont, color));
-  }
-
-  void DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0),  // Default color: Red
+  void DrawArrow(b2Vec2 const& origin, b2Vec2 const& destination, ALLEGRO_COLOR color = al_map_rgb(255, 0, 0));
+  void DrawText(std::string_view targetString, b2Vec2 screenSpacePosition, ALLEGRO_COLOR color = al_map_rgb(255, 255, 255));
+  void DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0),
                  Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority =
-                     Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT) {
-    spdlog::trace("[DebugRenderer] DebugRenderer::DrawCross");
-    addCommand(std::make_shared<DrawCrossCommand>(_position, _color, _renderPriority));
-  }
+                     Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT);
 
 private:
   inline static ALLEGRO_FONT* defaultFont = nullptr;

@@ -113,7 +113,6 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
     exit(-1);
   }
   Akr::Screen::RegisterDisplay(display);
-  Akr::Screen::updateScreenSize();
 
   // Load a font.
   font = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 36, 0);

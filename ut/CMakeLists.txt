@@ -1,7 +1,58 @@
-project(dataGen-tests)
+cmake_minimum_required(VERSION 3.12)
+
+project(SpaceDissident-tests)
+
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# find_package(fmt CONFIG REQUIRED)
+# find_package(spdlog CONFIG REQUIRED)
+
+# Add allegro and allegro_ttf library paths
+if(EXISTS "/etc/wsl")
+    set(ALLEGRO_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu/")
+else()
+    set(ALLEGRO_LIBRARY_PATH "/usr/lib/")
+    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/")
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    # Disable deprecated warnings for GCC
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # Disable deprecated warnings for Clang
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+endif()
+
+
+set(ALLEGRO_INCLUDE_DIR "/usr/include/allegro5")
+set(ALLEGRO_TTF_INCLUDE_DIR "/usr/include/allegro5")
+
+set(FMT_INCLUDE_DIR "/usr/include/fmt")
+set(SPDLOG_INCLUDE_DIR "/usr/include/spdlog")
+set(SPDLOG_LIB_PATH "/usr/lib/cmake/spdlog")
+
 
 # Find GTest package
 find_package(GTest REQUIRED)
+
+set(CORE_INCLUDES
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/include/common
+    ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/include/game
+    ${CMAKE_SOURCE_DIR}/include/input
+    ${CMAKE_SOURCE_DIR}/include/logs
+    ${CMAKE_SOURCE_DIR}/include/math
+    ${CMAKE_SOURCE_DIR}/include/render
+    ${CMAKE_SOURCE_DIR}/include/render/operations
+    ${CMAKE_SOURCE_DIR}/include/sound
+    ${CMAKE_SOURCE_DIR}/include/system
+    ${CMAKE_SOURCE_DIR}/include/ui
+    ${CMAKE_SOURCE_DIR}/include/util
+)
 
 ##############################################################
 ##                           CORE UT                        ##
@@ -25,10 +76,12 @@ target_link_libraries(${PROJECT_NAME}_core
 
 # Include directories
 target_include_directories(${PROJECT_NAME}_core PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CORE_INCLUDES}
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+    ${SPDLOG_INCLUDE_DIR}
+    ${FMT_INCLUDE_DIR}
 )
 
 add_custom_command(
@@ -62,10 +115,12 @@ target_link_libraries(${PROJECT_NAME}_box2d
 
 # Include directories
 target_include_directories(${PROJECT_NAME}_box2d PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CORE_INCLUDES}
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+    ${SPDLOG_INCLUDE_DIR}
+    ${FMT_INCLUDE_DIR}
 )
 
 add_custom_command(
@@ -99,10 +154,12 @@ target_link_libraries(${PROJECT_NAME}_conf
 
 # Include directories
 target_include_directories(${PROJECT_NAME}_conf PRIVATE
-    ${CMAKE_SOURCE_DIR}/include
+    ${CORE_INCLUDES}
     ${ALLEGRO_INCLUDE_DIR}
     ${ALLEGRO_TTF_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
+    ${SPDLOG_INCLUDE_DIR}
+    ${FMT_INCLUDE_DIR}
 )
 
 add_custom_command(
