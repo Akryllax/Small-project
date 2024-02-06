@@ -8,6 +8,7 @@
 #include "RenderCommand.h"
 #include "box2d/b2_math.h"
 #include "color.h"
+#include "AllegroManager.h"
 #include "spdlog.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -27,7 +28,7 @@ public:
     pressed_ = false;
 
     textRect_ = Math::Rect::GetCenteredRect(
-        buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(al_create_builtin_font(), label_));
+        buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(Akr::Init::AllegroManager::mainFont, label_));
   }
 
   void OnRawInput(std::chrono::milliseconds const& delta) override {
@@ -109,7 +110,7 @@ public:
     composideOperation->QueueCommand(std::make_shared<Renderer::DrawRectOperation>(rectColor, buttonRect_));
 
     composideOperation->QueueCommand(std::make_shared<Renderer::DrawTextCommand>(
-        label_, b2Vec2{static_cast<float>(textRect_.x), static_cast<float>(textRect_.y)}, al_create_builtin_font(),
+        label_, b2Vec2{static_cast<float>(textRect_.x), static_cast<float>(textRect_.y)}, Akr::Init::AllegroManager::mainFont,
         al_map_rgb(255, 255, 255), ALLEGRO_ALIGN_CENTER));
     return composideOperation;
   };

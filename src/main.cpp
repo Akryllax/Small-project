@@ -1,3 +1,4 @@
+#include "AllegroManager.h"
 #include "Button.h"
 #include "Configuration.h"
 #include "Core.h"
@@ -13,6 +14,7 @@
 #include "TestShip.h"
 #include "UIInputController.h"
 #include "box2d/b2_math.h"
+#include "events.h"
 #include "spdlog/spdlog.h"
 #include "timer.h"
 #include <allegro5/allegro.h>
@@ -23,7 +25,6 @@
 #include <cmath>
 #include <memory>
 
-float const FPS = 60;
 std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
     applicationEpoch;
 bool quit = false;
@@ -53,9 +54,9 @@ void _allegroStableTick(Akr::Core& coreInstance, std::chrono::milliseconds const
   coreInstance.Tick(delta);
 }
 
-void handleFrame(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, Akr::Core& coreInstance) {
+void handleFrame(Akr::Core& coreInstance) {
   ALLEGRO_EVENT event;
-  al_wait_for_event(event_queue, &event);
+  al_wait_for_event(Akr::Init::AllegroManager::mainQueue, &event);
 
   auto currentTime = std::chrono::high_resolution_clock::now();
   std::chrono::milliseconds deltaTick =
@@ -71,13 +72,13 @@ void handleFrame(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, Akr
   }
 }
 
-void cleanupAllegro(ALLEGRO_DISPLAY* display, ALLEGRO_EVENT_QUEUE* event_queue, ALLEGRO_FONT* font) {
-  al_destroy_font(font);
-  al_destroy_event_queue(event_queue);
-  al_destroy_display(display);
+void cleanupAllegro() {
+  al_destroy_font(Akr::Init::AllegroManager::mainFont);
+  al_destroy_event_queue(Akr::Init::AllegroManager::mainQueue);
+  al_destroy_display(Akr::Init::AllegroManager::systemDisplay);
 }
 
-void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_queue, ALLEGRO_FONT*& font) {
+void initializeAllegro() {
   // Initialize Allegro.
   if (!al_init()) {
     spdlog::error("Failed to initialize Allegro.");
@@ -107,33 +108,33 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
   }
 
   // Create the display.
-  display = al_create_display(800, 600);
-  if (!display) {
+  Akr::Init::AllegroManager::systemDisplay = al_create_display(1920, 1080);
+  if (!Akr::Init::AllegroManager::systemDisplay) {
     spdlog::error("Failed to create Allegro display.");
     exit(-1);
   }
-  Akr::Screen::RegisterDisplay(display);
+  Akr::Screen::RegisterDisplay(Akr::Init::AllegroManager::systemDisplay);
 
   // Load a font.
-  font = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 36, 0);
-  if (!font) {
+  Akr::Init::AllegroManager::mainFont = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 12, 0);
+  if (!Akr::Init::AllegroManager::mainFont) {
     spdlog::error("Failed to load font.");
     exit(-1);
   }
 
   // Create an event queue and a timer.
-  event_queue = al_create_event_queue();
-  if (!event_queue) {
+  Akr::Init::AllegroManager::mainQueue = al_create_event_queue();
+  if (!Akr::Init::AllegroManager::mainQueue) {
     spdlog::error("Failed to create event queue.");
     exit(-1);
   }
 
-  auto mainTimer = al_create_timer(1.0 / FPS);
-  spdlog::trace("[main] Setting FPS to {}", FPS);
-  al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
+  auto mainTimer = al_create_timer(1.0 / Akr::Init::AllegroManager::DEFAULT_FPS);
+  spdlog::trace("[main] Setting FPS to {}", Akr::Init::AllegroManager::DEFAULT_FPS);
+  al_register_event_source(Akr::Init::AllegroManager::mainQueue, al_get_timer_event_source(mainTimer));
   al_start_timer(mainTimer);
 
-  al_register_event_source(event_queue, al_get_display_event_source(display));
+  al_register_event_source(Akr::Init::AllegroManager::mainQueue, al_get_display_event_source(Akr::Init::AllegroManager::systemDisplay));
 
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().Initialize();
 
@@ -173,21 +174,17 @@ void initializeAllegro(ALLEGRO_DISPLAY*& display, ALLEGRO_EVENT_QUEUE*& event_qu
 }
 
 int _allegro_main(Akr::Core& coreInstance) {
-  ALLEGRO_DISPLAY* display = nullptr;
-  ALLEGRO_EVENT_QUEUE* event_queue = nullptr;
-  ALLEGRO_FONT* font = nullptr;
-
-  initializeAllegro(display, event_queue, font);
+  initializeAllegro();
 
   applicationEpoch = std::chrono::high_resolution_clock::now();
   quit = false;
 
-  spdlog::trace("[main] Entering main.cpp loop", FPS);
+  spdlog::trace("[main] Entering main.cpp loop", Akr::Init::AllegroManager::DEFAULT_FPS);
   while (!quit) {
-    handleFrame(display, event_queue, coreInstance);
+    handleFrame(coreInstance);
   }
 
-  cleanupAllegro(display, event_queue, font);
+  cleanupAllegro();
 
   return 0;
 }

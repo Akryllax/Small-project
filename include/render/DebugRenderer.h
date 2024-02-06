@@ -39,7 +39,6 @@ public:
                      Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT);
 
 private:
-  inline static ALLEGRO_FONT* defaultFont = nullptr;
   inline static std::queue<std::shared_ptr<RenderCommand>> commands;
 };
 

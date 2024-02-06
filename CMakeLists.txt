@@ -53,6 +53,7 @@ set(CORE_INCLUDES
 set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
 )
 
 # Link to allegro and allegro_ttf libraries
