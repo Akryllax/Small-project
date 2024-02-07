@@ -11,15 +11,15 @@ public:
   virtual ~IRenderable() = default;
 
   [[deprecated("SetBitmapResource is deprecated. Use RendererCommand generator instead.")]]
-  inline void
-  setBitmapResource(std::shared_ptr<BitmapResource> resource) {
+  inline void setBitmapResource(std::shared_ptr<BitmapResource> resource)
+  {
     this->bitmapResource = resource;
   }
 
   [[deprecated("GetBitmapResource is deprecated. Use RendererCommand generator instead.")]]
-  inline std::shared_ptr<
-      BitmapResource>
-  GetBitmapResource() const {
+  inline std::shared_ptr<BitmapResource>
+  GetBitmapResource() const
+  {
     return bitmapResource;
   }
 

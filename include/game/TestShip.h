@@ -28,7 +28,7 @@ public:
    * @brief Constructs a new TestShip object with the specified name.
    * @param name The name of the test ship.
    */
-  TestShip(std::string const& name);
+  explicit TestShip(std::string const& name);
 
   /**
    * @brief Default destructor for the TestShip class.
