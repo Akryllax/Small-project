@@ -11,6 +11,16 @@ if(WIN32)
     set(CMAKE_TOOLCHAIN_FILE "C:/buildtools/vcpkg/scripts/buildsystems/vcpkg.cmake")
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+    # Disable deprecated warnings for GCC
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # Disable deprecated warnings for Clang
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+elseif(MSVC)
+    add_compile_options(/D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 find_package(Allegro REQUIRED)
 find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)

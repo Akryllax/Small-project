@@ -1,6 +1,7 @@
 #pragma once
 
 #include "allegro5/bitmap.h"
+#include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
@@ -50,7 +51,7 @@ public:
   std::string const& getFilename() const { return filename; }
 
 public:
-  static std::filesystem::path GetResourceFolderPath() { return getExecutablePath().append("/res/"); }
+  static std::filesystem::path GetResourceFolderPath() { return GetExecutableFolderPath().append("res"); }
 
 protected:
   /**
@@ -69,9 +70,10 @@ private:
    * @brief Gets the path to the directory containing the executable.
    * @return The path to the directory containing the executable.
    */
-  static std::filesystem::path getExecutablePath() {
+  static std::filesystem::path GetExecutableFolderPath() {
     // Get the path to the directory containing the executable
     std::filesystem::path const executablePath = std::filesystem::path(getExecutableFullPath()).parent_path();
+    spdlog::trace("[Resource] GetExecutableFolderPath() returned: {}", executablePath.string());
     return executablePath;
   }
 
@@ -79,16 +81,19 @@ private:
    * @brief Gets the full path to the executable.
    * @return The full path to the executable.
    */
-  static std::string getExecutableFullPath() {
+  static std::filesystem::path getExecutableFullPath() {
     // Get the full path to the executable
 #if defined(_WIN32)
     char buffer[MAX_PATH];
     DWORD length = GetModuleFileName(nullptr, buffer, MAX_PATH);
+    std::filesystem::path exePath;
     if (length == 0) {
-      // Error handling: You may want to throw an exception or return an empty string
+      spdlog::error("[Resource] GetModuleFileName() returned empty name!");
       return "";
+    } else {
+      exePath = std::filesystem::path(std::string(buffer, length));
     }
-    return std::string(buffer, length);
+    return exePath;
 #else
     char buffer[PATH_MAX];
     ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
@@ -129,6 +134,10 @@ public:
     // Example using Allegro 5 and Allegro Image to load a PNG bitmap
     std::filesystem::path bitmapPath = getFullPath();
     bitmap = al_load_bitmap(bitmapPath.string().c_str());
+    if(!bitmap)
+    {
+      spdlog::error("[BitmapResource] Couldn't load bitmap at path: {}", bitmapPath.string());
+    }
 
     // Check if the bitmap was loaded successfully
     return bitmap != nullptr;

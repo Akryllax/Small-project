@@ -68,7 +68,7 @@ public:
       dataLayerMap_[std::type_index(typeid(T))] = dataLayer;  // Use std::type_index
     }
 
-    spdlog::info("Added data layer, new size: {}", dataLayerMap_.size());
+    spdlog::trace("Added data layer, new size: {}", dataLayerMap_.size());
   }
 
   /**

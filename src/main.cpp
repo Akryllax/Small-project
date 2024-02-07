@@ -158,7 +158,7 @@ void initializeAllegro() {
   }
 
   // Load a font.
-  spdlog::warn("Loading font from: {}",
+  spdlog::info("Loading font: {}",
                Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str());
   AllegroManager::mainFont =
       al_load_ttf_font(Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str(), 12, 0);

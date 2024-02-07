@@ -16,7 +16,7 @@ public:
     this->bitmapResource = resource;
   }
 
-  // [[deprecated("GetBitmapResource is deprecated. Use RendererCommand generator instead.")]]
+  [[deprecated("GetBitmapResource is deprecated. Use RendererCommand generator instead.")]]
   inline std::shared_ptr<
       BitmapResource>
   GetBitmapResource() const {
