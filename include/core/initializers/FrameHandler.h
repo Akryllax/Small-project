@@ -22,7 +22,7 @@ public:
     return 0;
   };
 
-  static int CleanUp() {
+  static int Cleanup() {
     return 0;
   }
 };

@@ -28,6 +28,6 @@ public:
     return 0;
   };
 
-  static int CleanUp() { return 0; };
+  static int Cleanup() { return 0; };
 };
 }  // namespace Akr::Init

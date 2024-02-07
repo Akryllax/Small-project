@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     Akr::Init::FrameManager::RunMainLoop(coreInstance);
 
     // Clean up Allegro resources
-    Akr::Init::AllegroManager::CleanUp(coreInstance);
+    Akr::Init::AllegroManager::Cleanup(coreInstance);
 
     return 0;
 }

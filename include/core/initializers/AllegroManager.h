@@ -11,6 +11,7 @@
 #include "Screen.h"
 #include "UIInputController.h"
 #include "allegro_font.h"
+#include "bitmap.h"
 #include "display.h"
 #include "events.h"
 #include "timer.h"
@@ -19,7 +20,7 @@ namespace Akr::Init {
 
 struct AllegroManager {
 public:
-  // static int Initialize(Akr::Core& coreInstance) {
+  static int Initialize(Akr::Core& coreInstance) {
   //   // void initializeAllegro(ALLEGRO_DISPLAY * &display, ALLEGRO_EVENT_QUEUE * &event_queue, ALLEGRO_FONT * &font) {
   //   // Initialize Allegro.
   //   if (!al_init()) {
@@ -114,15 +115,17 @@ public:
 
   //   //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
   //   //   Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(addRandomImpulseShipDbgButton);
-  //   return 0;
-  // };
+    return 0;
+  };
 
-  // static int CleanUp(Akr::Core& coreInstance) { return 0; };
-  static constexpr uint DEFAULT_FPS = 60;
+  static int Cleanup(Akr::Core& coreInstance) { return 0; };
+
+
+  static constexpr uint DEFAULT_FPS = 30;
 
   inline static ALLEGRO_EVENT_QUEUE* mainQueue = nullptr;
   inline static ALLEGRO_DISPLAY* systemDisplay = nullptr;
-  inline static ALLEGRO_DISPLAY* internalBuffer = nullptr;
+  inline static ALLEGRO_BITMAP* internalBuffer = nullptr;
   inline static ALLEGRO_FONT* mainFont = nullptr;
 };
 }  // namespace Akr::Init
