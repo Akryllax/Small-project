@@ -1,7 +1,7 @@
 #pragma once
 
 #include "InputController.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <memory>
 
 namespace Akr {

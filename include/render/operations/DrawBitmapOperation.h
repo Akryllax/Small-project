@@ -2,10 +2,10 @@
 
 #include "Rect.h"
 #include "RenderCommand.h"
-#include "bitmap.h"
+#include "allegro5/bitmap.h"
 #include "box2d/b2_collision.h"
 #include "box2d/b2_math.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <allegro5/allegro.h>
 
 namespace Akr::Renderer {

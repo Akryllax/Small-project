@@ -7,9 +7,9 @@
 #include "Rect.h"
 #include "RenderCommand.h"
 #include "box2d/b2_math.h"
-#include "color.h"
+#include "allegro5/color.h"
 #include "AllegroManager.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>

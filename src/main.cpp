@@ -11,26 +11,29 @@
 #include "PhysicsLayer.h"
 #include "Random.h"
 #include "RendererLayer.h"
+#include "Resource.h"
 #include "Screen.h"
 #include "TestShip.h"
 #include "UIInputController.h"
-#include "bitmap.h"
+#include "allegro5/base.h"
+#include "allegro5/bitmap.h"
+#include "allegro5/events.h"
+#include "allegro5/timer.h"
 #include "box2d/b2_math.h"
-#include "events.h"
 #include "spdlog/spdlog.h"
-#include "timer.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_ttf.h>
+#include <spdlog/spdlog.h>
 #include <chrono>
 #include <cmath>
 #include <memory>
 
 using namespace Akr::Init;
 
-std::chrono::time_point<std::chrono::system_clock, std::chrono::duration<long, std::ratio<1, 1000000000>>>
-    applicationEpoch;
+std::chrono::high_resolution_clock::time_point applicationEpoch;
+
 bool quit = false;
 
 std::shared_ptr<Akr::TestShip> testShip;
@@ -155,10 +158,17 @@ void initializeAllegro() {
   }
 
   // Load a font.
-  AllegroManager::mainFont = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 12, 0);
+  spdlog::warn("Loading font from: {}",
+               Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str());
+  AllegroManager::mainFont =
+      al_load_ttf_font(Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str(), 12, 0);
   if (!AllegroManager::mainFont) {
     spdlog::error("Failed to load font.");
-    exit(-1);
+    AllegroManager::mainFont = al_create_builtin_font();
+    if (!AllegroManager::mainFont) {
+      spdlog::error("[CRITICAL] Couldn't create default font. Exiting...");
+      exit(-1);
+    }
   }
 
   // Create an event queue and a timer.
@@ -180,7 +190,7 @@ void initializeAllegro() {
   // Initialize test ship
   testShip = std::make_shared<Akr::TestShip>("a");
   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
-  testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
+  testShip->GetBody()->SetAngularVelocity(std::cos(5 * ALLEGRO_PI / 180.0f));
   testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
 
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);

@@ -2,7 +2,7 @@
 
 #include "Rect.h"
 #include "RenderCommand.h"
-#include "color.h"
+#include "allegro5/color.h"
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 

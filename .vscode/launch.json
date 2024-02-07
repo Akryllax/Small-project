@@ -27,6 +27,13 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "type": "cmake",
+            "request": "launch",
+            "name": "CMake: Debug",
+            "cmakeDebugType": "configure",
+            "scriptPath": "${workspaceFolder}/CMakeLists.txt"
         }
     ]
 }

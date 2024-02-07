@@ -7,10 +7,10 @@
 #include "IRenderable.h"
 #include "RenderCommand.h"
 #include "box2d/b2_math.h"
-#include "spdlog.h"
-#include <allegro5/allegro5.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro_font.h>
+#include "spdlog/spdlog.h"
+#include "allegro5/allegro5.h"
+#include "allegro5/allegro_primitives.h"
+#include "allegro5/allegro_font.h"
 #include <memory>
 #include <queue>
 #include <string_view>

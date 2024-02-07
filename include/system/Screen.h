@@ -1,8 +1,8 @@
 #pragma once
 
 #include "box2d/b2_math.h"
-#include "display.h"
-#include "spdlog.h"
+#include "allegro5/display.h"
+#include "spdlog/spdlog.h"
 
 namespace Akr {
 

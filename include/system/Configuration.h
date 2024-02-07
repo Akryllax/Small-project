@@ -1,7 +1,7 @@
 #pragma once
 
-#include "config.h"
-#include "spdlog.h"
+#include "allegro5/config.h"
+#include "spdlog/spdlog.h"
 #include <filesystem> // For cross-platform path handling
 #include <stdexcept>  // For std::runtime_error
 #include <string>

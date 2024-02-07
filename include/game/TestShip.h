@@ -7,9 +7,9 @@
 #include "RenderCommand.h"
 #include "RendererLayer.h"
 #include "RigidBody.h"
-#include "bitmap_draw.h"
+#include "allegro5/bitmap_draw.h"
 #include "box2d/b2_body.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <allegro5/allegro.h>
 #include <cassert>
 #include <memory>

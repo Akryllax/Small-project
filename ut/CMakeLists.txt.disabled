@@ -11,11 +11,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add allegro and allegro_ttf library paths
 if(EXISTS "/etc/wsl")
+    set(LIB_NAME_PREFIX "lib")
+    set(LIB_NAME_POSTFIX ".so")
     set(ALLEGRO_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
     set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu/")
-else()
+elseif(LINUX)
+    set(LIB_NAME_PREFIX "lib")
+    set(LIB_NAME_POSTFIX ".so")
     set(ALLEGRO_LIBRARY_PATH "/usr/lib/")
     set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/")
+elseif(WIN32)
+    set(LIB_NAME_POSTFIX ".lib")
+    set(ALLEGRO_LIBRARY_PATH "${VCPKG_INSTALLED_DIR}/allegro5_x64-windows/lib")
+    set(ALLEGRO_TTF_LIBRARY_PATH "${VCPKG_INSTALLED_DIR}/allegro5_x64-windows/lib")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
@@ -34,6 +42,7 @@ set(FMT_INCLUDE_DIR "/usr/include/fmt")
 set(SPDLOG_INCLUDE_DIR "/usr/include/spdlog")
 set(SPDLOG_LIB_PATH "/usr/lib/cmake/spdlog")
 
+find_package(GTest CONFIG REQUIRED PATHS "C:/buildtools/vcpkg/packages/gtest_x64-windows/share/gtest/")
 
 # Find GTest package
 find_package(GTest REQUIRED)
@@ -65,13 +74,12 @@ add_executable(${PROJECT_NAME}_core
 target_link_libraries(${PROJECT_NAME}_core
     GTest::GTest
     GTest::Main
-    ${ALLEGRO_LIBRARY_PATH}/liballegro.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
-    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
-    fmt
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_primitives${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_font${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_ttf${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_image${LIB_NAME_POSTFIX}
+    ${VCPKG_INSTALLED_DIR}/box2d_x64-windows/lib/${LIB_NAME_PREFIX}box2d${LIB_NAME_POSTFIX}
 )
 
 # Include directories
@@ -104,13 +112,12 @@ add_executable(${PROJECT_NAME}_box2d
 target_link_libraries(${PROJECT_NAME}_box2d
     GTest::GTest
     GTest::Main
-    ${ALLEGRO_LIBRARY_PATH}/liballegro.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
-    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
-    fmt
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_primitives${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_font${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_ttf${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_image${LIB_NAME_POSTFIX}
+    ${VCPKG_INSTALLED_DIR}/box2d_x64-windows/lib/${LIB_NAME_PREFIX}box2d${LIB_NAME_POSTFIX}
 )
 
 # Include directories
@@ -143,13 +150,12 @@ add_executable(${PROJECT_NAME}_conf
 target_link_libraries(${PROJECT_NAME}_conf
     GTest::GTest
     GTest::Main
-    ${ALLEGRO_LIBRARY_PATH}/liballegro.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
-    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
-    fmt
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_primitives${LIB_NAME_POSTFIX}
+    ${ALLEGRO_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_font${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_ttf${LIB_NAME_POSTFIX}
+    ${ALLEGRO_TTF_LIBRARY_PATH}/${LIB_NAME_PREFIX}allegro_image${LIB_NAME_POSTFIX}
+    ${VCPKG_INSTALLED_DIR}/box2d_x64-windows/lib/${LIB_NAME_PREFIX}box2d${LIB_NAME_POSTFIX}
 )
 
 # Include directories

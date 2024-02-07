@@ -4,7 +4,7 @@
 #include "PhysicsLayer.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_math.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <memory>
 #include <string>
 #include <string_view>

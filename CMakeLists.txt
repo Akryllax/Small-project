@@ -5,108 +5,85 @@ project(SpaceDissident)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# find_package(fmt CONFIG REQUIRED)
-# find_package(spdlog CONFIG REQUIRED)
-
-# Add allegro and allegro_ttf library paths
-if(EXISTS "/etc/wsl")
-    set(ALLEGRO_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
-    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu/")
-else()
-    set(ALLEGRO_LIBRARY_PATH "/usr/lib/")
-    set(ALLEGRO_TTF_LIBRARY_PATH "/usr/lib/")
+# Find vcpkg installed packages
+if(WIN32)
+    set(VCPKG_INSTALLED_DIR "C:/buildtools/vcpkg/packages/")
+    set(CMAKE_TOOLCHAIN_FILE "C:/buildtools/vcpkg/scripts/buildsystems/vcpkg.cmake")
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-    # Disable deprecated warnings for GCC
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # Disable deprecated warnings for Clang
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
-endif()
+find_package(Allegro REQUIRED)
+find_package(fmt REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(GTest REQUIRED)
+find_package(box2d REQUIRED)
 
+# Define a function to construct the path
+function(CONSTRUCT_INCLUDE_PATH PARAMETER)
+    set(INCLUDE_PATH "C:/buildtools/vcpkg/packages/${PARAMETER}_x64-windows/include/")
+    message(STATUS "Constructed include path: ${INCLUDE_PATH}")
+    # Return the constructed path
+    set(${PARAMETER}_INCLUDE_PATH ${INCLUDE_PATH} PARENT_SCOPE)
+    # Return the constructed path directly for use in the list
+    list(APPEND EXTERNAL_INCLUDES ${INCLUDE_PATH})
+endfunction()
 
-set(ALLEGRO_INCLUDE_DIR "/usr/include/allegro5")
-set(ALLEGRO_TTF_INCLUDE_DIR "/usr/include/allegro5")
+# Call the function to populate EXTERNAL_INCLUDES
+CONSTRUCT_INCLUDE_PATH("allegro5")
+CONSTRUCT_INCLUDE_PATH("fmt")
+CONSTRUCT_INCLUDE_PATH("spdlog")
 
-set(FMT_INCLUDE_DIR "/usr/include/fmt")
-set(SPDLOG_INCLUDE_DIR "/usr/include/spdlog")
-set(SPDLOG_LIB_PATH "/usr/lib/cmake/spdlog")
-
-set(CORE_INCLUDES
+# Set include directories
+include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/common
     ${CMAKE_SOURCE_DIR}/include/core
     ${CMAKE_SOURCE_DIR}/include/core/initializers
     ${CMAKE_SOURCE_DIR}/include/game
     ${CMAKE_SOURCE_DIR}/include/input
-    ${CMAKE_SOURCE_DIR}/include/logs
     ${CMAKE_SOURCE_DIR}/include/math
     ${CMAKE_SOURCE_DIR}/include/render
     ${CMAKE_SOURCE_DIR}/include/render/operations
-    ${CMAKE_SOURCE_DIR}/include/sound
     ${CMAKE_SOURCE_DIR}/include/system
     ${CMAKE_SOURCE_DIR}/include/ui
-    ${CMAKE_SOURCE_DIR}/include/util
+    ${allegro5_INCLUDE_PATH}
+    ${spdlog_INCLUDE_PATH}
+    ${fmt_INCLUDE_PATH}
+    ${EXTERNAL_INCLUDES}
+    # Add other necessary include directories here
 )
 
+# Add your source files here
 set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
 )
 
-# Link to allegro and allegro_ttf libraries
-link_directories("${ALLEGRO_LIBRARY_PATH}" "${ALLEGRO_TTF_LIBRARY_PATH}")
-
-# Add your source files here
+# Create the executable
 add_executable(SpaceDissident
     ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CORE_ENGINE_SRC_FILES}
 )
 
-#TODO! PLEASE FIX TO THE NEW MAIN
-# # Add your source files here
-# add_executable(SpaceDissident
-#     ${CMAKE_SOURCE_DIR}/src/newMain.cpp
-#     ${CORE_ENGINE_SRC_FILES}
-# )
+get_target_property(TARGET_INCLUDE_DIRS SpaceDissident INCLUDE_DIRECTORIES)
+message(STATUS "Include directories for SpaceDissident: ${TARGET_INCLUDE_DIRS}")
 
 
-# Include allegro and allegro_ttf libraries
+# Link libraries
 target_link_libraries(SpaceDissident
-    ${ALLEGRO_LIBRARY_PATH}/liballegro.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_primitives.so
-    ${ALLEGRO_LIBRARY_PATH}/liballegro_font.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_ttf.so
-    ${ALLEGRO_TTF_LIBRARY_PATH}/liballegro_image.so
-    ${CMAKE_SOURCE_DIR}/lib/bin/libbox2d.a
-    fmt
+    Allegro::allegro
+    Allegro::allegro_primitives
+    Allegro::allegro_font
+    Allegro::allegro_ttf
+    Allegro::allegro_image
+    box2d::box2d
+    fmt::fmt
 )
-
-# Include directories
-target_include_directories(SpaceDissident PRIVATE
-    ${CORE_INCLUDES}
-    ${ALLEGRO_INCLUDE_DIR}
-    ${ALLEGRO_TTF_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/3pp/Box2D/include/  # Include Box2D headers
-    ${SPDLOG_INCLUDE_DIR}
-    ${FMT_INCLUDE_DIR}
-)
-
-# # Add Box2D as a submodule
-# add_subdirectory(${CMAKE_SOURCE_DIR}/3pp/Box2D)
-
-# # Link against the Box2D library
-# target_link_libraries(SpaceDissident Box2D)
 
 # Set the output directory for the binary
 set_target_properties(SpaceDissident PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build
 )
-
-# Include the "ut" (unit test) directory
-add_subdirectory(ut)
 
 # Enable the generation of compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

@@ -2,12 +2,13 @@
 
 #include "Rect.h"
 #include "RenderCommand.h"
-#include "allegro_font.h"
+#include "allegro5/allegro_font.h"
 #include "box2d/b2_math.h"
-#include "spdlog.h"
+#include "spdlog/spdlog.h"
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_ttf.h>
 #include <string>
+#include <string_view>
 
 namespace Akr::Renderer {
 class DrawTextCommand : public RenderCommand {
