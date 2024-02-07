@@ -39,7 +39,7 @@ void DebugRenderer::DrawArrow(b2Vec2 const& origin, b2Vec2 const& destination, A
 
 void DebugRenderer::DrawText(std::string_view targetString, b2Vec2 screenSpacePosition, ALLEGRO_COLOR color) {
   spdlog::trace("[DebugRenderer] DebugRenderer::DrawText");
-  addCommand(std::make_shared<DrawTextCommand>(targetString, screenSpacePosition, Akr::Init::AllegroManager::mainFont, color));
+  addCommand(std::make_shared<DrawTextCommand>(targetString, screenSpacePosition, Akr::AllegroManager::mainFont, color));
 }
 
 void DebugRenderer::DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color,

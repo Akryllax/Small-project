@@ -1,133 +1,101 @@
 #pragma once
 
-#include "Configuration.h"
-#include "Core.h"
-#include "InputLayer.h"
-#include "LocationLayer.h"
-#include "Logger.h"
-#include "NamedLayer.h"
-#include "PhysicsLayer.h"
-#include "RendererLayer.h"
-#include "Screen.h"
-#include "UIInputController.h"
-#include "allegro5/allegro_font.h"
-#include "allegro5/bitmap.h"
-#include "allegro5/display.h"
-#include "allegro5/events.h"
-#include "allegro5/timer.h"
 #include <cstdint>
+#include <memory>
+#include "allegro5/allegro5.h"
+#include "allegro5/allegro_font.h"
+#include "TestShip.h"
+#include "Button.h"
 
+namespace Akr {
 
-namespace Akr::Init {
-
+/**
+ * @brief The AllegroManager struct manages the initialization, running, and cleanup
+ * of the Allegro library and resources.
+ */
 struct AllegroManager {
 public:
-  static int Initialize(Akr::Core& coreInstance) {
-    //   // void initializeAllegro(ALLEGRO_DISPLAY * &display, ALLEGRO_EVENT_QUEUE * &event_queue, ALLEGRO_FONT * &font)
-    //   {
-    //   // Initialize Allegro.
-    //   if (!al_init()) {
-    //     spdlog::error("Failed to initialize Allegro.");
-    //     exit(-1);
-    //   }
+    /**
+     * @brief Initializes the Allegro library and resources.
+     * @return Returns 0 on success, or an error code otherwise.
+     */
+    static int Initialize();
 
-    //   // Initialize the font add-on.
-    //   al_init_font_addon();
-    //   al_init_ttf_addon();
-    //   al_init_primitives_addon();
-    //   al_init_image_addon();
+    /**
+     * @brief Runs the main loop of the application.
+     * @return Returns 0 on success, or an error code otherwise.
+     */
+    static int Run();
 
-    //   // Initialize the event addon for keyboard and mouse input.
-    //   if (!al_install_keyboard()) {
-    //     // Handle keyboard initialization failure.
-    //     fprintf(stderr, "Failed to initialize keyboard addon!\n");
-    //     al_uninstall_system();
-    //     exit(-1);
-    //   }
+    /**
+     * @brief Cleans up and deallocates resources used by the Allegro library.
+     * @return Returns 0 on success, or an error code otherwise.
+     */
+    static int Cleanup();
 
-    //   if (!al_install_mouse()) {
-    //     // Handle mouse initialization failure.
-    //     fprintf(stderr, "Failed to initialize mouse addon!\n");
-    //     al_uninstall_keyboard();
-    //     al_uninstall_system();
-    //     exit(-1);
-    //   }
+    /**
+     * @brief The default frames per second (FPS) for the application.
+     */
+    static constexpr uint16_t DEFAULT_FPS = 30;
 
-    //   // Create the display.
-    //   auto display = al_create_display(800, 600);
-    //   if (!display) {
-    //     spdlog::error("Failed to create Allegro display.");
-    //     exit(-1);
-    //   }
-    //   Akr::Screen::RegisterDisplay(display);
+    /**
+     * @brief The main event queue used by Allegro.
+     */
+    inline static ALLEGRO_EVENT_QUEUE* mainQueue;
 
-    //   // Load a font.
-    //   auto font = al_load_ttf_font("/usr/local/share/fonts/i/InputMono_Regular.ttf", 36, 0);
-    //   if (!font) {
-    //     spdlog::error("Failed to load font.");
-    //     exit(-1);
-    //   }
+    /**
+     * @brief The system display managed by Allegro.
+     */
+    inline static ALLEGRO_DISPLAY* systemDisplay;
 
-    //   // Create an event queue and a timer.
-    //   auto event_queue = al_create_event_queue();
-    //   if (!event_queue) {
-    //     spdlog::error("Failed to create event queue.");
-    //     exit(-1);
-    //   }
+    /**
+     * @brief The internal buffer used for rendering.
+     */
+    inline static ALLEGRO_BITMAP* internalBuffer;
 
-    //   auto mainTimer = al_create_timer(1.0 / FPS);
-    //   spdlog::trace("[main] Setting FPS to {}", FPS);
-    //   al_register_event_source(event_queue, al_get_timer_event_source(mainTimer));
-    //   al_start_timer(mainTimer);
+    /**
+     * @brief The main font used for text rendering.
+     */
+    inline static ALLEGRO_FONT* mainFont;
 
-    //   al_register_event_source(event_queue, al_get_display_event_source(display));
+    inline static std::chrono::high_resolution_clock::time_point applicationEpoch;
 
-    //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetCoreRenderer().Initialize();
-    //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().Initialize();
+private:
+    /**
+     * @brief Installs necessary Allegro systems.
+     */
+    static void InstallAllegroSystems();
 
-    //   //   // Initialize test ship
-    //   //   testShip = std::make_shared<Akr::TestShip>("a");
-    //   //   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
-    //   //   testShip->GetBody()->SetAngularVelocity(std::cos(5 * M_PI / 180.0f));
-    //   //   testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
+    /**
+     * @brief Creates the main display.
+     */
+    static void CreateDisplay();
 
-    //   //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
+    /**
+     * @brief Loads basic resources required for the application.
+     */
+    static void LoadBasicResources();
 
-    //   //   // Initialize button
-    //   //   // int x, int y, int width, int height,
-    //   //   resetShipDbgButton = std::make_shared<Akr::UI::Button>(0, 400, 200, 40, "Reset ship");
-    //   //   resetShipDbgButton->SetOnClick([&]() {
-    //   //     spdlog::trace("Reseting ship position!");
-    //   //     testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
-    //   //   });
+    /**
+     * @brief Creates event queues and timers.
+     */
+    static void CreateEventAndTimers();
 
-    //   //   addRandomImpulseShipDbgButton = std::make_shared<Akr::UI::Button>(0, 450, 200, 40, "Add random impulse");
-    //   //   addRandomImpulseShipDbgButton->SetOnClick([&]() {
-    //   //     // Generate random impulse values in the range of -80 to 80
-    //   //     float impulseX = Akr::Math::Utils::getRandomInRange(-120, 120);
-    //   //     float impulseY = Akr::Math::Utils::getRandomInRange(-120, 120);
+    /**
+     * @brief Loads a development scene for testing purposes.
+     */
+    static void LoadDevScene();
 
-    //   //     spdlog::trace("Adding impulse: (dX: {}, dY: {})", impulseX, impulseY);
+    static void HandleEngineLoopTick();
 
-    //   //     // Apply the random impulse to the ship's body
-    //   //     testShip->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
-    //   //   });
+    static void EngineTickFrame(std::chrono::milliseconds const&);
 
-    //   //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
-    //   //   Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(resetShipDbgButton);
+    static void EngineStableTick(std::chrono::milliseconds const&);
 
-    //   //   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
-    //   //   Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(addRandomImpulseShipDbgButton);
-    return 0;
-  };
+    static void MainLoop();
 
-  static int Cleanup(Akr::Core& coreInstance) { return 0; };
 
-  static constexpr uint16_t DEFAULT_FPS = 30;
-
-  inline static ALLEGRO_EVENT_QUEUE* mainQueue = nullptr;
-  inline static ALLEGRO_DISPLAY* systemDisplay = nullptr;
-  inline static ALLEGRO_BITMAP* internalBuffer = nullptr;
-  inline static ALLEGRO_FONT* mainFont = nullptr;
+    inline static bool quitApplication_ = false;
 };
+
 }  // namespace Akr::Init

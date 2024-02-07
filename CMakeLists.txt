@@ -44,6 +44,9 @@ CONSTRUCT_INCLUDE_PATH("spdlog")
 
 # Set include directories
 include_directories(
+    ${allegro5_INCLUDE_PATH}
+    ${fmt_INCLUDE_PATH}
+    ${spdlog_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/include/common
     ${CMAKE_SOURCE_DIR}/include/core
@@ -55,18 +58,19 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/render/operations
     ${CMAKE_SOURCE_DIR}/include/system
     ${CMAKE_SOURCE_DIR}/include/ui
-    ${allegro5_INCLUDE_PATH}
-    ${spdlog_INCLUDE_PATH}
-    ${fmt_INCLUDE_PATH}
     ${EXTERNAL_INCLUDES}
     # Add other necessary include directories here
 )
 
 # Add your source files here
 set(CORE_ENGINE_SRC_FILES
+    ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/TestShip.cpp
     ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
-    ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Button.cpp
 )
 
 # Create the executable

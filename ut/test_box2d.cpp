@@ -12,7 +12,7 @@ class Box2DIntegration : public ::testing::Test {
 protected:
     void SetUp() override {
         // Remove existing config file before each test
-        Akr::Logger::init("Box2DIntegration.log");
+        Akr::Logger::Init("Box2DIntegration.log");
     }
 
     void TearDown() override {

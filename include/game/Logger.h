@@ -12,12 +12,12 @@ class Logger {
 public:
   virtual ~Logger() = default;
 
-  static void init() {
+  static void Init() {
     init("core.log");
   };
 
   static void init(std::string filename) {
-    spdlog::info("Running Logger::init({})", filename);
+    spdlog::info("Running Logger::Init({})", filename);
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(fmt::format("logs/{}", filename), true);

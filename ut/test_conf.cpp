@@ -12,7 +12,7 @@ protected:
     void SetUp() override {
         // Remove existing config file before each test
         std::filesystem::remove(configFilePath);
-        Akr::Logger::init("ConfigurationTest.log");
+        Akr::Logger::Init("ConfigurationTest.log");
     }
 
     void TearDown() override {

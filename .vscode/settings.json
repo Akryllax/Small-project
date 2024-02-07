@@ -1,5 +1,5 @@
 {
-    "sonarlint.pathToCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
     "cSpell.enabled": false,
     "workbench.colorCustomizations": {
         "activityBar.background": "#4D0965",

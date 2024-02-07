@@ -1,33 +1,23 @@
 #pragma once
 
-#include "Configuration.h"
-#include "Core.h"
-#include "InputLayer.h"
-#include "LocationLayer.h"
-#include "Logger.h"
-#include "NamedLayer.h"
-#include "PhysicsLayer.h"
-#include "RendererLayer.h"
-#include "UIInputController.h"
+namespace Akr {
 
-namespace Akr::Init {
+/**
+ * @brief The CoreManager class manages initialization and cleanup tasks related to the core functionality of the application.
+ */
 class CoreManager {
 public:
-  static int Initialize(Akr::Core& coreInstance) {
-    Akr::Configuration::load();
-    Akr::Logger::init("core.log");
+    /**
+     * @brief Initializes the core functionality of the application.
+     * @return Returns 0 on success, or an error code otherwise.
+     */
+    static int Initialize();
 
-    coreInstance.AddDataLayer<Akr::InputLayer>();
-    coreInstance.AddDataLayer<Akr::NamedLayer>();
-    coreInstance.AddDataLayer<Akr::LocationLayer>();
-    coreInstance.AddDataLayer<Akr::RendererLayer>();
-    coreInstance.AddDataLayer<Akr::PhysicsLayer>();
-
-    Akr::Core::GetDataLayer<Akr::InputLayer>()->AddController(std::make_shared<Akr::Input::UIInputControler>());
-
-    return 0;
-  };
-
-  static int Cleanup() { return 0; };
+    /**
+     * @brief Cleans up and deallocates resources used by the core functionality of the application.
+     * @return Returns 0 on success, or an error code otherwise.
+     */
+    static int Cleanup();
 };
+
 }  // namespace Akr::Init
