@@ -202,11 +202,13 @@ void AllegroManager::LoadDevScene() {
     testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   });
 
+  const float impulseMultiplier = 300;
+
   auto addRandomImpulseShipDbgButton = std::make_shared<Akr::UI::Button>(0, 450, 200, 40, "Add random impulse");
   addRandomImpulseShipDbgButton->SetOnClick([&]() {
     // Generate random impulse values in the range of -80 to 80
-    float impulseX = Akr::Math::Utils::getRandomInRange(-120, 120);
-    float impulseY = Akr::Math::Utils::getRandomInRange(-120, 120);
+    float impulseX = (Akr::Math::Utils::getRandomInRange(-100.0f, 100.0f) / 100.0f) * impulseMultiplier;
+    float impulseY = (Akr::Math::Utils::getRandomInRange(-100.0f, 100.0f) / 100.0f) * impulseMultiplier;
 
     spdlog::trace("Adding impulse: (dX: {}, dY: {})", impulseX, impulseY);
 

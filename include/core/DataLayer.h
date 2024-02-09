@@ -7,7 +7,7 @@ class DataLayer : public ITickable {
 public:
   constexpr static size_t EXEC_PRIORITY = 100;
   DataLayer() = default;
-  virtual ~DataLayer() = default;
+  ~DataLayer() override = default;
 
   virtual void Initialize(){};
 

@@ -52,6 +52,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/core
     ${CMAKE_SOURCE_DIR}/include/core/initializers
     ${CMAKE_SOURCE_DIR}/include/game
+    ${CMAKE_SOURCE_DIR}/include/game/common
     ${CMAKE_SOURCE_DIR}/include/input
     ${CMAKE_SOURCE_DIR}/include/math
     ${CMAKE_SOURCE_DIR}/include/render
@@ -109,6 +110,11 @@ add_custom_command(
     ${CMAKE_SOURCE_DIR}/res
     ${CMAKE_SOURCE_DIR}/build/res
 )
+
+# Include the "ut" directory only if the build mode is Debug
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_subdirectory(ut)
+endif()
 
 # Create a custom target to ensure the copy command is executed
 add_custom_target(copy_resources ALL DEPENDS SpaceDissident)

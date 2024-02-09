@@ -13,10 +13,10 @@ public:
   virtual ~Logger() = default;
 
   static void Init() {
-    init("core.log");
+    Init("core.log");
   };
 
-  static void init(std::string filename) {
+  static void Init(std::string filename) {
     spdlog::info("Running Logger::Init({})", filename);
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
@@ -44,7 +44,7 @@ public:
       spdlog::info("Setting log level to: {}", "ERROR");
       logger->set_level(spdlog::level::err);
     } else {
-      spdlog::warn("Unknown debug level: \"{}\", defaulting to \"INFO\"", dbgLevel);
+      spdlog::warn(R"(Unknown debug level: "{}", defaulting to "INFO")", dbgLevel);
       logger->set_level(spdlog::level::err);
       // Set a default log level here if needed
     }

@@ -11,8 +11,7 @@
 #include <functional>
 #include <string>
 
-namespace Akr {
-  namespace UI {
+namespace Akr::UI {
     class Button : public IControllable, public IRenderable {
     public:
       Button(int x, int y, int width, int height, const char* label);
@@ -45,5 +44,4 @@ namespace Akr {
 
       std::function<void()> onClick_;
     };
-  } // namespace UI
-} // namespace Akr
+} // namespace Akr::UI
