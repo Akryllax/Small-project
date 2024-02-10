@@ -50,6 +50,7 @@ set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/NamedLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/TestShip.cpp
     ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
@@ -69,6 +70,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/core/initializers
     ${CMAKE_SOURCE_DIR}/include/game
     ${CMAKE_SOURCE_DIR}/include/game/common
+    ${CMAKE_SOURCE_DIR}/include/game/demo
     ${CMAKE_SOURCE_DIR}/include/input
     ${CMAKE_SOURCE_DIR}/include/math
     ${CMAKE_SOURCE_DIR}/include/render

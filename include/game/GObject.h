@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "INamedObject.h"
 #include "PhysicsLayer.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_math.h"
@@ -12,19 +13,16 @@
 
 namespace Akr::Game {
 
-class GObject : private std::enable_shared_from_this<GObject> {
+class GObject : public Common::INamedObject, private std::enable_shared_from_this<GObject> {
 public:
   GObject();
-  explicit GObject(std::string const& name);
+  GObject(std::string const& name);
   virtual ~GObject() = default;
 
   b2Transform const& GetTransform() const;
 
   void setName(std::string_view const& newName);
   std::string GetName() const;
-
-  void AddChild(std::shared_ptr<GObject> newChild);
-  std::shared_ptr<GObject> GetChildGObject(std::string_view const& name);
 
   std::vector<std::shared_ptr<GObject>>& GetChildren();
 
