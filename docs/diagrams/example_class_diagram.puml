@@ -1,0 +1,696 @@
+@startuml
+abstract "Akr::Renderer::RenderCommand" as C_0001218732286150901704
+abstract C_0001218732286150901704 {
++RenderCommand(const RenderCommandPriority & _renderPriority = RenderCommandPriority::DEFAULT) : void
++~RenderCommand() = default : void
+..
+{abstract} +execute() = 0 : void
++prepare() : void
++release() : void
+__
++renderPriority : const RenderCommandPriority
+}
+enum "Akr::Renderer::RenderCommand::RenderCommandPriority" as C_0002125263033806575406
+enum C_0002125263033806575406 {
+NONE
+DEFAULT
+MAXIMUM
+}
+class "Akr::Renderer::CompositeRenderComand" as C_0002085352847230652888
+class C_0002085352847230652888 {
++QueueCommand(std::shared_ptr<RenderCommand> renderCommand) : void
++QueueCommands(std::queue<std::shared_ptr<RenderCommand>> & renderCommands) : void
++execute() : void
+__
+-commands : std::queue<std::shared_ptr<RenderCommand>>
+}
+class "Akr::Renderer::DrawArrowCommand" as C_0001361815375630780549
+class C_0001361815375630780549 {
++DrawArrowCommand(const b2Vec2 & _origin, const b2Vec2 & _destination, ALLEGRO_COLOR _color, const RenderCommandPriority & _renderPriority = RenderCommandPriority::DEFAULT) : void
+..
++execute() : void
+__
+-color : ALLEGRO_COLOR
+-destination : b2Vec2
+-origin : b2Vec2
+}
+class "Akr::Renderer::DrawCrossCommand" as C_0001728238067513966805
+class C_0001728238067513966805 {
++DrawCrossCommand(const b2Vec2 & _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0), const RenderCommandPriority & _renderPriority = RenderCommandPriority::DEFAULT) : void
+..
++execute() : void
+__
+-color : ALLEGRO_COLOR
+-position : b2Vec2
+}
+class "Akr::Renderer::DrawTextCommand" as C_0000924049509153409401
+class C_0000924049509153409401 {
++DrawTextCommand(std::string_view _targetString, b2Vec2 _screenSpacePosition, ALLEGRO_FONT * _font, ALLEGRO_COLOR _color, int allignment = ALLEGRO_ALIGN_LEFT) : void
+..
+{static} +CalculateTextRect(ALLEGRO_FONT * font, const std::string & text) : Math::Rect
++execute() : void
+__
++allignment_ : int
++color_ : ALLEGRO_COLOR
++font_ : ALLEGRO_FONT *
++screenSpacePosition_ : b2Vec2
++targetString_ : std::string
+}
+class "Akr::Renderer::DebugRenderer" as C_0001954895088232326719
+class C_0001954895088232326719 {
++DebugRenderer() : void
++~DebugRenderer() = default : void
+..
++DrawArrow(const b2Vec2 & origin, const b2Vec2 & destination, ALLEGRO_COLOR color = al_map_rgb(255, 0, 0)) : void
++DrawCross(const b2Vec2 & _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0), const Akr::Renderer::RenderCommand::RenderCommandPriority & _renderPriority = Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT) : void
++DrawTextA(std::string_view targetString, b2Vec2 screenSpacePosition, ALLEGRO_COLOR color = al_map_rgb(255, 255, 255)) : void
++GenerateRenderCommand() : std::shared_ptr<Renderer::RenderCommand>
++Initialize() : void
++addCommand(std::shared_ptr<RenderCommand> cmd) : void
++render() : void
++setDefaultFont(ALLEGRO_FONT * _font) : void
+__
+{static} -commands : std::queue<std::shared_ptr<RenderCommand>>
+}
+class "Akr::Renderer::DrawBitmapOperation" as C_0002128830987380624352
+class C_0002128830987380624352 {
++DrawBitmapOperation(ALLEGRO_BITMAP * _targetBitmap, const Akr::Math::Rect & _bitmapRect, const RenderCommandPriority & _renderPriority = RenderCommand::RenderCommandPriority::DEFAULT) : void
+-DrawBitmapOperation() = deleted : void
+..
++execute() : void
+__
+-bitmap_ : ALLEGRO_BITMAP *
+-rect_ : Akr::Math::Rect
+}
+class "Akr::Renderer::CoreRenderer" as C_0000597225562283462777
+class C_0000597225562283462777 {
++CoreRenderer() : void
+-CoreRenderer(const CoreRenderer &) = deleted : void
+..
+-operator=(const CoreRenderer &) = deleted : CoreRenderer &
+..
++Initialize() : void
++addEarlyRenderCommand(const std::shared_ptr<RenderCommand> cmd) : void
++addLateRenderCommand(const std::shared_ptr<RenderCommand> cmd) : void
++addMainRenderCommand(const std::shared_ptr<RenderCommand> cmd) : void
++earlyFrameRender() : void
++lateFrameRender() : void
++mainFrameRender() : void
+-processCommands(PriorityRenderQueue & commandQueue) : void
++render() : void
+__
+-earlyRenderCmds : PriorityRenderQueue
+-lateRenderCmds : PriorityRenderQueue
+-mainRenderCmds : PriorityRenderQueue
+}
+class "Akr::Renderer::CoreRenderer::RenderCommandComparator" as C_0001294722108783110569
+class C_0001294722108783110569 {
++operator()(const std::shared_ptr<RenderCommand> & lhs, const std::shared_ptr<RenderCommand> & rhs) const : bool
+__
+}
+class "Akr::Renderer::DrawRectOperation" as C_0000314380172787068105
+class C_0000314380172787068105 {
++DrawRectOperation(ALLEGRO_COLOR color, const Akr::Math::Rect & rect, const RenderCommandPriority & _renderPriority = RenderCommand::RenderCommandPriority::DEFAULT) : void
+-DrawRectOperation() = deleted : void
+..
++execute() : void
+__
+-color_ : ALLEGRO_COLOR
+-rect_ : Akr::Math::Rect
+}
+class "Akr::Math::Rect" as C_0001859086223336199722
+class C_0001859086223336199722 {
+{static} +GetCenteredRect(const Rect & parentRect, const Rect & childRect) : Rect
+__
++angle : float
++h : float
++w : float
++x : float
++y : float
+}
+class "Akr::Math::Utils" as C_0000120949208458745805
+class C_0000120949208458745805 {
+{static} +getRandomInRange(float min, float max) : float
+__
+}
+abstract "Akr::Resource" as C_0001115061033628568822
+abstract C_0001115061033628568822 {
++Resource(const std::string & filename) : void
++~Resource() = default : void
+..
+{static} -GetExecutableFolderPath() : std::filesystem::path
+{static} +GetResourceFolderPath() : std::filesystem::path
+{static} -getExecutableFullPath() : std::filesystem::path
++getFilename() const : const std::string &
+#getFullPath() const : std::filesystem::path
+{abstract} +load() = 0 : bool
+{abstract} +unload() = 0 : void
+__
+-filename : std::string
+}
+class "Akr::BitmapResource" as C_0000548001644302594287
+class C_0000548001644302594287 {
++Resource(const std::string &) : void
++getBitmap() const : ALLEGRO_BITMAP *
++load() : bool
++unload() : void
+__
+-bitmap : ALLEGRO_BITMAP *
+}
+class "Akr::AudioResource" as C_0001204561639888884949
+class C_0001204561639888884949 {
++AudioResource(const std::string & filename) : void
+..
++load() : bool
++unload() : void
+__
+}
+abstract "Akr::IRenderable" as C_0001744493675782334231
+abstract C_0001744493675782334231 {
++IRenderable() = default : void
++~IRenderable() = default : void
+..
+{abstract} +GenerateRenderCommand() = 0 : std::shared_ptr<Renderer::RenderCommand>
++GetBitmapResource() const : std::shared_ptr<BitmapResource>
++render() : void
++setBitmapResource(std::shared_ptr<BitmapResource> resource) : void
+__
+-bitmapResource : std::shared_ptr<BitmapResource>
+}
+class "Akr::DataLayer" as C_0001123697511393514266
+class C_0001123697511393514266 {
++DataLayer() = default : void
+-DataLayer(const DataLayer &) = deleted : void
++~DataLayer() = default : void
+..
+-operator=(const DataLayer &) = deleted : DataLayer &
+..
++GetExecPriority() const : size_t
++Initialize() : void
++Kill() : void
++Tick(const std::chrono::milliseconds & delta) : void
+__
+{static} +EXEC_PRIORITY : const size_t
+}
+class "Akr::IsDerivedFromDataLayer<T>" as C_0001846279197794122525
+class C_0001846279197794122525 {
+__
+{static} +value : const bool
+}
+class "Akr::Core" as C_0001093087798085963523
+class C_0001093087798085963523 {
+-Core() = default : void
+-Core(const Core & core) = deleted : void
++~Core() = default : void
+..
++AddDataLayer<T,std::enable_if_t<IsDerivedFromDataLayer<T>::value, int>=0>(std::shared_ptr<T> dataLayer) : void
++AddDataLayer<T>() : void
+{static} +GetDataLayer<T,std::enable_if_t<IsDerivedFromDataLayer<T>::value, int>=0>() : std::shared_ptr<T>
++GetFrameCount() const : uint64_t
+{static} +GetInstance() : Core &
++GetLayerCount() const : size_t
++Tick(const std::chrono::milliseconds & delta) : void
+__
+-dataLayerMap_ : std::map<std::type_index,std::shared_ptr<DataLayer>>
+-frameCount_ : uint64_t
+-mainEventQueue_ : ALLEGRO_EVENT_QUEUE *
+}
+class "Akr::IEnableable" as C_0001608511310108225467
+class C_0001608511310108225467 {
++Disable() : void
++Enable() : void
++IsEnabled() const : bool
+__
+-isEnabled_ : bool
+}
+class "Akr::RendererLayer" as C_0000298054430810699690
+class C_0000298054430810699690 {
++AddEarlyRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) : void
++AddLateRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) : void
++AddMainRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) : void
++GetCoreRenderer() : Renderer::CoreRenderer &
++GetDebugRenderer() : Renderer::DebugRenderer &
++RegisterRenderable(std::shared_ptr<Akr::IRenderable> _renderable) : void
++Tick(const std::chrono::milliseconds & delta) : void
+__
+-debugRenderer_ : Akr::Renderer::DebugRenderer
+-renderables_ : std::vector<std::shared_ptr<IRenderable>>
+-renderer_ : Akr::Renderer::CoreRenderer
+}
+class "Akr::Input::InputController" as C_0002197927953503847081
+class C_0002197927953503847081 {
++~InputController() = default : void
+..
++HandleKeyboardInput() : void
++HandleMouseInput() : void
++IsListening() const : bool
++ReleaseControl() : void
++TakeControl() : void
+__
+#isListening_ : bool
+#keyState_ : ALLEGRO_KEYBOARD_STATE
+#mouseState_ : ALLEGRO_MOUSE_STATE
+}
+class "Akr::Input::InputController::InputEvent" as C_0001673057736286980470
+class C_0001673057736286980470 {
+{static} -GetEventType(ALLEGRO_EVENT_TYPE eventCode) : EVENT_TYPE
+__
++ : InputController::InputEvent::(anonymous_5136947)
++eventModifier : const ALLEGRO_EVENT
++eventType : const EVENT_TYPE
+{static} -keyboardEvents : const ALLEGRO_EVENT_TYPE[3]
+{static} -mouseEvents : const ALLEGRO_EVENT_TYPE[3]
+}
+enum "Akr::Input::InputController::InputEvent::EVENT_TYPE" as C_0001908984108348683595
+enum C_0001908984108348683595 {
+UNKNOWN
+NONE
+KEYBOARD
+MOUSE
+}
+class "Akr::Input::InputController::InputEvent::()" as C_0001031736326685558825
+class C_0001031736326685558825 {
+__
++keyboardEvent : InputController::InputEvent::::(anonymous_5136982)
++mouseEvent : InputController::InputEvent::::(anonymous_5137060)
+}
+class "Akr::Input::InputController::InputEvent::()::(keyboardEvent)" as C_0001289128500146961150
+class C_0001289128500146961150 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::()::(mouseEvent)" as C_0000421668833977597881
+class C_0000421668833977597881 {
+__
++mouseX : int
++mouseY : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5136947)" as C_0001702149570394344433
+class C_0001702149570394344433 {
+__
++keyboardEvent : InputController::InputEvent::::(anonymous_5136982)
++mouseEvent : InputController::InputEvent::::(anonymous_5137060)
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5136947)::(keyboardEvent)" as C_0001957672020248565668
+class C_0001957672020248565668 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5136947)::(mouseEvent)" as C_0000340951052706445234
+class C_0000340951052706445234 {
+__
++mouseX : int
++mouseY : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5136947)::(anonymous_5136982)" as C_0000062174935564188297
+class C_0000062174935564188297 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5136947)::(anonymous_5137060)" as C_0001384708538539085280
+class C_0001384708538539085280 {
+__
++mouseX : int
++mouseY : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5254753)" as C_0000436494777741852341
+class C_0000436494777741852341 {
+__
++keyboardEvent : InputController::InputEvent::::(anonymous_5254788)
++mouseEvent : InputController::InputEvent::::(anonymous_5254866)
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5254753)::(keyboardEvent)" as C_0000500432317990282008
+class C_0000500432317990282008 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5254753)::(mouseEvent)" as C_0002183095058677484837
+class C_0002183095058677484837 {
+__
++mouseX : int
++mouseY : int
+}
+class "Akr::Input::UIInputControler" as C_0000271915604721684362
+class C_0000271915604721684362 {
++Tick(const std::chrono::milliseconds & delta) : void
+__
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5131327)" as C_0001367724799857405471
+class C_0001367724799857405471 {
+__
++keyboardEvent : InputController::InputEvent::::(anonymous_5131362)
++mouseEvent : InputController::InputEvent::::(anonymous_5131440)
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5131327)::(keyboardEvent)" as C_0000807681129362359507
+class C_0000807681129362359507 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5131327)::(mouseEvent)" as C_0001587864301141996384
+class C_0001587864301141996384 {
+__
++mouseX : int
++mouseY : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5131327)::(anonymous_5131362)" as C_0001864707545759434701
+class C_0001864707545759434701 {
+__
++keyCode : int
+}
+class "Akr::Input::InputController::InputEvent::(anonymous_5131327)::(anonymous_5131440)" as C_0001948937286656966252
+class C_0001948937286656966252 {
+__
++mouseX : int
++mouseY : int
+}
+abstract "Akr::IControllable" as C_0001436952904731076811
+abstract C_0001436952904731076811 {
++~IControllable() = default : void
+..
+{abstract} +OnEvent() = 0 : void
++OnRawInput(const std::chrono::milliseconds & delta) : void
++RegisterController(std::shared_ptr<Akr::Input::InputController> controller) : void
+{abstract} +ReleaseControl() = 0 : void
+{abstract} +TakeControl() = 0 : void
+__
+-controller_ : std::shared_ptr<Akr::Input::InputController>
+}
+class "Akr::World" as C_0001241458559087860046
+class C_0001241458559087860046 {
++World() : void
+..
++GetBox2DWorld() : b2World &
+__
+-gravity : b2Vec2
+-world : b2World
+}
+class "Akr::PhysicsLayer" as C_0001690876582489315425
+class C_0001690876582489315425 {
++GetBox2DWorld() : b2World &
++Tick(const std::chrono::milliseconds & delta) : void
+__
++world : Akr::World
+}
+class "Akr::Entity" as C_0000654461865119206511
+class C_0000654461865119206511 {
++Entity(const std::string & identifier) : void
+__
++name : const std::string
+}
+class "Akr::RigidBody" as C_0001946155021140202277
+class C_0001946155021140202277 {
++RigidBody(const std::string & name, b2World * world) : void
+-RigidBody(const RigidBody &) = deleted : void
+..
+-operator=(const RigidBody &) = deleted : RigidBody &
+..
++GetBody() : b2Body *
+__
+#body : b2Body *
+}
+class "Akr::TestShip" as C_0001154177139299772231
+class C_0001154177139299772231 {
++TestShip(const std::string & name) : void
+-TestShip(const TestShip &) = deleted : void
++~TestShip() = default : void
+..
++GenerateRenderCommand() : std::shared_ptr<Renderer::RenderCommand>
++OnEvent() : void
++OnRawInput(const std::chrono::milliseconds & delta) : void
++ReleaseControl() : void
++TakeControl() : void
++render() : void
+__
+-starshipDef : b2BodyDef
+}
+class "Akr::NamedLayer" as C_0001447667812721663897
+class C_0001447667812721663897 {
++Tick(const std::chrono::milliseconds & delta) : void
+__
+}
+class "Akr::Common::TreeNode<K,V>" as C_0001980779595115213367
+class C_0001980779595115213367 {
+__
+}
+class "Akr::Common::Tree<K,V>" as C_0002032378480087804751
+class C_0002032378480087804751 {
++Tree() : void
+..
++find(const K & key) : std::shared_ptr<TreeNode<K,V>>
+-find(std::shared_ptr<TreeNode<K,V>> & node, const K & key) : std::shared_ptr<TreeNode<K,V>>
++insert(const K & key, const V & value) : void
+-insert(std::shared_ptr<TreeNode<K,V>> & node, const K & key, const V & value) : void
++remove(const K & key) : bool
+-remove(std::shared_ptr<TreeNode<K,V>> & node, const K & key) : bool
+__
+-root_ : std::shared_ptr<TreeNode<K,V>>
+}
+class "Akr::Common::Tree<std::basic_string_view<char>,std::shared_ptr<Akr::Game::GObject>>" as C_0001312574248046031951
+class C_0001312574248046031951 {
+__
+}
+class "Akr::Game::GObject" as C_0001437405982866310270
+class C_0001437405982866310270 {
++GObject() : void
++GObject(const std::string & name) : void
+-GObject(const GObject &) = deleted : void
++~GObject() = default : void
+..
++GetChildren() : std::vector<std::shared_ptr<GObject>> &
++GetName() const : std::string
++GetTransform() const : const b2Transform &
++setName(const std::string_view & newName) : void
+__
+-bodyDef_ : b2BodyDef
+-body_ : b2Body *
+-children_ : std::vector<std::shared_ptr<GObject>>
+-name_ : std::string
+-parent_ : std::shared_ptr<GObject>
+}
+class "Akr::Game::Scene" as C_0000659681666714815092
+class C_0000659681666714815092 {
++Scene() : void
++Scene(const Common::Types::ByteVector & inputString) : void
+-Scene(const Scene &) = deleted : void
+..
++AddRootObject(std::shared_ptr<GObject> gameObject) : void
++GetRootObject() : GObject &
++Load() : void
+{static} +LoadScene(const std::string_view & sceneName) : void
++OnLoad() : void
++OnSave() : void
++RemoveRootObject(const std::string & gameObjectName) : void
++Save() : void
+{static} +SaveScene(const std::string_view & sceneName) : void
++Serialize() : const Common::Types::ByteVector
+__
+-gobjectTree : Akr::Common::Tree<std::string_view,std::shared_ptr<GObject>>
+}
+class "Akr::Game::DevScene" as C_0000020826850072825488
+class C_0000020826850072825488 {
++OnLoad() : void
++OnSave() : void
+__
+}
+class "Akr::UI::Button" as C_0000522735143122574562
+class C_0000522735143122574562 {
++Button(int x, int y, int width, int height, const char * label) : void
+..
++GenerateRenderCommand() : std::shared_ptr<Renderer::RenderCommand>
+-OnClick() : void
++OnEvent() : void
++OnRawInput(const std::chrono::milliseconds & delta) : void
++ReleaseControl() : void
++SetOnClick(std::function<void ()> onClick) : void
++TakeControl() : void
+-handleClick() : void
++isMouseOver(int mouseX, int mouseY) : bool
++release() : void
+__
+-buttonRect_ : Math::Rect
+-label_ : std::string
+-mouseWasOverButton_ : bool
+-onClick_ : std::function<void ()>
+-pressed_ : bool
+-textRect_ : Math::Rect
+}
+class "Akr::AllegroManager" as C_0001199471531101731154
+class C_0001199471531101731154 {
+{static} +Cleanup() : int
+{static} -CreateDisplay() : void
+{static} -CreateEventAndTimers() : void
+{static} -EngineStableTick(const std::chrono::milliseconds &) : void
+{static} -EngineTickFrame(const std::chrono::milliseconds &) : void
+{static} -HandleEngineLoopTick() : void
+{static} +Initialize() : int
+{static} -InstallAllegroSystems() : void
+{static} -LoadBasicResources() : void
+{static} -LoadDevScene() : void
+{static} -MainLoop() : void
+{static} +Run() : int
+__
+{static} +DEFAULT_FPS : const uint16_t
+{static} +applicationEpoch : std::chrono::high_resolution_clock::time_point
+{static} +internalBuffer : ALLEGRO_BITMAP *
+{static} +mainFont : ALLEGRO_FONT *
+{static} +mainQueue : ALLEGRO_EVENT_QUEUE *
+{static} -quitApplication_ : bool
+{static} +systemDisplay : ALLEGRO_DISPLAY *
+}
+class "Akr::Configuration" as C_0000923350711163594723
+class C_0000923350711163594723 {
+-Configuration() = default : void
+..
+{static} +GetInstance() : Configuration &
+{static} +getConfigFilePath() : std::string
+{static} +getValue(const std::string_view & key, std::string defaultValue = "") : std::string
+{static} +load() : bool
+{static} +save() : bool
+{static} +setValue(const std::string_view & key, const std::string & value) : void
+__
+-config : ALLEGRO_CONFIG *
+}
+class "Akr::InputLayer" as C_0002271517109462284062
+class C_0002271517109462284062 {
++AddController(std::shared_ptr<Akr::Input::InputController> controller) : void
++GetExecPriority() const : size_t
++GetMouseScreenPosition() const : b2Vec2
++RegisterRawInputListener(std::shared_ptr<IControllable> controllable) : void
++Tick(const std::chrono::milliseconds & delta) : void
+__
+{static} +EXEC_PRIORITY : const size_t
+-controllerList : std::vector<std::shared_ptr<Akr::Input::InputController>>
+-rawControllables_ : std::vector<std::shared_ptr<Akr::IControllable>>
+}
+class "Akr::Location" as C_0000773860092359197388
+class C_0000773860092359197388 {
++Location() : void
++Location(const b2Vec2 & position) : void
++Location(long x, long y) : void
+..
++operator+(const Location & other) const : Location
+..
++addChild(std::shared_ptr<Location> child) : void
++getChildren() const : const std::vector<std::shared_ptr<Location>> &
++getParent() const : std::shared_ptr<Location>
++getPosition() const : const b2Vec2 &
++setParent(std::shared_ptr<Location> parent) : void
++setPosition(const b2Vec2 & position) : void
++setPosition(float x, float y) : void
+__
+-children_ : std::vector<std::shared_ptr<Location>>
+-parent_ : std::shared_ptr<Location>
+-position_ : b2Vec2
+}
+class "Akr::LocationLayer" as C_0001332174688925586493
+class C_0001332174688925586493 {
+#Tick(const std::chrono::milliseconds & delta) : void
+__
+#locationVector : std::unordered_map<std::string,Location>
+}
+class "Akr::Logger" as C_0001450547412279310138
+class C_0001450547412279310138 {
+-Logger() = default : void
+-Logger(const Logger & core) = deleted : void
++~Logger() = default : void
+..
+{static} +Init() : void
+{static} +Init(std::string filename) : void
+{static} +error(std::string_view view) : void
+{static} +info(std::string_view view) : void
+{static} +warn(std::string_view view) : void
+__
+{static} -isInitialized : bool
+}
+class "Akr::Screen" as C_0000613271562547766046
+class C_0000613271562547766046 {
+{static} +RegisterDisplay(ALLEGRO_DISPLAY * display) : void
+{static} +ResizeDisplay(b2Vec2 newScreenSize) : void
+{static} +getDisplay() : ALLEGRO_DISPLAY *
+{static} +getScreenSize() : b2Vec2
+{static} -updateScreenSize() : void
+__
+{static} -currentDisplay_ : ALLEGRO_DISPLAY *
+{static} -desiredScreenSize_ : b2Vec2
+{static} -screenSize_ : b2Vec2
+}
+class "Akr::CoreManager" as C_0000226571488666003801
+class C_0000226571488666003801 {
+{static} +Cleanup() : int
+{static} +Initialize() : int
+__
+}
+C_0002125263033806575406 --+ C_0001218732286150901704
+C_0002085352847230652888 o-- C_0001218732286150901704 : -commands
+C_0001218732286150901704 <|-- C_0002085352847230652888
+C_0001218732286150901704 <|-- C_0001361815375630780549
+C_0001218732286150901704 <|-- C_0001728238067513966805
+C_0000924049509153409401 ..> C_0001859086223336199722
+C_0001218732286150901704 <|-- C_0000924049509153409401
+C_0001954895088232326719 --> C_0001218732286150901704 : -commands
+C_0001744493675782334231 <|-- C_0001954895088232326719
+C_0002128830987380624352 o-- C_0001859086223336199722 : -rect_
+C_0001218732286150901704 <|-- C_0002128830987380624352
+C_0000597225562283462777 o-- C_0001218732286150901704 : -earlyRenderCmds
+C_0000597225562283462777 o-- C_0001218732286150901704 : -mainRenderCmds
+C_0000597225562283462777 o-- C_0001218732286150901704 : -lateRenderCmds
+C_0001294722108783110569 --+ C_0000597225562283462777
+C_0001294722108783110569 ..> C_0001218732286150901704
+C_0000314380172787068105 o-- C_0001859086223336199722 : -rect_
+C_0001218732286150901704 <|-- C_0000314380172787068105
+C_0001115061033628568822 <|-- C_0000548001644302594287
+C_0001115061033628568822 <|-- C_0001204561639888884949
+C_0001744493675782334231 ..> C_0001218732286150901704
+C_0001744493675782334231 --> C_0000548001644302594287 : -bitmapResource
+C_0001093087798085963523 o-- C_0001123697511393514266 : -dataLayerMap_
+C_0000298054430810699690 ..> C_0001218732286150901704
+C_0000298054430810699690 o-- C_0000597225562283462777 : -renderer_
+C_0000298054430810699690 o-- C_0001954895088232326719 : -debugRenderer_
+C_0000298054430810699690 o-- C_0001744493675782334231 : -renderables_
+C_0001123697511393514266 <|-- C_0000298054430810699690
+C_0001608511310108225467 <|-- C_0002197927953503847081
+C_0001673057736286980470 --+ C_0002197927953503847081
+C_0001673057736286980470 o-- C_0001031736326685558825
+C_0001908984108348683595 --+ C_0001673057736286980470
+C_0001031736326685558825 o-- C_0001289128500146961150 : +keyboardEvent
+C_0001031736326685558825 o-- C_0000421668833977597881 : +mouseEvent
+C_0001702149570394344433 o-- C_0001957672020248565668 : +keyboardEvent
+C_0001702149570394344433 o-- C_0000340951052706445234 : +mouseEvent
+C_0000436494777741852341 o-- C_0000500432317990282008 : +keyboardEvent
+C_0000436494777741852341 o-- C_0002183095058677484837 : +mouseEvent
+C_0002197927953503847081 <|-- C_0000271915604721684362
+C_0001367724799857405471 o-- C_0000807681129362359507 : +keyboardEvent
+C_0001367724799857405471 o-- C_0001587864301141996384 : +mouseEvent
+C_0001436952904731076811 --> C_0002197927953503847081 : -controller_
+C_0001690876582489315425 o-- C_0001241458559087860046 : +world
+C_0001123697511393514266 <|-- C_0001690876582489315425
+C_0000654461865119206511 <|-- C_0001946155021140202277
+C_0001154177139299772231 ..> C_0001218732286150901704
+C_0001946155021140202277 <|-- C_0001154177139299772231
+C_0001744493675782334231 <|-- C_0001154177139299772231
+C_0001436952904731076811 <|-- C_0001154177139299772231
+C_0001123697511393514266 <|-- C_0001447667812721663897
+C_0001980779595115213367 ..|> C_0001980779595115213367
+C_0002032378480087804751 --> C_0001980779595115213367 : -root_
+C_0001312574248046031951 ..|> C_0002032378480087804751
+C_0001437405982866310270 --> C_0001437405982866310270 : -parent_
+C_0001437405982866310270 o-- C_0001437405982866310270 : -children_
+C_0000659681666714815092 ..> C_0001437405982866310270
+C_0000659681666714815092 o-- C_0001312574248046031951 : -gobjectTree
+C_0000659681666714815092 <|-- C_0000020826850072825488
+C_0000522735143122574562 ..> C_0001218732286150901704
+C_0000522735143122574562 o-- C_0001859086223336199722 : -buttonRect_
+C_0000522735143122574562 o-- C_0001859086223336199722 : -textRect_
+C_0001436952904731076811 <|-- C_0000522735143122574562
+C_0001744493675782334231 <|-- C_0000522735143122574562
+C_0002271517109462284062 o-- C_0002197927953503847081 : -controllerList
+C_0002271517109462284062 o-- C_0001436952904731076811 : -rawControllables_
+C_0001123697511393514266 <|-- C_0002271517109462284062
+C_0000773860092359197388 --> C_0000773860092359197388 : -parent_
+C_0000773860092359197388 o-- C_0000773860092359197388 : -children_
+C_0001332174688925586493 o-- C_0000773860092359197388 : #locationVector
+C_0001123697511393514266 <|-- C_0001332174688925586493
+
+'Generated with clang-uml, version 0.5.0
+'LLVM version clang version 17.0.6 (https://github.com/llvm/llvm-project.git 6009708b4367171ccdbf4b5905cb6a803753fe18)
+@enduml

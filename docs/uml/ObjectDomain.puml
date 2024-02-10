@@ -1,0 +1,25 @@
+@startuml
+set separator ::
+class Game::GObject
+{
+  name : String
+  Transform : b2box::b2Transform
+}
+
+class b2box::b2Transform
+{
+
+}
+
+class Common::TreeNode
+{
+  element : *GObject
+  children : *GObject[]
+}
+
+class Common::Tree {
+  root : TreeNode
+}
+
+Common::TreeNode "0" --*  "*" Common::Tree : contains
+@enduml
