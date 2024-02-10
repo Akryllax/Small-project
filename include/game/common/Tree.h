@@ -42,7 +42,7 @@ public:
    * @brief Add a child node to the current node.
    * @param child The child node to add.
    */
-  void addChild(std::shared_ptr<TreeNode<K, V>> const& child) { children.push_back(child); }
+  void addChild(std::shared_ptr<TreeNode<K, V>> const child) { children.push_back(child); }
 
   std::vector<std::shared_ptr<TreeNode<K, V>>> children; /**< Children nodes of the current node. */
 private:

@@ -6,9 +6,7 @@ namespace Akr::Game {
 void DevScene::OnLoad(){
   auto testShip = std::make_shared<TestShip>("");
 
-  auto& sceneRoot = this->GetRootObject();
-
-  // sceneRoot.("testShip1", testShip);
+  auto sceneRoot = this->GetTreeRoot();
 
 };
 void DevScene::OnSave(){
