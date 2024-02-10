@@ -31,17 +31,17 @@ public:
    * @brief Registers a named object with the layer.
    *
    * @param name The name of the object to register.
-   * @param namedObject A weak pointer to the named object.
+   * @param namedObject A raw pointer to the named object.
    */
-  void RegisterNamedObject(std::string const& name, std::shared_ptr<Akr::Common::INamedObject> namedObject);
+  void RegisterNamedObject(std::string const& name, Akr::Common::INamedObject* namedObject);
 
   /**
    * @brief Finds a named object by its name.
    *
    * @param name The name of the object to find.
-   * @return A weak pointer to the found object, or nullptr if not found.
+   * @return A raw pointer to the found object, or nullptr if not found.
    */
-  std::shared_ptr<Akr::Common::INamedObject> FindNamedObject(std::string const& name) const;
+  Akr::Common::INamedObject* FindNamedObject(std::string const& name) const;
 
   /**
    * @brief Removes a named object from the layer.
@@ -59,7 +59,6 @@ public:
   void UpdateObjectName(std::string const& oldName, std::string const& newName);
 
 private:
-  std::unordered_map<std::string, std::shared_ptr<Common::INamedObject>>
-      namedObjects_; /**< A map of named objects managed by the layer. */
+  std::unordered_map<std::string, Akr::Common::INamedObject*> namedObjects_; /**< A map of named objects managed by the layer. */
 };
 }  // namespace Akr

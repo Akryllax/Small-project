@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "allegro5/allegro5.h"
 #include <gtest/gtest.h>
+#include <fileapi.h>
 #include <memory>
 #include <vector>
 
@@ -90,8 +91,8 @@ TEST_F(ScreenTest, ResizeScreenSize) {
 // Define a test fixture for NamedLayer
 class NamedLayerTest : public testing::Test {
 protected:
-  std::vector<std::shared_ptr<Akr::Common::INamedObject>> testNamedObjects {
-    std::make_shared<Akr::Common::INamedObject>("object1"), std::make_shared<Akr::Common::INamedObject>("object2")
+  std::vector<Akr::Common::INamedObject*> testNamedObjects {
+    new Akr::Common::INamedObject("object1"), new Akr::Common::INamedObject("object2")
   };  // We keep the keep-alives here, and autodelete out-of-scope
 
   void SetUp() override {
@@ -99,6 +100,14 @@ protected:
     namedLayer.RegisterNamedObject(testNamedObjects[0]->GetName(), testNamedObjects[0]);
     namedLayer.RegisterNamedObject(testNamedObjects[1]->GetName(), testNamedObjects[1]);
   }
+
+  void TearDown() override
+  {
+    for(auto it : testNamedObjects)
+    {
+      delete it;
+    }
+  };
 
   // Declare variables needed for testing
   Akr::NamedLayer namedLayer;
@@ -135,7 +144,7 @@ TEST_F(NamedLayerTest, UpdateObjectName) {
 
 // Test case for registering a new named object
 TEST_F(NamedLayerTest, RegisterNamedObject) {
-  auto newObj = std::make_shared<Akr::Common::INamedObject>("New Object");
+  auto newObj = new Akr::Common::INamedObject("New Object");
   testNamedObjects.push_back(newObj);
   namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());
   auto newObject = namedLayer.FindNamedObject("New Object");
@@ -147,8 +156,8 @@ TEST_F(NamedLayerTest, RegisterNamedObject) {
 
 // Test case for registering a duplicated named object
 TEST_F(NamedLayerTest, RegisterObjectWithDuplicatedName) {
-  auto oldObj = std::make_shared<Akr::Common::INamedObject>("New Object");
-  auto newObj = std::make_shared<Akr::Common::INamedObject>("New Object");
+  auto oldObj = new Akr::Common::INamedObject("New Object");
+  auto newObj = new Akr::Common::INamedObject("New Object");
 
   testNamedObjects.push_back(oldObj);
   namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());

@@ -8,6 +8,7 @@ namespace Akr::Common {
 class INamedObject {
 public:
   INamedObject(std::string name);
+  ~INamedObject();
 
   std::string GetName() const;
   void SetName(std::string const name);
