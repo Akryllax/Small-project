@@ -1,5 +1,6 @@
 #include "NamedLayer.h"
 #include "INamedObject.h"
+#include "spdlog/spdlog.h"
 
 namespace Akr {
     void NamedLayer::Tick(std::chrono::milliseconds const& delta) {
@@ -8,12 +9,15 @@ namespace Akr {
     }
 
     void NamedLayer::RegisterNamedObject(std::string const& name, Akr::Common::INamedObject* namedObject) {
+        spdlog::trace("[NamedLayer] Registering NamedObject with name: {}. Current vector size: {}", name, namedObjects_.size());
         // Check if the object with the same name already exists
         auto it = namedObjects_.find(name);
         if (it == namedObjects_.end()) {
+            spdlog::trace("[NamedLayer] Key isn't in use, adding with key: {}", name);
             // Object with the given name doesn't exist, so add it directly
             namedObjects_[name] = namedObject;
         } else {
+            spdlog::trace("[NamedLayer] Key is in use, generating new name...");
             // Object with the given name already exists, so auto-increment numerically
             int suffix = 1;
             std::string newName = name;
@@ -28,6 +32,8 @@ namespace Akr {
             namedObject->SetName(newName);
             spdlog::warn("Object with name '{}' already registered. Auto-incremented to '{}'.", name, newName);
         }
+
+        spdlog::trace("[NamedLayer] Final vector size: {}", namedObjects_.size());
     }
 
     Akr::Common::INamedObject* NamedLayer::FindNamedObject(std::string const& name) const {

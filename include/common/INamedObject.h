@@ -7,6 +7,8 @@ namespace Akr::Common {
 
 class INamedObject {
 public:
+  INamedObject() = delete;
+  // Create a named object
   INamedObject(std::string name);
   ~INamedObject();
 

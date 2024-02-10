@@ -1,10 +1,12 @@
 #include "Core.h"
 #include "DataLayer.h"
-#include "INamedObject.h"
+#include "GObject.h"
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
 #include "Screen.h"
 #include "allegro5/allegro5.h"
+#include "spdlog/common.h"
+#include "spdlog/spdlog.h"
 #include <gtest/gtest.h>
 #include <fileapi.h>
 #include <memory>
@@ -91,63 +93,56 @@ TEST_F(ScreenTest, ResizeScreenSize) {
 // Define a test fixture for NamedLayer
 class NamedLayerTest : public testing::Test {
 protected:
-  std::vector<Akr::Common::INamedObject*> testNamedObjects {
-    new Akr::Common::INamedObject("object1"), new Akr::Common::INamedObject("object2")
-  };  // We keep the keep-alives here, and autodelete out-of-scope
+  std::vector<Akr::Game::GObject*>
+      testNamedObjects;  // We keep the keep-alives here, and autodelete out-of-scope
 
   void SetUp() override {
-    // Initialize objects or perform setup tasks before each test
-    namedLayer.RegisterNamedObject(testNamedObjects[0]->GetName(), testNamedObjects[0]);
-    namedLayer.RegisterNamedObject(testNamedObjects[1]->GetName(), testNamedObjects[1]);
+    testNamedObjects.push_back(new Akr::Game::GObject("object1"));
+    testNamedObjects.push_back(new Akr::Game::GObject("object2"));
   }
 
-  void TearDown() override
-  {
-    for(auto it : testNamedObjects)
-    {
+  void TearDown() override {
+    for (auto it : testNamedObjects) {
       delete it;
     }
   };
 
-  // Declare variables needed for testing
-  Akr::NamedLayer namedLayer;
 };
 
 // Test case for finding a named object
 TEST_F(NamedLayerTest, FindNamedObject) {
-  auto object1 = namedLayer.FindNamedObject("object1");
-  auto object2 = namedLayer.FindNamedObject("object2");
-  auto nonExistentObject = namedLayer.FindNamedObject("non_existent");
+  auto object1 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("object1");
+  auto object2 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("object2");
+  auto nonExistentObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("non_existent");
 
-  ASSERT_TRUE(object1);           // Check if object1 exists
-  ASSERT_TRUE(object2);           // Check if object2 exists
-  ASSERT_TRUE(!nonExistentObject);  // Check if non-existent object returns nullptr
+  ASSERT_TRUE(object1 != nullptr);             // Check if object1 exists
+  ASSERT_TRUE(object2 != nullptr);             // Check if object2 exists
+  ASSERT_TRUE(nonExistentObject == nullptr);  // Check if non-existent object returns nullptr
 }
 
 // Test case for removing a named object
 TEST_F(NamedLayerTest, RemoveNamedObject) {
-  namedLayer.RemoveNamedObject("object1");
-  auto object1 = namedLayer.FindNamedObject("object1");
+  Akr::Core::GetDataLayer<Akr::NamedLayer>()->RemoveNamedObject("object1");
+  auto object1 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("object1");
 
   ASSERT_TRUE(!object1);  // Check if object1 has been removed
 }
 
 // Test case for updating the name of a named object
 TEST_F(NamedLayerTest, UpdateObjectName) {
-  namedLayer.UpdateObjectName("object1", "new_object1");
-  auto object1 = namedLayer.FindNamedObject("object1");
-  auto newObject1 = namedLayer.FindNamedObject("new_object1");
+  Akr::Core::GetDataLayer<Akr::NamedLayer>()->UpdateObjectName("object1", "new_object1");
+  auto object1 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("object1");
+  auto newObject1 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("new_object1");
 
-  ASSERT_TRUE(!object1);      // Check if old name no longer exists
+  ASSERT_TRUE(!object1);    // Check if old name no longer exists
   ASSERT_TRUE(newObject1);  // Check if object has been updated successfully
 }
 
 // Test case for registering a new named object
 TEST_F(NamedLayerTest, RegisterNamedObject) {
-  auto newObj = new Akr::Common::INamedObject("New Object");
+  auto newObj = new Akr::Game::GObject("New Object");
   testNamedObjects.push_back(newObj);
-  namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());
-  auto newObject = namedLayer.FindNamedObject("New Object");
+  auto newObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object");
 
   ASSERT_TRUE(newObject);  // Check if new object has been registered successfully
 
@@ -156,32 +151,31 @@ TEST_F(NamedLayerTest, RegisterNamedObject) {
 
 // Test case for registering a duplicated named object
 TEST_F(NamedLayerTest, RegisterObjectWithDuplicatedName) {
-  auto oldObj = new Akr::Common::INamedObject("New Object");
-  auto newObj = new Akr::Common::INamedObject("New Object");
+  auto oldObj = new Akr::Game::GObject("New Object");
+  auto newObj = new Akr::Game::GObject("New Object");
 
   testNamedObjects.push_back(oldObj);
-  namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());
   testNamedObjects.push_back(newObj);
-  namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());
 
-  auto foundOldObject = namedLayer.FindNamedObject("New Object");
-  auto foundNewObject = namedLayer.FindNamedObject("New Object_1");
+  auto foundOldObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object");
+  auto foundNewObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object_1");
 
-
-  ASSERT_TRUE(foundOldObject);  // Check if old object hasn't been replace
-  ASSERT_TRUE(foundNewObject);  // Check if new object has been registered successfully
-  ASSERT_NE(foundOldObject, foundNewObject);  // Check they are different
+  ASSERT_TRUE(foundOldObject);                           // Check if old object hasn't been replace
+  ASSERT_TRUE(foundNewObject);                           // Check if new object has been registered successfully
+  ASSERT_NE(foundOldObject, foundNewObject);             // Check they are different
   ASSERT_EQ(foundNewObject->GetName(), "New Object_1");  // Check if name of new object has been autoincremented
 }
 
 // Test case for ticking the named layer
 TEST_F(NamedLayerTest, Tick) {
   // This test only checks if the Tick function runs without errors
-  namedLayer.Tick(std::chrono::milliseconds(100));
+  Akr::Core::GetDataLayer<Akr::NamedLayer>()->Tick(std::chrono::milliseconds(100));
   // Add more detailed tests if Tick function has specific behaviors to verify
 }
 
 int main(int argc, char** argv) {
+  spdlog::set_level(spdlog::level::trace);
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

@@ -1,11 +1,13 @@
 #include "INamedObject.h"
 #include "Core.h"
 #include "NamedLayer.h"
+#include "spdlog/spdlog.h"
 
 namespace Akr::Common {
 
 INamedObject::INamedObject(std::string name) : name_(std::move(name)) {
-  Akr::Core::GetDataLayer<Akr::NamedLayer>()->RegisterNamedObject(name, this);
+  spdlog::trace("[INamedObject] INamedObject(\"{}\"), registering to NamedLayer.", name_);
+  Akr::Core::GetDataLayer<Akr::NamedLayer>()->RegisterNamedObject(name_, this);
 }
 
 INamedObject::~INamedObject()

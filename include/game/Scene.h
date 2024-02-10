@@ -5,10 +5,13 @@
 #include "Scene.h"
 #include "Tree.h"
 #include <memory>
+#include <string>
 #include <string_view>
 #include <vector>
 
 namespace Akr::Game {
+using GObjTree = Akr::Common::Tree<std::string, std::shared_ptr<Akr::Game::GObject>>;
+using GObjTreeNode = Akr::Common::TreeNode<std::string, std::shared_ptr<Akr::Game::GObject>>;
 
 class Scene {
 public:
@@ -49,6 +52,8 @@ public:
     // Get a reference to the root GameObject of the scene
     GObject& GetRootObject() { return *gobjectTree.find("root")->getData(); }
 
+    std::shared_ptr<GObjTreeNode> GetTreeRoot() { return gobjectTree.root();}
+
     // Add a GameObject to the root of the scene
     void AddRootObject(std::shared_ptr<GObject> gameObject) { gobjectTree.insert(gameObject->GetName(), gameObject); }
 
@@ -67,7 +72,7 @@ public:
 private:
     Scene(Scene const&) = delete;
 
-    Akr::Common::Tree<std::string_view, std::shared_ptr<GObject>> gobjectTree;
+    GObjTree gobjectTree;
 };
 
 } // namespace Akr::Game

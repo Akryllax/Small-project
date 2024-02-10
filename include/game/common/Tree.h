@@ -46,8 +46,8 @@ public:
 
   std::vector<std::shared_ptr<TreeNode<K, V>>> children; /**< Children nodes of the current node. */
 private:
-  K id_; /**< The ID of the node. */
-  V data_;         /**< The data associated with the node. */
+  K id_;   /**< The ID of the node. */
+  V data_; /**< The data associated with the node. */
 };
 
 /**
@@ -89,6 +89,12 @@ public:
    * @return true if the node is successfully removed, false otherwise.
    */
   bool remove(K const& key) { return remove(root_, key); }
+
+   /**
+    * @brief Get the root TreeNode of this Tree.
+    * @return const reference to root TreeNode
+    */
+  std::shared_ptr<TreeNode<K, V>> const& root() { return root_; }
 
 private:
   std::shared_ptr<TreeNode<K, V>> root_; /**< The root node of the tree. */
