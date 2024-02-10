@@ -1,4 +1,5 @@
 #include "NamedLayer.h"
+#include "INamedObject.h"
 
 namespace Akr {
 void NamedLayer::Tick(std::chrono::milliseconds const& delta) {
@@ -6,8 +7,8 @@ void NamedLayer::Tick(std::chrono::milliseconds const& delta) {
   // Implement tick logic here if needed
 }
 
-void NamedLayer::RegisterNamedObject(Common::NamedString const& name,
-                                     std::weak_ptr<Akr::Common::INamedObject> namedObject) {
+void NamedLayer::RegisterNamedObject(std::string const& name,
+                                     std::shared_ptr<Akr::Common::INamedObject> namedObject) {
   // Check if the object with the same name already exists
   auto it = namedObjects_.find(name);
   if (it == namedObjects_.end()) {
@@ -16,7 +17,7 @@ void NamedLayer::RegisterNamedObject(Common::NamedString const& name,
   } else {
     // Object with the given name already exists, so auto-increment numerically
     int suffix = 1;
-    Common::NamedString newName = name;
+    std::string newName = name;
     while (namedObjects_.find(newName) != namedObjects_.end()) {
       // Append a numerical suffix to the name
       newName = name + "_" + std::to_string(suffix);
@@ -25,22 +26,22 @@ void NamedLayer::RegisterNamedObject(Common::NamedString const& name,
     // Add the object with the new name
     namedObjects_[newName] = namedObject;
     // Update the objects name so it is reflected everywhere
-    namedObject.lock()->SetName(newName);
+    namedObject->SetName(newName);
     spdlog::warn("Object with name '{}' already registered. Auto-incremented to '{}'.", name, newName);
   }
 }
 
-std::weak_ptr<Akr::Common::INamedObject> NamedLayer::FindNamedObject(Common::NamedString const& name) const {
+std::shared_ptr<Akr::Common::INamedObject> NamedLayer::FindNamedObject(std::string const& name) const {
   auto it = namedObjects_.find(name);
   if (it != namedObjects_.end()) {
     return it->second;
   } else {
     spdlog::warn("Object with name '{}' not found.", name);
-    return std::weak_ptr<Akr::Common::INamedObject>();
+    return std::shared_ptr<Akr::Common::INamedObject>();
   }
 }
 
-void NamedLayer::RemoveNamedObject(Common::NamedString const& name) {
+void NamedLayer::RemoveNamedObject(std::string const& name) {
   auto it = namedObjects_.find(name);
   if (it != namedObjects_.end()) {
     namedObjects_.erase(it);
@@ -49,7 +50,7 @@ void NamedLayer::RemoveNamedObject(Common::NamedString const& name) {
   }
 }
 
-void NamedLayer::UpdateObjectName(Common::NamedString const& oldName, Common::NamedString const& newName) {
+void NamedLayer::UpdateObjectName(std::string const& oldName, std::string const& newName) {
   auto it = namedObjects_.find(oldName);
   if (it != namedObjects_.end()) {
     // Update the key in the map

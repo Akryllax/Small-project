@@ -66,6 +66,7 @@ include_directories(
 
 # Add your source files here
 set(CORE_ENGINE_SRC_FILES
+    ${CMAKE_SOURCE_DIR}/src/common/INamedObject.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
     ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp

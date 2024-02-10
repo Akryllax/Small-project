@@ -40,7 +40,7 @@ class UniqueIdentifier {
 //       UniqueIdentifier const& str) {
 //     if (auto it = associatedObjects_.find(str);
 //         it != associatedObjects_.end()) {
-//       return it->second.lock();  // Use lock to convert weak_ptr to
+//       return it->second;  // Use lock to convert weak_ptr to
 //       shared_ptr
 //     }
 //     return nullptr;

@@ -1,15 +1,16 @@
 #pragma once
 
+#include <memory>
 #include <string>
+
 namespace Akr::Common {
-using NamedString = std::string;
 
 class INamedObject {
 public:
-  INamedObject(std::string name) : name_(name) {}
+  INamedObject(std::string name);
 
-  inline std::string GetName() const { return name_; }
-  inline void SetName(std::string const name) { name_ = name; };
+  std::string GetName() const;
+  void SetName(std::string const name);
 
 private:
   std::string name_;

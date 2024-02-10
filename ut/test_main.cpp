@@ -110,9 +110,9 @@ TEST_F(NamedLayerTest, FindNamedObject) {
   auto object2 = namedLayer.FindNamedObject("object2");
   auto nonExistentObject = namedLayer.FindNamedObject("non_existent");
 
-  ASSERT_TRUE(!object1.expired());           // Check if object1 exists
-  ASSERT_TRUE(!object2.expired());           // Check if object2 exists
-  ASSERT_TRUE(nonExistentObject.expired());  // Check if non-existent object returns nullptr
+  ASSERT_TRUE(object1);           // Check if object1 exists
+  ASSERT_TRUE(object2);           // Check if object2 exists
+  ASSERT_TRUE(!nonExistentObject);  // Check if non-existent object returns nullptr
 }
 
 // Test case for removing a named object
@@ -120,7 +120,7 @@ TEST_F(NamedLayerTest, RemoveNamedObject) {
   namedLayer.RemoveNamedObject("object1");
   auto object1 = namedLayer.FindNamedObject("object1");
 
-  ASSERT_TRUE(object1.expired());  // Check if object1 has been removed
+  ASSERT_TRUE(!object1);  // Check if object1 has been removed
 }
 
 // Test case for updating the name of a named object
@@ -129,8 +129,8 @@ TEST_F(NamedLayerTest, UpdateObjectName) {
   auto object1 = namedLayer.FindNamedObject("object1");
   auto newObject1 = namedLayer.FindNamedObject("new_object1");
 
-  ASSERT_TRUE(object1.expired());      // Check if old name no longer exists
-  ASSERT_TRUE(!newObject1.expired());  // Check if object has been updated successfully
+  ASSERT_TRUE(!object1);      // Check if old name no longer exists
+  ASSERT_TRUE(newObject1);  // Check if object has been updated successfully
 }
 
 // Test case for registering a new named object
@@ -140,7 +140,7 @@ TEST_F(NamedLayerTest, RegisterNamedObject) {
   namedLayer.RegisterNamedObject(testNamedObjects.back()->GetName(), testNamedObjects.back());
   auto newObject = namedLayer.FindNamedObject("New Object");
 
-  ASSERT_TRUE(!newObject.expired());  // Check if new object has been registered successfully
+  ASSERT_TRUE(newObject);  // Check if new object has been registered successfully
 
   testNamedObjects.erase(--testNamedObjects.end());
 }
@@ -159,10 +159,10 @@ TEST_F(NamedLayerTest, RegisterObjectWithDuplicatedName) {
   auto foundNewObject = namedLayer.FindNamedObject("New Object_1");
 
 
-  ASSERT_TRUE(!foundOldObject.expired());  // Check if old object hasn't been replace
-  ASSERT_TRUE(!foundNewObject.expired());  // Check if new object has been registered successfully
-  ASSERT_NE(foundOldObject.lock(), foundNewObject.lock());  // Check they are different
-  ASSERT_EQ(foundNewObject.lock()->GetName(), "New Object_1");  // Check if name of new object has been autoincremented
+  ASSERT_TRUE(foundOldObject);  // Check if old object hasn't been replace
+  ASSERT_TRUE(foundNewObject);  // Check if new object has been registered successfully
+  ASSERT_NE(foundOldObject, foundNewObject);  // Check they are different
+  ASSERT_EQ(foundNewObject->GetName(), "New Object_1");  // Check if name of new object has been autoincremented
 }
 
 // Test case for ticking the named layer

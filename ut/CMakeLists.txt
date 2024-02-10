@@ -44,11 +44,12 @@ CONSTRUCT_INCLUDE_PATH("allegro5")
 CONSTRUCT_INCLUDE_PATH("fmt")
 CONSTRUCT_INCLUDE_PATH("spdlog")
 
-
 # Add your source files here
 set(CORE_ENGINE_SRC_FILES
+    ${CMAKE_SOURCE_DIR}/src/common/INamedObject.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
     ${CMAKE_SOURCE_DIR}/src/game/NamedLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/TestShip.cpp
