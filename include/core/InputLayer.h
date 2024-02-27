@@ -37,12 +37,20 @@ public:
    */
   void Tick(std::chrono::milliseconds const& delta) override {
     spdlog::trace("[InputLayer] Tick()");
-    for (auto controller : controllerList) {
+    for (auto controller : controllerList_) {
       controller->Tick(delta);
     }
 
     for (auto rawControllable : rawControllables_) {
       rawControllable->OnRawInput(delta);
+    }
+
+    for (auto controllerPtr : controllerPtrList_) {
+      controllerPtr->Tick(delta);
+    }
+
+    for (auto rawControllablePtr : rawControllablesPtrs_) {
+      rawControllablePtr->OnRawInput(delta);
     }
   }
 
@@ -51,11 +59,23 @@ public:
    * @param controller Input controller to add.
    */
   void AddController(std::shared_ptr<Akr::Input::InputController> controller) {
-    this->controllerList.push_back(controller);
+    this->controllerList_.push_back(controller);
   }
 
   void RegisterRawInputListener(std::shared_ptr<IControllable> controllable) {
     this->rawControllables_.push_back(controllable);
+  };
+
+  /**
+   * @brief Adds an input controller.
+   * @param controller Input controller to add.
+   */
+  void AddControllerPtr(Akr::Input::InputController* controller) {
+    this->controllerPtrList_.push_back(controller);
+  }
+
+  void RegisterRawInputListenerPtr(Akr::IControllable* controllable) {
+    this->rawControllablesPtrs_.push_back(controllable);
   };
 
   /**
@@ -65,8 +85,11 @@ public:
   b2Vec2 GetMouseScreenPosition() const { return b2Vec2(); }
 
 private:
-  std::vector<std::shared_ptr<Akr::Input::InputController>> controllerList; /**< List of input controllers. */
+  std::vector<std::shared_ptr<Akr::Input::InputController>> controllerList_; /**< List of input controllers. */
   std::vector<std::shared_ptr<Akr::IControllable>> rawControllables_;
+
+  std::vector<Akr::Input::InputController*> controllerPtrList_; /**< List of input controllers. */
+  std::vector<Akr::IControllable*> rawControllablesPtrs_;
 };
 
 }  // namespace Akr

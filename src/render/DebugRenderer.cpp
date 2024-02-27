@@ -1,9 +1,10 @@
 #include "DebugRenderer.h"
 #include "AllegroManager.h"
+#include "DrawArrowOperation.h"
+#include "DrawTextCommand.h"
+#include "DrawCrossOperation.h"
 
 namespace Akr::Renderer {
-
-DebugRenderer::DebugRenderer() = default;
 
 void DebugRenderer::Initialize() {
   // Initialize
@@ -17,13 +18,6 @@ void DebugRenderer::addCommand(std::shared_ptr<RenderCommand> cmd) {
   commands.emplace(cmd);
 }
 
-[[deprecated("Please, use the RenderCommand method, plz")]] void DebugRenderer::render() {
-  while (!commands.empty()) {
-    commands.front()->execute();
-    commands.pop();
-  }
-}
-
 std::shared_ptr<Renderer::RenderCommand> DebugRenderer::GenerateRenderCommand() {
   spdlog::trace("[DebugRenderer] DebugRenderer::GenerateRenderCommand()");
 
@@ -33,11 +27,11 @@ std::shared_ptr<Renderer::RenderCommand> DebugRenderer::GenerateRenderCommand() 
   return compositeCommand;
 }
 
-void DebugRenderer::DrawArrow(b2Vec2 const& origin, b2Vec2 const& destination, ALLEGRO_COLOR color) {
+void DebugRenderer::DrawArrowDebug(b2Vec2 const& origin, b2Vec2 const& destination, ALLEGRO_COLOR color) {
   addCommand(std::make_shared<DrawArrowCommand>(origin, destination, color));
 }
 
-void DebugRenderer::DrawText(std::string_view targetString, b2Vec2 screenSpacePosition, ALLEGRO_COLOR color) {
+void DebugRenderer::DrawTextDebug(std::string_view targetString, b2Vec2 screenSpacePosition, ALLEGRO_COLOR color) {
   spdlog::trace("[DebugRenderer] DebugRenderer::DrawText");
   addCommand(std::make_shared<DrawTextCommand>(targetString, screenSpacePosition, Akr::AllegroManager::mainFont, color));
 }

@@ -10,50 +10,64 @@
 
 namespace Akr {
 
+/**
+ * @brief The RendererLayer class manages rendering tasks and interacts with the rendering subsystem.
+ */
 class RendererLayer : public DataLayer {
 public:
-  inline Renderer::DebugRenderer& GetDebugRenderer() { return debugRenderer_; }
-  inline Renderer::CoreRenderer& GetCoreRenderer() { return renderer_; }
+    /**
+     * @brief Gets the debug renderer instance.
+     * @return A reference to the debug renderer.
+     */
+    inline Renderer::DebugRenderer& GetDebugRenderer() { return debugRenderer_; }
 
-  void Tick(std::chrono::milliseconds const& delta) override {
-    spdlog::trace("[RenderLayer] RendererLayer::Tick()");
+    /**
+     * @brief Gets the core renderer instance.
+     * @return A reference to the core renderer.
+     */
+    inline Renderer::CoreRenderer& GetCoreRenderer() { return renderer_; }
 
-    for(auto renderable : renderables_)
-    {
-      AddMainRenderCommand(renderable->GenerateRenderCommand());
-    }
+    /**
+     * @brief Performs rendering operations.
+     * @param delta The time elapsed since the last rendering update.
+     */
+    void Tick(std::chrono::milliseconds const& delta) override;
 
-    AddLateRenderCommand(debugRenderer_.GenerateRenderCommand());
+    /**
+     * @brief Registers an IRenderable object for rendering.
+     * @param _renderable The IRenderable object to register.
+     */
+    void RegisterRenderable(std::shared_ptr<Akr::IRenderable> _renderable);
 
-    renderer_.render();
-  }
+    /**
+     * @brief Registers an IRenderable pointer for rendering.
+     * @param _renderablePtr The pointer to the IRenderable object to register.
+     */
+    void RegisterRenderablePtr(Akr::IRenderable* _renderablePtr);
 
-  //IRenderables managment
-  void RegisterRenderable(std::shared_ptr<Akr::IRenderable> _renderable)
-  {
-    spdlog::trace("[RenderLayer] RendererLayer::RegisterRenderable()");
-    renderables_.push_back(_renderable);
-  }
+    /**
+     * @brief Adds a render command to be executed early in the rendering process.
+     * @param command The render command to add.
+     */
+    void AddEarlyRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command);
 
-  // CoreRenderer interface
-  void AddEarlyRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) {
-    spdlog::trace("[RenderLayer] RendererLayer::AddEarlyRenderCommand()");
-    renderer_.addEarlyRenderCommand(command);
-  }
-  void AddMainRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) {
+    /**
+     * @brief Adds a render command to be executed during the main rendering process.
+     * @param command The render command to add.
+     */
+    void AddMainRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command);
 
-    spdlog::trace("[RenderLayer] RendererLayer::AddMainRenderCommand()");
-    renderer_.addMainRenderCommand(command);
-  }
-  void AddLateRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) {
-
-    spdlog::trace("[RenderLayer] RendererLayer::AddLateRenderCommand()");
-    renderer_.addLateRenderCommand(command);
-  }
+    /**
+     * @brief Adds a render command to be executed late in the rendering process.
+     * @param command The render command to add.
+     */
+    void AddLateRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command);
 
 private:
-  Akr::Renderer::CoreRenderer renderer_;
-  Akr::Renderer::DebugRenderer debugRenderer_;
-  std::vector<std::shared_ptr<IRenderable>> renderables_;
+    Akr::Renderer::CoreRenderer renderer_; /**< The core renderer instance. */
+    Akr::Renderer::DebugRenderer debugRenderer_; /**< The debug renderer instance. */
+    std::vector<std::shared_ptr<IRenderable>> renderables_; /**< Vector of registered IRenderable objects. */
+    std::vector<IRenderable*> purePtrRenderables_; /**< Vector of pointers to registered IRenderable objects. */
 };
-} // namespace Akr
+
+}  // namespace Akr

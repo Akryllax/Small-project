@@ -4,6 +4,7 @@
 #include "NamedLayer.h"
 #include "PhysicsLayer.h"
 #include "Screen.h"
+#include "TestShip.h"
 #include "allegro5/allegro5.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
@@ -93,20 +94,12 @@ TEST_F(ScreenTest, ResizeScreenSize) {
 // Define a test fixture for NamedLayer
 class NamedLayerTest : public testing::Test {
 protected:
-  std::vector<Akr::Game::GObject*>
-      testNamedObjects;  // We keep the keep-alives here, and autodelete out-of-scope
+  std::vector<std::shared_ptr<Akr::Game::GObject>> testNamedObjects;  // Use shared_ptr for memory management
 
   void SetUp() override {
-    testNamedObjects.push_back(new Akr::Game::GObject("object1"));
-    testNamedObjects.push_back(new Akr::Game::GObject("object2"));
+    testNamedObjects.push_back(Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("object1"));
+    testNamedObjects.push_back(Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("object2"));
   }
-
-  void TearDown() override {
-    for (auto it : testNamedObjects) {
-      delete it;
-    }
-  };
-
 };
 
 // Test case for finding a named object
@@ -115,8 +108,8 @@ TEST_F(NamedLayerTest, FindNamedObject) {
   auto object2 = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("object2");
   auto nonExistentObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("non_existent");
 
-  ASSERT_TRUE(object1 != nullptr);             // Check if object1 exists
-  ASSERT_TRUE(object2 != nullptr);             // Check if object2 exists
+  ASSERT_TRUE(object1 != nullptr);            // Check if object1 exists
+  ASSERT_TRUE(object2 != nullptr);            // Check if object2 exists
   ASSERT_TRUE(nonExistentObject == nullptr);  // Check if non-existent object returns nullptr
 }
 
@@ -140,19 +133,19 @@ TEST_F(NamedLayerTest, UpdateObjectName) {
 
 // Test case for registering a new named object
 TEST_F(NamedLayerTest, RegisterNamedObject) {
-  auto newObj = new Akr::Game::GObject("New Object");
+  auto newObj = Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("New Object");
   testNamedObjects.push_back(newObj);
   auto newObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object");
 
   ASSERT_TRUE(newObject);  // Check if new object has been registered successfully
 
-  testNamedObjects.erase(--testNamedObjects.end());
+  testNamedObjects.pop_back(); // Remove the object after the test
 }
 
 // Test case for registering a duplicated named object
 TEST_F(NamedLayerTest, RegisterObjectWithDuplicatedName) {
-  auto oldObj = new Akr::Game::GObject("New Object");
-  auto newObj = new Akr::Game::GObject("New Object");
+  auto oldObj = Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("New Object");
+  auto newObj = Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("New Object");
 
   testNamedObjects.push_back(oldObj);
   testNamedObjects.push_back(newObj);
@@ -160,10 +153,14 @@ TEST_F(NamedLayerTest, RegisterObjectWithDuplicatedName) {
   auto foundOldObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object");
   auto foundNewObject = Akr::Core::GetDataLayer<Akr::NamedLayer>()->FindNamedObject("New Object_1");
 
-  ASSERT_TRUE(foundOldObject);                           // Check if old object hasn't been replace
+  ASSERT_TRUE(foundOldObject);                           // Check if old object hasn't been replaced
   ASSERT_TRUE(foundNewObject);                           // Check if new object has been registered successfully
   ASSERT_NE(foundOldObject, foundNewObject);             // Check they are different
   ASSERT_EQ(foundNewObject->GetName(), "New Object_1");  // Check if name of new object has been autoincremented
+
+  // Remove objects after the test
+  testNamedObjects.pop_back();
+  testNamedObjects.pop_back();
 }
 
 // Test case for ticking the named layer
@@ -171,6 +168,35 @@ TEST_F(NamedLayerTest, Tick) {
   // This test only checks if the Tick function runs without errors
   Akr::Core::GetDataLayer<Akr::NamedLayer>()->Tick(std::chrono::milliseconds(100));
   // Add more detailed tests if Tick function has specific behaviors to verify
+}
+
+// Test fixture for GameLayer
+class GameLayerTest : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // Initialize GameLayer
+    gameLayer.Initialize();
+  }
+
+  void TearDown() override {
+    // Clean up resources
+    gameLayer.Kill();
+  }
+
+  // Test GameLayer instance
+  Akr::GameLayer gameLayer;
+};
+
+// Test case to verify tracking of objects in GameLayer
+TEST_F(GameLayerTest, TrackedObjects) {
+  // Create a test GObject
+  auto gObject = Akr::Game::GObject::make_shared_gobject<Akr::TestShip>("TestObject");
+
+  // Track the test GObject in GameLayer
+  gameLayer.TrackGObject(gObject);
+
+  // Check if the test GObject is tracked in GameLayer
+  EXPECT_TRUE(gameLayer.IsGObjectTracked(gObject)) << "Test object should be tracked in GameLayer";
 }
 
 int main(int argc, char** argv) {

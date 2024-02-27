@@ -67,6 +67,6 @@ RawStringFormats:
     BasedOnStyle: Google
 
 # Increase the maximum line width to 120 characters
-ColumnLimit: 120
+ColumnLimit: 140
 
 CommentPragmas: "(@copydoc|@copybrief|@see|@overload|@snippet)"

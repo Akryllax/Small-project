@@ -8,6 +8,7 @@ namespace Akr::UI {
     pressed_ = false;
 
     textRect_ = Math::Rect::GetCenteredRect(buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(Akr::AllegroManager::mainFont, label_));
+    Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderablePtr(this);
   }
 
   void Button::OnRawInput(const std::chrono::milliseconds& delta) {

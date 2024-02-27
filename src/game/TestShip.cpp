@@ -7,6 +7,7 @@ TestShip::TestShip(std::string const& name) : RigidBody(name, &(Core::GetDataLay
   setBitmapResource(std::make_shared<BitmapResource>("1.png"));
   GetBitmapResource()->load();
   assert(body);
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderablePtr(this);
 }
 
 void TestShip::render() {
@@ -22,7 +23,7 @@ std::shared_ptr<Renderer::RenderCommand> TestShip::GenerateRenderCommand() {
   compositeCommand->QueueCommand(
       std::make_shared<Renderer::DrawBitmapOperation>(GetBitmapResource()->getBitmap(), rect));
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().DrawArrow(
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().DrawArrowDebug(
       this->GetBody()->GetPosition(), this->GetBody()->GetPosition() + this->GetBody()->GetLinearVelocity());
 
   return compositeCommand;

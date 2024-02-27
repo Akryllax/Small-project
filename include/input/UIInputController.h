@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core.h"
+#include "RendererLayer.h"
 #include "InputController.h"
 
 namespace Akr::Input {
@@ -16,9 +18,9 @@ public:
 
     al_get_mouse_state(&mouseState_);
 
-    auto coreRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
+    auto& coreRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
 
-    coreRenderer.DrawText(
+    coreRenderer.DrawTextDebug(
         fmt::format("mousePos: ({}, {})", mouseState_.x, mouseState_.y), b2Vec2(0, 0));
     coreRenderer.DrawCross(b2Vec2(500, 400));
   };

@@ -11,7 +11,7 @@ public:
 
   virtual void Initialize(){};
 
-  void Tick(std::chrono::milliseconds const& delta) override{};
+  void Tick(std::chrono::milliseconds const& delta) override {};
   virtual void Kill(){};
   virtual size_t GetExecPriority() const { return EXEC_PRIORITY; }
 
@@ -19,4 +19,4 @@ private:
   DataLayer& operator=(DataLayer const&) = delete;
   DataLayer(DataLayer const&) = delete;
 };
-} // namespace Akr
+}  // namespace Akr

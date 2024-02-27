@@ -11,6 +11,15 @@ if(WIN32)
     set(CMAKE_TOOLCHAIN_FILE "C:/buildtools/vcpkg/scripts/buildsystems/vcpkg.cmake")
 endif()
 
+# Check if ccache is available
+find_program(CCACHE_FOUND ccache)
+
+# If ccache is found, use it as a wrapper for the compiler
+if(CCACHE_FOUND)
+    set(CMAKE_CXX_COMPILER_LAUNCHER "ccache")
+    message(STATUS "ccache found, using it for the compiler")
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     # Disable deprecated warnings for GCC
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
@@ -30,7 +39,7 @@ find_package(box2d REQUIRED)
 # Define a function to construct the path
 function(CONSTRUCT_INCLUDE_PATH PARAMETER)
     set(INCLUDE_PATH "C:/buildtools/vcpkg/packages/${PARAMETER}_x64-windows/include/")
-    message(STATUS "Constructed include path: ${INCLUDE_PATH}")
+    # message(STATUS "Constructed include path: ${INCLUDE_PATH}")
     # Return the constructed path
     set(${PARAMETER}_INCLUDE_PATH ${INCLUDE_PATH} PARENT_SCOPE)
     # Return the constructed path directly for use in the list
@@ -67,8 +76,10 @@ include_directories(
 # Add your source files here
 set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/common/INamedObject.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/IRenderable.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/RendererLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
     ${CMAKE_SOURCE_DIR}/src/game/NamedLayer.cpp

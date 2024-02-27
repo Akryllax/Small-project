@@ -30,7 +30,7 @@ find_package(box2d REQUIRED)
 # Define a function to construct the path
 function(CONSTRUCT_INCLUDE_PATH PARAMETER)
     set(INCLUDE_PATH "C:/buildtools/vcpkg/packages/${PARAMETER}_x64-windows/include/")
-    message(STATUS "Constructed include path: ${INCLUDE_PATH}")
+    # message(STATUS "Constructed include path: ${INCLUDE_PATH}")
     # Return the constructed path
     set(${PARAMETER}_INCLUDE_PATH ${INCLUDE_PATH} PARENT_SCOPE)
     # Return the constructed path directly for use in the list
@@ -47,8 +47,10 @@ CONSTRUCT_INCLUDE_PATH("spdlog")
 # Add your source files here
 set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/common/INamedObject.cpp
+    ${CMAKE_SOURCE_DIR}/src/common/IRenderable.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/RendererLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp
     ${CMAKE_SOURCE_DIR}/src/game/NamedLayer.cpp
@@ -242,6 +244,17 @@ add_custom_command(
     ${CMAKE_SOURCE_DIR}/build/ut/res
 )
 ##                     AKR COMMON GAME UT                   ##
+##############################################################
+
+##############################################################
+##                     AKR CODE PLAYGROUND                  ##
+
+
+add_executable(playground
+    playground.cpp
+)
+
+##                     AKR CODE PLAYGROUND                  ##
 ##############################################################
 
 include(CTest)

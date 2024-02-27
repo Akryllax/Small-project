@@ -3,6 +3,7 @@
 #include "CompositeRenderCommand.h"
 #include "DebugRenderer.h"
 #include "DrawBitmapOperation.h"
+#include "GObject.h"
 #include "IControllable.h"
 #include "IRenderable.h"
 #include "PhysicsLayer.h"
@@ -22,13 +23,13 @@ namespace Akr {
 /**
  * @brief The TestShip class represents a test ship entity in the game.
  */
-class TestShip : public RigidBody, public IRenderable, public IControllable {
+class TestShip : public Game::GObject, public RigidBody, public IRenderable, public IControllable {
 public:
   /**
    * @brief Constructs a new TestShip object with the specified name.
    * @param name The name of the test ship.
    */
-  explicit TestShip(std::string const& name);
+  TestShip(std::string const& name);
 
   /**
    * @brief Default destructor for the TestShip class.

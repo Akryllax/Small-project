@@ -1,9 +1,9 @@
 #include "GObject.h"
 #include "GObject.h"  // Include the header file that defines Akr::Game::GObject
-#include "Tree.h"     // Include the header file that defines Tree and TreeNode
+#include "Scene.h"
+#include "Tree.h"  // Include the header file that defines Tree and TreeNode
 #include <gtest/gtest.h>
 #include <memory>
-
 
 // Define your test fixture
 class TreeTest : public ::testing::Test {
@@ -25,9 +25,9 @@ protected:
 // Define test cases to test different functionalities of the Tree class
 TEST_F(TreeTest, InsertAndFind) {
   // Insert nodes into the tree
-  tree_.insert("node1", std::make_shared<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
-  tree_.insert("node2", std::make_shared<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
-  tree_.insert("node3", std::make_shared<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
+  tree_.insert("node1", Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
+  tree_.insert("node2", Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
+  tree_.insert("node3", Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>(/* Initialize Akr::Game::GObject parameters */));
 
   // Find nodes in the tree
   auto node1 = tree_.find("node1");
@@ -41,8 +41,75 @@ TEST_F(TreeTest, InsertAndFind) {
 
   // Optionally, add more assertions to test other functionalities
 }
+// Define a fixture for the Scene tests
+class SceneTest : public ::testing::Test {
+protected:
+  void SetUp() override {
+    // Initialize any objects or variables needed for the tests
+    scene.AddRootObject(Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("testObject"));
+  }
 
-// You can define more test cases here to cover other functionalities of the Tree class
+  // Declare any objects or variables needed for the tests
+  Akr::Game::Scene scene;
+};
+
+// Test case for adding a GameObject to the scene
+TEST_F(SceneTest, AddToScene) {
+  // Add a new GameObject to the scene
+  scene.AddToScene(Akr::Game::GObject::make_shared_gobject<Akr::Game::GObject>("newObject"));
+
+  // Verify that the GameObject is added to the scene
+  ASSERT_TRUE(scene.FindInScene("newObject") != nullptr);
+}
+
+// Test case for removing a GameObject from the scene
+TEST_F(SceneTest, RemoveRootObject) {
+  // Remove the root GameObject from the scene
+  scene.RemoveRootObject("testObject");
+
+  // Verify that the root GameObject is removed from the scene
+  ASSERT_TRUE(scene.FindInScene("testObject") == nullptr);
+}
+
+// Test case for finding a GameObject in the scene
+TEST_F(SceneTest, FindInScene) {
+  // Find a GameObject in the scene
+  auto gameObject = scene.FindInScene("testObject");
+
+  // Verify that the GameObject is found in the scene
+  ASSERT_TRUE(gameObject != nullptr);
+  ASSERT_EQ(gameObject->GetName(), "testObject");
+}
+
+// Test case for deleting a GameObject from the scene
+TEST_F(SceneTest, DeleteGObject) {
+  // Find the GameObject to delete
+  auto gameObject = scene.FindInScene("testObject");
+
+  // Delete the GameObject from the scene
+  scene.DeleteGObject(gameObject);
+
+  // Verify that the GameObject is deleted from the scene
+  ASSERT_TRUE(scene.FindInScene("testObject") == nullptr);
+}
+
+// Test case for getting the root GameObject of the scene
+TEST_F(SceneTest, GetRootObject) {
+  // Get the root GameObject of the scene
+  auto& rootObject = scene.GetRootObject();
+
+  // Verify that the correct root GameObject is returned
+  ASSERT_EQ(rootObject.GetName(), "root");
+}
+
+// Test case for getting the root TreeNode of the scene
+TEST_F(SceneTest, GetTreeRoot) {
+  // Get the root TreeNode of the scene
+  auto treeRoot = scene.GetTreeRoot();
+
+  // Verify that the correct root TreeNode is returned
+  ASSERT_TRUE(treeRoot != nullptr);
+}
 
 // Define the main function to run the tests
 int main(int argc, char** argv) {

@@ -7,7 +7,7 @@
 namespace Akr {
 class IRenderable {
 public:
-  IRenderable() = default;
+  IRenderable();
   virtual ~IRenderable() = default;
 
   [[deprecated("SetBitmapResource is deprecated. Use RendererCommand generator instead.")]]
@@ -29,5 +29,7 @@ public:
 
 private:
   std::shared_ptr<BitmapResource> bitmapResource;
+
+  IRenderable(const IRenderable&) = delete;
 };
 }  // namespace Akr

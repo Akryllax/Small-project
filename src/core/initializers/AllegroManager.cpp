@@ -1,6 +1,8 @@
 #include "AllegroManager.h"
 #include "Configuration.h"
 #include "Core.h"
+#include "CoreManager.h"
+#include "DevScene.h"
 #include "InputLayer.h"
 #include "LocationLayer.h"
 #include "Logger.h"
@@ -15,6 +17,7 @@
 #include "allegro5/display.h"
 #include "allegro5/events.h"
 #include "allegro5/timer.h"
+#include <memory>
 
 namespace Akr {
 
@@ -93,6 +96,9 @@ int AllegroManager::Run() {
   spdlog::trace("[AllegroManager] Run() triggered");
 
   LoadDevScene();
+  // CoreManager::SetActiveScene(CoreManager::LoadScene(std::make_shared<Game::DevScene>()));
+  // CoreManager::StartActiveScene();
+
   MainLoop();
 
   return 0;
@@ -187,16 +193,16 @@ void AllegroManager::CreateEventAndTimers() {
 
 void AllegroManager::LoadDevScene() {
   // Initialize test ship
-  auto testShip = std::make_shared<Akr::TestShip>("a");
+  auto testShip = new Akr::TestShip("a");
   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   testShip->GetBody()->SetAngularVelocity(std::cos(5 * ALLEGRO_PI / 180.0f));
   testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
+  // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 
   // Initialize button
   // int x, int y, int width, int height,
-  auto resetShipDbgButton = std::make_shared<Akr::UI::Button>(0, 400, 200, 40, "Reset ship");
+  auto resetShipDbgButton = new Akr::UI::Button(0, 400, 200, 40, "Reset ship");
   resetShipDbgButton->SetOnClick([&]() {
     spdlog::trace("Reseting ship position!");
     testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
@@ -204,7 +210,7 @@ void AllegroManager::LoadDevScene() {
 
   const float impulseMultiplier = 300;
 
-  auto addRandomImpulseShipDbgButton = std::make_shared<Akr::UI::Button>(0, 450, 200, 40, "Add random impulse");
+  auto addRandomImpulseShipDbgButton = new Akr::UI::Button(0, 450, 200, 40, "Add random impulse");
   addRandomImpulseShipDbgButton->SetOnClick([&]() {
     // Generate random impulse values in the range of -80 to 80
     float impulseX = (Akr::Math::Utils::getRandomInRange(-100.0f, 100.0f) / 100.0f) * impulseMultiplier;
@@ -216,11 +222,11 @@ void AllegroManager::LoadDevScene() {
     testShip->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
   });
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
-  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(resetShipDbgButton);
+  // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(resetShipDbgButton);
 
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
-  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListener(addRandomImpulseShipDbgButton);
+  // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
+  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(addRandomImpulseShipDbgButton);
 }
 
 }  // namespace Akr
