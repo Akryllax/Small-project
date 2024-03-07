@@ -10,6 +10,7 @@
 #include "PhysicsLayer.h"
 #include "Random.h"
 #include "RendererLayer.h"
+#include "Scene.h"
 #include "Screen.h"
 #include "UIInputController.h"
 #include "allegro5/allegro_font.h"
@@ -43,8 +44,7 @@ void AllegroManager::HandleEngineLoopTick() {
   al_wait_for_event(AllegroManager::mainQueue, &event);
 
   auto currentTime = std::chrono::high_resolution_clock::now();
-  std::chrono::milliseconds deltaTick =
-      std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
+  std::chrono::milliseconds deltaTick = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - applicationEpoch);
 
   if (event.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
     // Handle display close event
@@ -62,22 +62,16 @@ void AllegroManager::HandleEngineLoopTick() {
     al_set_target_backbuffer(AllegroManager::systemDisplay);
     al_clear_to_color(al_map_rgb(0, 0, 0));
 
-    float scaleX = al_get_display_width(AllegroManager::systemDisplay) /
-                   (float)al_get_bitmap_width(AllegroManager::internalBuffer);
-    float scaleY = al_get_display_height(AllegroManager::systemDisplay) /
-                   (float)al_get_bitmap_height(AllegroManager::internalBuffer);
+    float scaleX = al_get_display_width(AllegroManager::systemDisplay) / (float)al_get_bitmap_width(AllegroManager::internalBuffer);
+    float scaleY = al_get_display_height(AllegroManager::systemDisplay) / (float)al_get_bitmap_height(AllegroManager::internalBuffer);
     float scale = fmin(scaleX, scaleY);
 
-    al_draw_scaled_bitmap(AllegroManager::internalBuffer, 0, 0, al_get_bitmap_width(AllegroManager::internalBuffer),
-                          al_get_bitmap_height(AllegroManager::internalBuffer),
-                          (al_get_display_width(AllegroManager::systemDisplay) -
-                           scale * al_get_bitmap_width(AllegroManager::internalBuffer)) /
-                              2,
-                          (al_get_display_height(AllegroManager::systemDisplay) -
-                           scale * al_get_bitmap_height(AllegroManager::internalBuffer)) /
-                              2,
-                          scale * al_get_bitmap_width(AllegroManager::internalBuffer),
-                          scale * al_get_bitmap_height(AllegroManager::internalBuffer), 0);
+    al_draw_scaled_bitmap(
+        AllegroManager::internalBuffer, 0, 0, al_get_bitmap_width(AllegroManager::internalBuffer),
+        al_get_bitmap_height(AllegroManager::internalBuffer),
+        (al_get_display_width(AllegroManager::systemDisplay) - scale * al_get_bitmap_width(AllegroManager::internalBuffer)) / 2,
+        (al_get_display_height(AllegroManager::systemDisplay) - scale * al_get_bitmap_height(AllegroManager::internalBuffer)) / 2,
+        scale * al_get_bitmap_width(AllegroManager::internalBuffer), scale * al_get_bitmap_height(AllegroManager::internalBuffer), 0);
 
     al_flip_display();
   }
@@ -161,8 +155,7 @@ void AllegroManager::CreateDisplay() {
 
 void AllegroManager::LoadBasicResources() {
   // Load a font.
-  spdlog::info("Loading font: {}",
-               Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str());
+  spdlog::info("Loading font: {}", Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str());
   AllegroManager::mainFont =
       al_load_ttf_font(Akr::Resource::GetResourceFolderPath().append("FiraMono-Regular.ttf").string().c_str(), 12, 0);
   if (!AllegroManager::mainFont) {
@@ -192,41 +185,44 @@ void AllegroManager::CreateEventAndTimers() {
 }
 
 void AllegroManager::LoadDevScene() {
-  // Initialize test ship
-  auto testShip = new Akr::TestShip("a");
-  testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
-  testShip->GetBody()->SetAngularVelocity(std::cos(5 * ALLEGRO_PI / 180.0f));
-  testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
+  auto devScene = std::make_shared<Game::DevScene>();
+
+  Akr::CoreManager::SetActiveScene(devScene);
+  Akr::CoreManager::StartActiveScene();
+
+  // // Initialize test ship
+  // auto testShip = new Akr::TestShip("a");
+  // testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
+  // testShip->GetBody()->SetAngularVelocity(std::cos(5 * ALLEGRO_PI / 180.0f));
+  // testShip->GetBody()->SetLinearVelocity(b2Vec2(20, 20));
 
   // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(testShip);
 
   // Initialize button
   // int x, int y, int width, int height,
-  auto resetShipDbgButton = new Akr::UI::Button(0, 400, 200, 40, "Reset ship");
-  resetShipDbgButton->SetOnClick([&]() {
-    spdlog::trace("Reseting ship position!");
-    testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
-  });
+  // auto resetShipDbgButton = new Akr::UI::Button(0, 400, 200, 40, "Reset ship");
+  // resetShipDbgButton->SetOnClick([&]() {
+  //   spdlog::trace("Reseting ship position!");
+  //   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
+  // });
 
-  const float impulseMultiplier = 300;
 
-  auto addRandomImpulseShipDbgButton = new Akr::UI::Button(0, 450, 200, 40, "Add random impulse");
-  addRandomImpulseShipDbgButton->SetOnClick([&]() {
-    // Generate random impulse values in the range of -80 to 80
-    float impulseX = (Akr::Math::Utils::getRandomInRange(-100.0f, 100.0f) / 100.0f) * impulseMultiplier;
-    float impulseY = (Akr::Math::Utils::getRandomInRange(-100.0f, 100.0f) / 100.0f) * impulseMultiplier;
+  // auto loadDevScene1 = new Akr::UI::Button(0, 500, 200, 40, "Load DevScene1");
+  // loadDevScene1->SetOnClick([&]() {
+  //   auto devScene = std::make_shared<Game::DevScene>();
 
-    spdlog::trace("Adding impulse: (dX: {}, dY: {})", impulseX, impulseY);
+  //   Akr::CoreManager::SetActiveScene(devScene);
+  //   Akr::CoreManager::StartActiveScene();
+  // });
 
-    // Apply the random impulse to the ship's body
-    testShip->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
-  });
+  // // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
+  // Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(resetShipDbgButton);
 
-  // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(resetShipDbgButton);
-  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(resetShipDbgButton);
+  // // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(loadDevScene1);
+  // Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(loadDevScene1);
 
-  // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
-  Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(addRandomImpulseShipDbgButton);
+  // // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
+  // Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(addRandomImpulseShipDbgButton);
 }
 
 }  // namespace Akr

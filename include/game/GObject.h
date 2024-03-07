@@ -16,7 +16,7 @@ class GObject : public Common::INamedObject, private std::enable_shared_from_thi
 public:
   GObject();
   GObject(std::string const& name) : Common::INamedObject(name), name_(name){};
-  virtual ~GObject() { Core::GetDataLayer<GameLayer>()->UntrackGObject(shared_from_this()); };
+  virtual ~GObject() { };
 
   b2Transform const& GetTransform() const;
 

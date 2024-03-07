@@ -90,10 +90,10 @@ public:
    */
   bool remove(K const& key) { return remove(root_, key); }
 
-   /**
-    * @brief Get the root TreeNode of this Tree.
-    * @return const reference to root TreeNode
-    */
+  /**
+   * @brief Get the root TreeNode of this Tree.
+   * @return const reference to root TreeNode
+   */
   std::shared_ptr<TreeNode<K, V>> const& root() { return root_; }
 
 private:
@@ -173,6 +173,20 @@ private:
 
     return false;  // Node not found
   }
-};
 
+  void clear() { clear(root_); }
+
+private:
+  void clear(std::shared_ptr<TreeNode<K, V>>& node) {
+    if (!node) {
+      return;
+    }
+
+    for (auto child : node->children) {
+      clear(child);
+    }
+
+    node.reset();  // Release memory
+  }
+};
 }  // namespace Akr::Common

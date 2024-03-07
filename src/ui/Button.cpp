@@ -46,7 +46,7 @@ namespace Akr::UI {
     mouseWasOverButton_ = isMouseOverButton;
   }
 
-  bool Button::isMouseOver(int mouseX, int mouseY) {
+  bool Button::isMouseOver(int mouseX, int mouseY) const {
     return mouseX >= buttonRect_.x && mouseX <= buttonRect_.x + buttonRect_.w && mouseY >= buttonRect_.y &&
            mouseY <= buttonRect_.y + buttonRect_.h;
   }

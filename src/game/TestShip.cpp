@@ -2,7 +2,7 @@
 
 namespace Akr {
 
-TestShip::TestShip(std::string const& name) : RigidBody(name, &(Core::GetDataLayer<PhysicsLayer>()->GetBox2DWorld())) {
+TestShip::TestShip(std::string const& name) : Game::GObject(name), RigidBody(name, &(Core::GetDataLayer<PhysicsLayer>()->GetBox2DWorld())) {
   starshipDef.type = b2_dynamicBody;
   setBitmapResource(std::make_shared<BitmapResource>("1.png"));
   GetBitmapResource()->load();

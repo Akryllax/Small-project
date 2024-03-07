@@ -40,6 +40,10 @@ std::shared_ptr<Game::Scene> CoreManager::LoadScene(std::shared_ptr<Game::Scene>
 std::shared_ptr<Game::Scene> CoreManager::GetActiveScene() { return CoreManager::activeScene_; }
 
 void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
+  if (IsSceneLoaded(GetActiveScene())) {
+    UnloadScene(activeScene_);
+  }
+
   // Check if the scene is not already in loadedScenes_
   if (!IsSceneLoaded(scene)) {
     // Load the scene
@@ -53,6 +57,18 @@ void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
   } else {
     // Scene is already loaded, set it as the active scene
     CoreManager::activeScene_ = scene;
+  }
+}
+
+int CoreManager::UnloadScene(std::shared_ptr<Game::Scene> scene) {
+  if (IsSceneLoaded(scene)) {
+    scene->Save();
+    scene->Unload();
+    CoreManager::loadedScenes_.erase(std::remove(CoreManager::loadedScenes_.begin(), CoreManager::loadedScenes_.end(), scene),
+                                     CoreManager::loadedScenes_.end());
+    return 0;
+  } else {
+    return 1;
   }
 }
 

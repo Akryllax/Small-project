@@ -30,7 +30,7 @@ namespace Akr {
             namedObjects_[newName] = namedObject;
             // Update the object's name so it is reflected everywhere
             namedObject->SetName(newName);
-            spdlog::warn("Object with name '{}' already registered. Auto-incremented to '{}'.", name, newName);
+            spdlog::warn("[NamedLayer] Object with name '{}' already registered. Auto-incremented to '{}'.", name, newName);
         }
 
         spdlog::trace("[NamedLayer] Final vector size: {}", namedObjects_.size());
@@ -41,7 +41,7 @@ namespace Akr {
         if (it != namedObjects_.end()) {
             return it->second;
         } else {
-            spdlog::warn("Object with name '{}' not found.", name);
+            spdlog::warn("[NamedLayer] Object with name '{}' not found.", name);
             return nullptr;
         }
     }
@@ -51,7 +51,7 @@ namespace Akr {
         if (it != namedObjects_.end()) {
             namedObjects_.erase(it);
         } else {
-            spdlog::warn("Object with name '{}' not found for removal.", name);
+            spdlog::warn("[NamedLayer] Object with name '{}' not found for removal.", name);
         }
     }
 
@@ -62,7 +62,7 @@ namespace Akr {
             namedObjects_[newName] = it->second;
             namedObjects_.erase(it);  // Remove the old key
         } else {
-            spdlog::warn("Object with name '{}' not found for update.", oldName);
+            spdlog::warn("[NamedLayer] Object with name '{}' not found for update.", oldName);
         }
     }
 }  // namespace Akr

@@ -12,36 +12,36 @@
 #include <string>
 
 namespace Akr::UI {
-    class Button : public IControllable, public IRenderable {
-    public:
-      Button(int x, int y, int width, int height, const char* label);
+class Button : public IControllable, public IRenderable {
+public:
+  Button(int x, int y, int width, int height, char const* label);
 
-      void OnRawInput(std::chrono::milliseconds const& delta) override;
+  void OnRawInput(std::chrono::milliseconds const& delta) override;
 
-      bool isMouseOver(int mouseX, int mouseY);
+  bool isMouseOver(int mouseX, int mouseY) const;
 
-      void SetOnClick(std::function<void()> onClick);
+  void SetOnClick(std::function<void()> onClick);
 
-      virtual void TakeControl() override{};
-      virtual void ReleaseControl() override{};
+  void TakeControl() override{/* Override to implement custom functionality */};
+  void ReleaseControl() override{/* Override to implement custom functionality */};
 
-      virtual void OnEvent() override{};
+  void OnEvent() override{/* Override to implement custom functionality */};
 
-      virtual std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override;
+  std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override;
 
-      void release();
+  void release();
 
-    private:
-      void handleClick();
-      void OnClick();
+private:
+  void handleClick();
+  void OnClick();
 
-      std::string label_;
-      Math::Rect buttonRect_;
-      Math::Rect textRect_;
+  std::string label_;
+  Math::Rect buttonRect_;
+  Math::Rect textRect_;
 
-      bool pressed_;
-      bool mouseWasOverButton_;
+  bool pressed_;
+  bool mouseWasOverButton_;
 
-      std::function<void()> onClick_;
-    };
-} // namespace Akr::UI
+  std::function<void()> onClick_;
+};
+}  // namespace Akr::UI

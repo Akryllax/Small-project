@@ -37,12 +37,12 @@ public:
   /**
    * @brief Unloads the currently active scene.
    */
-  static int UnloadScene() { throw NotImplementedException(); };
+  static int UnloadScene(std::shared_ptr<Game::Scene> scene);
 
   /**
    * @brief Saves the currently active scene.
    */
-  static bool SaveScene() { throw NotImplementedException(); };
+  static bool SaveScene(std::shared_ptr<Game::Scene> scene) { throw NotImplementedException(); };
 
   /**
    * @brief Gets the active scene.
