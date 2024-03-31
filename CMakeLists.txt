@@ -63,10 +63,12 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/game
     ${CMAKE_SOURCE_DIR}/include/game/common
     ${CMAKE_SOURCE_DIR}/include/game/demo
+    ${CMAKE_SOURCE_DIR}/include/game/simulation
     ${CMAKE_SOURCE_DIR}/include/input
     ${CMAKE_SOURCE_DIR}/include/math
     ${CMAKE_SOURCE_DIR}/include/render
     ${CMAKE_SOURCE_DIR}/include/render/operations
+    ${CMAKE_SOURCE_DIR}/include/render/operations/debug
     ${CMAKE_SOURCE_DIR}/include/system
     ${CMAKE_SOURCE_DIR}/include/ui
     ${EXTERNAL_INCLUDES}
@@ -79,6 +81,7 @@ set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/common/IRenderable.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/Core.cpp
     ${CMAKE_SOURCE_DIR}/src/core/RendererLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp

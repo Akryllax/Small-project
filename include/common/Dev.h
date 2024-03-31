@@ -61,7 +61,7 @@ struct IsDerivedFrom {
  * @note This macro uses std::enable_if to perform the type checking at compile-time.
  */
 #define IS_CHILD_OF_TYPE_ARGS_T(Type) \
-  template <typename T, typename... Args, std::enable_if_t<Akr::Common::IsDerivedFromV<T, Type>::value, int> = 0>
+  template <typename T, typename... Args, std::enable_if_t<Akr::IsDerivedFrom<T, Type>::value, int> = 0>
 
 /**
  * @brief Macro to enable SFINAE (Substitution Failure Is Not An Error) technique to check if a type is derived from another type with

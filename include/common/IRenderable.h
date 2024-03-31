@@ -31,5 +31,6 @@ private:
   std::shared_ptr<BitmapResource> bitmapResource;
 
   IRenderable(const IRenderable&) = delete;
+  IRenderable& operator=(const IRenderable&) = delete;
 };
 }  // namespace Akr

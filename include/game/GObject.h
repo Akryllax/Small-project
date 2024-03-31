@@ -16,7 +16,7 @@ class GObject : public Common::INamedObject, private std::enable_shared_from_thi
 public:
   GObject();
   GObject(std::string const& name) : Common::INamedObject(name), name_(name){};
-  virtual ~GObject() { };
+  virtual ~GObject() = default;
 
   b2Transform const& GetTransform() const;
 
@@ -40,6 +40,7 @@ private:
 
   // Protect from accidental copy
   GObject(GObject const&) = delete;
+  GObject& operator=(GObject const&) = delete;
 };
 
 }  // namespace Akr::Game
