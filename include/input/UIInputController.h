@@ -18,11 +18,11 @@ public:
 
     al_get_mouse_state(&mouseState_);
 
-    auto& coreRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
+    auto& debugRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
 
-    coreRenderer.DrawTextDebug(
+    debugRenderer.DrawTextDebug(
         fmt::format("mousePos: ({}, {})", mouseState_.x, mouseState_.y), b2Vec2(0, 0));
-    coreRenderer.DrawCross(b2Vec2(500, 400));
+    debugRenderer.DrawCross(b2Vec2(500, 400));
   };
 };
 } // namespace Akr::Input

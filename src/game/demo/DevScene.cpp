@@ -25,8 +25,9 @@ void DevScene::OnStart() {
 };
 
 void DevScene::OnLoad() {
-  /// GAME OBJECTS
+  auto uiRect = new Akr::UI::UIRectangle(0, 0, 100, 100, al_map_rgb(255, 0, 0), 0.1f);
 
+  /// GAME OBJECTS
   ships[0] = GObject::make_shared_gobject<TestShip>("testShip1");
   ships[1] = GObject::make_shared_gobject<TestShip>("testShip2");
   ships[2] = GObject::make_shared_gobject<TestShip>("testShip3");
@@ -36,7 +37,6 @@ void DevScene::OnLoad() {
   ships[2]->GetBody()->SetTransform(b2Vec2(400, 300), 0);
 
   /// UI ELEMENTS
-
   auto resetShipDbgButton = new Akr::UI::Button(0, 400, 200, 40, "Reset ship");
   resetShipDbgButton->SetOnClick([&]() {
     spdlog::trace("Reseting ship position!");
@@ -58,7 +58,6 @@ void DevScene::OnLoad() {
     ships[0]->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
   });
 
-  auto uiRect = new Akr::UI::UIRectangle(0, 0, 100, 100, al_map_rgb(255, 0, 0), 1.0f);
 
   /// ADD TO SCENE
 
@@ -89,11 +88,11 @@ void DevScene::OnUnload() {
 };
 
 void DevScene::Tick(std::chrono::milliseconds const& delta) {
-  auto& coreRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
+  auto& debugRenderer = Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer();
 
   auto frameCount = Akr::Core::GetFrameCount();
 
-  coreRenderer.DrawCross(b2Vec2(200.f + 20 * static_cast<float>(frameCount) * 1.f/60.f, 400.f), al_map_rgb(255, 255, 255));
+  debugRenderer.DrawCross(b2Vec2(200.f + 20 * static_cast<float>(frameCount) * 1.f / 60.f, 400.f), al_map_rgb(255, 255, 255));
 };
 
 }  // namespace Akr::Game

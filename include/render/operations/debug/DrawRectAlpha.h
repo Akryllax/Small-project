@@ -9,9 +9,9 @@
 namespace Akr::Renderer {
 class DrawRectAlphaOperation : public RenderCommand {
 public:
-  DrawRectAlphaOperation(ALLEGRO_COLOR color, Akr::Math::Rect const& rect, float alpha,
+  DrawRectAlphaOperation(ALLEGRO_COLOR color, Akr::Math::Rect const& rect, float alpha = 1.f,
                          RenderCommandPriority const& _renderPriority = RenderCommand::RenderCommandPriority::DEFAULT)
-      : RenderCommand(_renderPriority), color_(color), rect_(rect), alpha_(alpha){};
+      : RenderCommand(_renderPriority), rect_(rect), color_(color), alpha_(alpha){};
 
   void execute() override {
     al_draw_filled_rectangle(rect_.x, rect_.y, rect_.x + rect_.w, rect_.y + rect_.h, al_map_rgba_f(color_.r, color_.g, color_.b, alpha_));

@@ -1,4 +1,5 @@
 #include "CoreManager.h"
+#include "ActiveSceneLayer.h"
 #include "Configuration.h"
 #include "Core.h"
 #include "GameLayer.h"
@@ -19,6 +20,7 @@ int CoreManager::Initialize() {
   Akr::Logger::Init();
 
   Akr::Core::GetInstance().AddDataLayer<Akr::GameLayer>();
+  Akr::Core::GetInstance().AddDataLayer<Akr::ActiveSceneLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::InputLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::LocationLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::NamedLayer>();
@@ -50,6 +52,7 @@ void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
     if (LoadScene(scene)) {
       // Scene loaded successfully, set it as the active scene
       CoreManager::activeScene_ = scene;
+      Core::GetDataLayer<ActiveSceneLayer>()->SetActiveScene(scene);
     } else {
       // Scene loading failed
       spdlog::error("Failed to set active scene: Scene loading failed.");
@@ -62,6 +65,10 @@ void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
 
 int CoreManager::UnloadScene(std::shared_ptr<Game::Scene> scene) {
   if (IsSceneLoaded(scene)) {
+    if (scene == CoreManager::activeScene_) {
+      CoreManager::activeScene_ = nullptr;
+    }
+
     scene->Save();
     scene->Unload();
     CoreManager::loadedScenes_.erase(std::remove(CoreManager::loadedScenes_.begin(), CoreManager::loadedScenes_.end(), scene),

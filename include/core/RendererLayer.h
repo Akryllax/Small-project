@@ -3,6 +3,7 @@
 #include "CoreRenderer.h"
 #include "DataLayer.h"
 #include "DebugRenderer.h"
+#include "UiRenderer.h"
 #include "IRenderable.h"
 #include "RenderCommand.h"
 #include <memory>
@@ -20,6 +21,12 @@ public:
      * @return A reference to the debug renderer.
      */
     inline Renderer::DebugRenderer& GetDebugRenderer() { return debugRenderer_; }
+
+    /**
+     * @brief Gets the debug renderer instance.
+     * @return A reference to the debug renderer.
+     */
+    inline Renderer::UiRenderer& GetUiRenderer() { return uiRenderer_; }
 
     /**
      * @brief Gets the core renderer instance.
@@ -46,6 +53,12 @@ public:
     void RegisterRenderablePtr(Akr::IRenderable* _renderablePtr);
 
     /**
+     * @brief Registers an IRenderable pointer for rendering.
+     * @param _renderablePtr The pointer to the IRenderable object to register.
+     */
+    void RegisterUIRenderablePtr(Akr::IRenderable* _renderablePtr);
+
+    /**
      * @brief Adds a render command to be executed early in the rendering process.
      * @param command The render command to add.
      */
@@ -66,8 +79,11 @@ public:
 private:
     Akr::Renderer::CoreRenderer renderer_; /**< The core renderer instance. */
     Akr::Renderer::DebugRenderer debugRenderer_; /**< The debug renderer instance. */
+    Akr::Renderer::UiRenderer uiRenderer_; /**< The UI renderer instance. */
+
     std::vector<std::shared_ptr<IRenderable>> renderables_; /**< Vector of registered IRenderable objects. */
     std::vector<IRenderable*> purePtrRenderables_; /**< Vector of pointers to registered IRenderable objects. */
+    std::vector<IRenderable*> pureUIPtrRenderables_; /**< Vector of pointers to registered IRenderable objects. */
 };
 
 }  // namespace Akr

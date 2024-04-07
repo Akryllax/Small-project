@@ -25,8 +25,20 @@ void RendererLayer::Tick(std::chrono::milliseconds const& delta) {
     }
   }
 
+  // Generate render commands for UI registered renderable pointers
+  for (auto* renderableUIIt : pureUIPtrRenderables_) {
+    if (renderableUIIt) {
+      auto renderCommand = renderableUIIt->GenerateRenderCommand();
+      if (renderCommand) {
+        AddMainRenderCommand(renderCommand);
+      }
+    }
+  }
+
+
   // Add late render command from debug renderer
   AddLateRenderCommand(debugRenderer_.GenerateRenderCommand());
+  AddLateRenderCommand(uiRenderer_.GenerateRenderCommand());
 
   // Perform rendering
   renderer_.render();
@@ -39,8 +51,12 @@ void RendererLayer::RegisterRenderable(std::shared_ptr<Akr::IRenderable> _render
 
 void RendererLayer::RegisterRenderablePtr(Akr::IRenderable* _renderablePtr) {
   spdlog::trace("[RenderLayer] RendererLayer::RegisterRenderable()");
-  if(_renderablePtr)
-  purePtrRenderables_.push_back(_renderablePtr);
+  if (_renderablePtr) purePtrRenderables_.push_back(_renderablePtr);
+}
+
+void RendererLayer::RegisterUIRenderablePtr(Akr::IRenderable* _renderablePtr) {
+  spdlog::trace("[RenderLayer] RendererLayer::RegisterUIRenderablePtr()");
+  if (_renderablePtr) pureUIPtrRenderables_.push_back(_renderablePtr);
 }
 
 void RendererLayer::AddEarlyRenderCommand(std::shared_ptr<Akr::Renderer::RenderCommand> command) {

@@ -89,6 +89,7 @@ set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/game/TestShip.cpp
     ${CMAKE_SOURCE_DIR}/src/render/CoreRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
+    ${CMAKE_SOURCE_DIR}/src/render/UiRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/ui/Button.cpp
 )
 
