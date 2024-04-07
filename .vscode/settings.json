@@ -1,5 +1,4 @@
 {
-    "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json",
     "cSpell.enabled": false,
     "workbench.colorCustomizations": {
         "activityBar.background": "#4D0965",
@@ -34,5 +33,6 @@
     "gtest-adapter.debugConfig": [
         "(lldb) Launch"
     ],
-    "gtest-adapter.supportLocation": false
+    "gtest-adapter.supportLocation": false,
+    "sonarlint.pathToCompileCommands": "${workspaceFolder}\\build\\compile_commands.json"
 }

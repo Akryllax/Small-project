@@ -8,5 +8,6 @@ public:
 
 private:
   ObjectDatabase(ObjectDatabase const&) = delete;
+  ObjectDatabase& operator=(ObjectDatabase const&) = delete;
 };
 }  // namespace Akr::Core

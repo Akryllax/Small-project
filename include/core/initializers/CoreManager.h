@@ -58,6 +58,8 @@ public:
 
   static void StartActiveScene();
 
+  static bool IsASceneActive() { return activeScene_ != nullptr; }
+
   /**
    * @brief Checks if a scene is already loaded.
    * @param sceneName The name of the scene to check.

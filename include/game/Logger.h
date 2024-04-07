@@ -73,6 +73,8 @@ private:
    */
   Logger() = default;
   Logger(Logger const& core) = delete;
+  Logger& operator=(Logger const& core) = delete;
+
   static inline bool isInitialized = false;
 };
 }  // namespace Akr

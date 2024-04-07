@@ -29,6 +29,8 @@ public:
 
 private:
   DrawBitmapOperation() = delete;
+  DrawBitmapOperation(DrawBitmapOperation const&) = delete;
+
   Akr::Math::Rect rect_;
   ALLEGRO_BITMAP* bitmap_;
 };

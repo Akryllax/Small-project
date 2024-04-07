@@ -53,6 +53,7 @@ public:
 
 private:
   TestShip(TestShip const&) = delete;  // Deleted copy constructor
+  TestShip& operator=(TestShip const&) = delete;  // Deleted copy assignment operator
 
   b2BodyDef starshipDef;
 };

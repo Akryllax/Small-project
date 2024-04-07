@@ -144,8 +144,12 @@ public:
    *
    * @return Current frame count.
    */
-  inline uint64_t GetFrameCount() const { return frameCount_; }
+  inline uint64_t GetInstanceFrameCount() const { return frameCount_; }
   inline size_t GetLayerCount() const { return this->dataLayerMap_.size(); }
+
+
+  inline static uint64_t GetFrameCount() { return GetInstance().GetInstanceFrameCount(); }
+
 
 private:
   uint64_t frameCount_ = 0;  ///< Frame count variable.

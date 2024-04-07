@@ -2,6 +2,7 @@
 
 #include "CommonTypes.h"
 #include "GObject.h"
+#include "ITickable.h"
 #include "Tree.h"
 #include "spdlog/spdlog.h"
 #include <cstddef>
@@ -20,7 +21,7 @@ namespace Akr::Game {
 using GObjTree = Akr::Common::Tree<std::string, std::shared_ptr<Akr::Game::GObject>>;
 using GObjTreeNode = Akr::Common::TreeNode<std::string, std::shared_ptr<Akr::Game::GObject>>;
 
-class Scene {
+class Scene : public ITickable {
 public:
   /**
    * @brief Default constructor.
@@ -193,6 +194,8 @@ public:
    */
   void AddRootObject(std::shared_ptr<GObject> gameObject) { gobjectTree.insert(gameObject->GetName(), gameObject); }
 
+  void Tick(const std::chrono::milliseconds& delta) override {};
+
 #pragma region STATIC METHODS
   /**
    * @brief Load a scene from a file or resource.
@@ -215,6 +218,7 @@ public:
 
 private:
   Scene(Scene const&) = delete;
+  Scene& operator=(Scene const&) = delete;
 
   GObjTree gobjectTree;
 };

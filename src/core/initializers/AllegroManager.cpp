@@ -34,7 +34,7 @@ int AllegroManager::Initialize() {
 void AllegroManager::EngineTickFrame(std::chrono::milliseconds const& delta) {}
 
 void AllegroManager::EngineStableTick(std::chrono::milliseconds const& delta) {
-  spdlog::trace("[AllegroManager] EngineStableTick(), Frame: {}", Akr::Core::GetInstance().GetFrameCount());
+  spdlog::trace("[AllegroManager] EngineStableTick(), Frame: {}", Akr::Core::GetInstance().GetInstanceFrameCount());
 
   Akr::Core::GetInstance().Tick(delta);
 }

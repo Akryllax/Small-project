@@ -9,5 +9,6 @@ public:
 
 private:
   Squad(Squad const&) = delete;
+  Squad& operator=(Squad const&) = delete;
 };
 };  // namespace Akr::Game::Squad

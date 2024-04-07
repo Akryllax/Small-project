@@ -17,6 +17,8 @@ public:
 
 private:
   DrawRectOperation() = delete;
+  DrawRectOperation(DrawRectOperation const&) = delete;
+
   Akr::Math::Rect rect_;
   ALLEGRO_COLOR color_;
 };
