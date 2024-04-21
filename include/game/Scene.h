@@ -5,6 +5,7 @@
 #include "ITickable.h"
 #include "Tree.h"
 #include "spdlog/spdlog.h"
+#include "DebugConsole.h"
 #include <cstddef>
 #include <memory>
 #include <string>
@@ -53,28 +54,40 @@ public:
    *
    * Calls the virtual OnLoad() function.
    */
-  void Load() { OnLoad(); };
+  void Load() {
+    Debug::DebugConsole::Log("[Scene] Scene::Load called.");
+    OnLoad();
+  };
 
   /**
    * @brief Unload the scene.
    *
    * Calls the virtual OnUnload() function.
    */
-  void Unload() { OnUnload(); };
+  void Unload() {
+    Debug::DebugConsole::Log("[Scene] Scene::Unload called.");
+    OnUnload();
+  };
 
   /**
    * @brief Save the scene.
    *
    * Calls the virtual OnSave() function.
    */
-  void Save() { OnSave(); };
+  void Save() {
+    Debug::DebugConsole::Log("[Scene] Scene::Save called.");
+    OnSave();
+  };
 
   /**
    * @brief Start the scene.
    *
    * Calls the virtual OnStart() function.
    */
-  void Start() { OnStart(); };
+  void Start() {
+    Debug::DebugConsole::Log("[Scene] Scene::Start called.");
+    OnStart();
+  };
 
   /**
    * @brief Virtual function called when the scene is loaded.

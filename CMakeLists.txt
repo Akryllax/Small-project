@@ -5,6 +5,8 @@ project(SpaceDissident)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(WIN32 FALSE)
+
 # Find vcpkg installed packages
 if(WIN32)
     set(VCPKG_INSTALLED_DIR "C:/buildtools/vcpkg/packages/")
@@ -38,7 +40,9 @@ find_package(box2d REQUIRED)
 
 # Define a function to construct the path
 function(CONSTRUCT_INCLUDE_PATH PARAMETER)
-    set(INCLUDE_PATH "C:/buildtools/vcpkg/packages/${PARAMETER}_x64-windows/include/")
+    if(WIN32)
+        set(INCLUDE_PATH "C:/buildtools/vcpkg/packages/${PARAMETER}_x64-windows/include/")
+    endif()
     # message(STATUS "Constructed include path: ${INCLUDE_PATH}")
     # Return the constructed path
     set(${PARAMETER}_INCLUDE_PATH ${INCLUDE_PATH} PARENT_SCOPE)

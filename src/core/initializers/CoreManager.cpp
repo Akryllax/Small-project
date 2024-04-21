@@ -2,6 +2,7 @@
 #include "ActiveSceneLayer.h"
 #include "Configuration.h"
 #include "Core.h"
+#include "DebugConsole.h"
 #include "GameLayer.h"
 #include "InputLayer.h"
 #include "LocationLayer.h"
@@ -26,6 +27,10 @@ int CoreManager::Initialize() {
   Akr::Core::GetInstance().AddDataLayer<Akr::NamedLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::PhysicsLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::RendererLayer>();
+
+  //!DEBT Initialize the debug console, [nondiscard] is annoying but necessary
+  [[maybe_unused]]
+  auto& debugConsole = Akr::Debug::DebugConsole::GetInstance();
 
   Akr::Core::GetDataLayer<Akr::InputLayer>()->AddController(std::make_shared<Akr::Input::UIInputControler>());
 
@@ -56,6 +61,7 @@ void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
     } else {
       // Scene loading failed
       spdlog::error("Failed to set active scene: Scene loading failed.");
+Debug::DebugConsole::LogError("Failed to set active scene: Scene loading failed.");
     }
   } else {
     // Scene is already loaded, set it as the active scene
