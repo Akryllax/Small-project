@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CompositeRenderCommand.h"
+#include "DrawBoundingBoxCommand.h"
 #include "DrawCrossOperation.h"
 #include "DrawRectAlpha.h"
 #include "IControllable.h"
@@ -28,6 +29,7 @@ public:
 
   std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override {
     ALLEGRO_COLOR rectColor = m_color;
+    rectColor.a = m_transparency;
     spdlog::trace("[UIRectangle] Generating render command");
     auto compositeOperation = std::make_shared<Renderer::CompositeRenderComand>();
 
@@ -44,13 +46,12 @@ public:
     auto mouseDelta = dbgCurrentDragPosition_ - dbgInitialDragPosition_;
 
     if (pressed_ && mouseDelta.x != 0 && mouseDelta.y != 0) {
-      auto rectCommand = std::make_shared<Renderer::DrawRectAlphaOperation>(
-          rectColor,
+      auto rectCommand = std::make_shared<Renderer::DrawBoundingBoxCommand>(
           Math::Rect{static_cast<float>(dbgInitialDragPosition_.x),
           static_cast<float>(dbgInitialDragPosition_.y),
                      static_cast<float>(mouseDelta.x),
                      static_cast<float>(mouseDelta.y)},
-          m_transparency);
+          rectColor);
 
       compositeOperation->QueueCommand(rectCommand);
     }

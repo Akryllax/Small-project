@@ -2,6 +2,7 @@
 #include "Button.h"
 #include "CoreManager.h"
 #include "DataLayer.h"
+#include "DebugConsole.h"
 #include "GObject.h"
 #include "GameLayer.h"
 #include "InputLayer.h"
@@ -75,6 +76,14 @@ void DevScene::OnLoad() {
   // Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderable(addRandomImpulseShipDbgButton);
   Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(addRandomImpulseShipDbgButton);
   Akr::Core::GetDataLayer<Akr::InputLayer>()->RegisterRawInputListenerPtr(uiRect);
+
+  Debug::DebugConsole::Log("DevScene loaded!");
+  // Debug::DebugConsole::Log("Second log line");
+  // Debug::DebugConsole::Log("Third log line");
+  // Debug::DebugConsole::Log("Fourth log line");
+  // Debug::DebugConsole::LogWarning("This is a warning");
+  // Debug::DebugConsole::LogError("And this is an error");
+  // Debug::DebugConsole::Log("Fifth log line");
 };
 
 void DevScene::OnSave(){
@@ -85,6 +94,8 @@ void DevScene::OnUnload() {
   // Unload the test ships from the scene
   Akr::Core::GetDataLayer<Akr::InputLayer>()->ClearAllInputs();
   Akr::Core::GetDataLayer<Akr::GameLayer>()->UntrackGObject(ships[0]);
+
+  Debug::DebugConsole::Log("DevScene unloaded!");
 };
 
 void DevScene::Tick(std::chrono::milliseconds const& delta) {

@@ -7,7 +7,9 @@
 #include "box2d/b2_math.h"
 #include <memory>
 #include <string>
+#ifdef _WIN32
 #include <vcruntime_typeinfo.h>
+#endif
 #include <vector>
 
 namespace Akr::Game {

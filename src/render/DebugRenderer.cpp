@@ -1,6 +1,7 @@
 #include "DebugRenderer.h"
 #include "AllegroManager.h"
 #include "DrawArrowOperation.h"
+#include "DrawBoundingBoxCommand.h"
 #include "DrawTextCommand.h"
 #include "DrawCrossOperation.h"
 #include "CompositeRenderCommand.h"
@@ -41,6 +42,12 @@ void DebugRenderer::DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color,
                               Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority) {
   spdlog::trace("[DebugRenderer] DebugRenderer::DrawCross");
   addCommand(std::make_shared<DrawCrossCommand>(_position, _color, _renderPriority));
+}
+
+void DebugRenderer::DrawBoundingBox(Math::Rect const& _rect, ALLEGRO_COLOR _color,
+                  Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority) {
+  spdlog::trace("[DebugRenderer] DebugRenderer::DrawBoundingBox");
+  addCommand(std::make_shared<DrawBoundingBoxCommand>(_rect, _color, _renderPriority));
 }
 
 }  // namespace Akr::Renderer

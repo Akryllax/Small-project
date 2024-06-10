@@ -13,6 +13,9 @@
 #include "GObject.h"
 #include "IControllable.h"
 #include "IRenderable.h"
+#include "ISelectable.h"
+#include "PhysicsLayer.h"
+#include "Rect.h"
 #include "RenderCommand.h"
 #include "RigidBody.h"
 
@@ -21,7 +24,7 @@ namespace Akr {
 /**
  * @brief The TestShip class represents a test ship entity in the game.
  */
-class TestShip : public Game::GObject, public RigidBody, public IRenderable, public IControllable {
+class TestShip : public Game::GObject, public RigidBody, public IRenderable, public IControllable, public Game::ISelectable {
 public:
   /**
    * @brief Constructs a new TestShip object with the specified name.
@@ -48,6 +51,8 @@ public:
   void ReleaseControl() override;
   void OnEvent() override;
   void OnRawInput(std::chrono::milliseconds const& delta) override;
+  void OnSelect() override;
+  void OnDeselect() override;
 
 private:
   TestShip(TestShip const&) = delete;  // Deleted copy constructor

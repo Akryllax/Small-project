@@ -9,9 +9,12 @@
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 #include <gtest/gtest.h>
-#include <fileapi.h>
 #include <memory>
 #include <vector>
+
+#ifdef _WIN32
+#include <fileapi.h>
+#endif
 
 TEST(CoreTest, Core_Instance_SingletonCheck) {
   auto& core1 = Akr::Core::GetInstance();

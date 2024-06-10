@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Rect.h"
 #include "RenderCommand.h"
 #include "allegro5/allegro5.h"
 #include "allegro5/allegro_font.h"
@@ -30,6 +31,10 @@ public:
   void DrawCross(b2Vec2 const& _position, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0),
                  Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority =
                      Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT);
+
+  void DrawBoundingBox(Math::Rect const& _rect, ALLEGRO_COLOR _color = al_map_rgb(255, 0, 0),
+                       Akr::Renderer::RenderCommand::RenderCommandPriority const& _renderPriority =
+                           Akr::Renderer::RenderCommand::RenderCommandPriority::DEFAULT);
 
 private:
   inline static std::queue<std::shared_ptr<RenderCommand>> commands;
