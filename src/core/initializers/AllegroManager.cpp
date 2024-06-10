@@ -19,6 +19,7 @@
 #include "allegro5/events.h"
 #include "allegro5/timer.h"
 #include <memory>
+#include "allegro5/allegro_ttf.h"
 
 namespace Akr {
 

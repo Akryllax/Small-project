@@ -1,20 +1,16 @@
 #pragma once
 
-#include "AllegroManager.h"
-#include "CompositeRenderCommand.h"
-#include "DrawRectOperation.h"
-#include "DrawTextCommand.h"
 #include "IControllable.h"
-#include "IRenderable.h"
+#include "UIElement.h"
 #include "Rect.h"
 #include <chrono>
 #include <functional>
 #include <string>
 
 namespace Akr::UI {
-class Button : public IControllable, public IRenderable {
+class Button : public UIElement, public IControllable {
 public:
-  Button(int x, int y, int width, int height, char const* label);
+  Button(int x, int y, int width, int height, const char* label, std::uint8_t id = 0);
 
   void OnRawInput(std::chrono::milliseconds const& delta) override;
 
@@ -22,10 +18,10 @@ public:
 
   void SetOnClick(std::function<void()> onClick);
 
-  void TakeControl() override{/* Override to implement custom functionality */};
-  void ReleaseControl() override{/* Override to implement custom functionality */};
+  void TakeControl() override {};
+  void ReleaseControl() override {};
 
-  void OnEvent() override{/* Override to implement custom functionality */};
+  void OnEvent() override {};
 
   std::shared_ptr<Renderer::RenderCommand> GenerateRenderCommand() override;
 
@@ -44,4 +40,4 @@ private:
 
   std::function<void()> onClick_;
 };
-}  // namespace Akr::UI
+}

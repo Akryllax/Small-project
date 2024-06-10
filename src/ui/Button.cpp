@@ -1,92 +1,97 @@
 #include "Button.h"
+
 #include "AllegroManager.h"
+#include "RendererLayer.h"
+#include "CompositeRenderCommand.h"
+#include "RenderCommand.h"
+#include "DrawTextCommand.h"
+#include "DrawRectOperation.h"
+#include "Core.h"
 
 namespace Akr::UI {
-  Button::Button(int x, int y, int width, int height, const char* label)
-    : buttonRect_({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}),
+Button::Button(int x, int y, int width, int height, char const* label, std::uint8_t id)
+    : UIElement(UIElement::Type::BUTTON, id),
+      buttonRect_({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}),
       label_(label) {
-    pressed_ = false;
+  pressed_ = false;
 
-    textRect_ = Math::Rect::GetCenteredRect(buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(Akr::AllegroManager::mainFont, label_));
-    Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderablePtr(this);
-  }
+  textRect_ = Math::Rect::GetCenteredRect(buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(Akr::AllegroManager::mainFont, label_));
 
-  void Button::OnRawInput(const std::chrono::milliseconds& delta) {
-    IControllable::OnRawInput(delta);
+  Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderablePtr(this);
+}
 
-    // Get the current mouse state
-    ALLEGRO_MOUSE_STATE mouseState;
-    al_get_mouse_state(&mouseState);
+void Button::OnRawInput(std::chrono::milliseconds const& delta) {
+  IControllable::OnRawInput(delta);
 
-    // Get the current mouse position
-    int mouseX = mouseState.x;
-    int mouseY = mouseState.y;
+  // Get the current mouse state
+  ALLEGRO_MOUSE_STATE mouseState;
+  al_get_mouse_state(&mouseState);
 
-    // Check for mouse over
-    bool isMouseOverButton = isMouseOver(mouseX, mouseY);
+  // Get the current mouse position
+  int mouseX = mouseState.x;
+  int mouseY = mouseState.y;
 
-    // Check for mouse click
-    if (isMouseOverButton && mouseState.buttons & 1 && !pressed_) {
-      // Left mouse button is pressed while over the button
-      // Handle button click event
-      pressed_ = true;
-      handleClick();
-    } else if (!(mouseState.buttons & 1)) {
-      // Mouse button is released
-      pressed_ = false;
-    }
+  // Check for mouse over
+  bool isMouseOverButton = isMouseOver(mouseX, mouseY);
 
-    // Check for mouse leave
-    if (!isMouseOverButton && mouseWasOverButton_) {
-      // Mouse has left the button's area
-      // Handle mouse leave event
-    }
-
-    // Update the mouse state for the next frame
-    mouseWasOverButton_ = isMouseOverButton;
-  }
-
-  bool Button::isMouseOver(int mouseX, int mouseY) const {
-    return mouseX >= buttonRect_.x && mouseX <= buttonRect_.x + buttonRect_.w && mouseY >= buttonRect_.y &&
-           mouseY <= buttonRect_.y + buttonRect_.h;
-  }
-
-  void Button::SetOnClick(std::function<void()> onClick) {
-    onClick_ = onClick;
-  }
-
-  std::shared_ptr<Renderer::RenderCommand> Button::GenerateRenderCommand() {
-    ALLEGRO_COLOR rectColor;
-
-    if (!pressed_ && !mouseWasOverButton_) {
-      rectColor = al_map_rgb(200, 100, 100);
-    } else if (pressed_) {
-      rectColor = al_map_rgb(200, 120, 120);
-    } else {
-      rectColor = al_map_rgb(200, 80, 80);
-    }
-
-    auto composideOperation = std::make_shared<Renderer::CompositeRenderComand>();
-    composideOperation->QueueCommand(std::make_shared<Renderer::DrawRectOperation>(rectColor, buttonRect_));
-
-    composideOperation->QueueCommand(std::make_shared<Renderer::DrawTextCommand>(
-        label_, b2Vec2{static_cast<float>(textRect_.x), static_cast<float>(textRect_.y)}, Akr::AllegroManager::mainFont,
-        al_map_rgb(255, 255, 255), ALLEGRO_ALIGN_CENTER));
-    return composideOperation;
-  }
-
-  void Button::release() {
-    pressed_ = false;
-  }
-
-  void Button::handleClick() {
+  // Check for mouse click
+  if (isMouseOverButton && mouseState.buttons & 1 && !pressed_) {
+    // Left mouse button is pressed while over the button
+    // Handle button click event
     pressed_ = true;
-    OnClick();
+    handleClick();
+  } else if (!(mouseState.buttons & 1)) {
+    // Mouse button is released
+    pressed_ = false;
   }
 
-    void Button::OnClick() {
-    if (onClick_) {
-      onClick_();
-    }
+  // Check for mouse leave
+  if (!isMouseOverButton && mouseWasOverButton_) {
+    // Mouse has left the button's area
+    // Handle mouse leave event
   }
-} // namespace Akr::UI
+
+  // Update the mouse state for the next frame
+  mouseWasOverButton_ = isMouseOverButton;
+}
+
+bool Button::isMouseOver(int mouseX, int mouseY) const {
+  return mouseX >= buttonRect_.x && mouseX <= buttonRect_.x + buttonRect_.w && mouseY >= buttonRect_.y &&
+         mouseY <= buttonRect_.y + buttonRect_.h;
+}
+
+void Button::SetOnClick(std::function<void()> onClick) { onClick_ = onClick; }
+
+std::shared_ptr<Renderer::RenderCommand> Button::GenerateRenderCommand() {
+  ALLEGRO_COLOR rectColor;
+
+  if (!pressed_ && !mouseWasOverButton_) {
+    rectColor = al_map_rgb(200, 100, 100);
+  } else if (pressed_) {
+    rectColor = al_map_rgb(200, 120, 120);
+  } else {
+    rectColor = al_map_rgb(200, 80, 80);
+  }
+
+  auto composideOperation = std::make_shared<Renderer::CompositeRenderComand>();
+  composideOperation->QueueCommand(std::make_shared<Renderer::DrawRectOperation>(rectColor, buttonRect_));
+
+  composideOperation->QueueCommand(
+      std::make_shared<Renderer::DrawTextCommand>(label_, b2Vec2{static_cast<float>(textRect_.x), static_cast<float>(textRect_.y)},
+                                                  Akr::AllegroManager::mainFont, al_map_rgb(255, 255, 255), ALLEGRO_ALIGN_CENTER));
+  return composideOperation;
+}
+
+void Button::release() { pressed_ = false; }
+
+void Button::handleClick() {
+  pressed_ = true;
+  OnClick();
+}
+
+void Button::OnClick() {
+  if (onClick_) {
+    onClick_();
+  }
+}
+}  // namespace Akr::UI

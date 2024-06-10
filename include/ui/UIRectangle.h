@@ -1,10 +1,8 @@
 #pragma once
 
-#include "AllegroManager.h"
 #include "CompositeRenderCommand.h"
 #include "DrawCrossOperation.h"
 #include "DrawRectAlpha.h"
-#include "DrawTextCommand.h"
 #include "IControllable.h"
 #include "IRenderable.h"
 #include "Rect.h"
@@ -14,6 +12,7 @@
 #include <chrono>
 #include <memory>
 #include <string>
+#include "RendererLayer.h"
 
 namespace Akr::UI {
 class UIRectangle : public Akr::IRenderable, public Akr::IControllable {

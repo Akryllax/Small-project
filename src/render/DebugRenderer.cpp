@@ -3,6 +3,7 @@
 #include "DrawArrowOperation.h"
 #include "DrawTextCommand.h"
 #include "DrawCrossOperation.h"
+#include "CompositeRenderCommand.h"
 
 namespace Akr::Renderer {
 

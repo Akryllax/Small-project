@@ -91,6 +91,7 @@ set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/render/DebugRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/render/UiRenderer.cpp
     ${CMAKE_SOURCE_DIR}/src/ui/Button.cpp
+    ${CMAKE_SOURCE_DIR}/src/ui/Panel.cpp
 )
 
 # Create the executable

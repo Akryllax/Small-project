@@ -1,22 +1,20 @@
 #pragma once
 
-#include "CompositeRenderCommand.h"
-#include "DebugRenderer.h"
-#include "DrawBitmapOperation.h"
+// C++ system headers
+#include <cassert>
+#include <memory>
+#include <chrono>
+
+// Other libraries' .h files
+#include <allegro5/allegro.h>
+#include "box2d/b2_body.h"
+
+// Your project's .h files
 #include "GObject.h"
 #include "IControllable.h"
 #include "IRenderable.h"
-#include "PhysicsLayer.h"
-#include "Rect.h"
 #include "RenderCommand.h"
-#include "RendererLayer.h"
 #include "RigidBody.h"
-#include "allegro5/bitmap_draw.h"
-#include "box2d/b2_body.h"
-#include "spdlog/spdlog.h"
-#include <allegro5/allegro.h>
-#include <cassert>
-#include <memory>
 
 namespace Akr {
 

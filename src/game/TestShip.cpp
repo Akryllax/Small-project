@@ -1,5 +1,13 @@
 #include "TestShip.h"
 
+#include "CompositeRenderCommand.h"
+#include "DrawBitmapOperation.h"
+#include "RendererLayer.h"
+#include "PhysicsLayer.h"
+#include "RendererLayer.h"
+#include "Core.h"
+#include "Rect.h"
+
 namespace Akr {
 
 TestShip::TestShip(std::string const& name) : Game::GObject(name), RigidBody(name, &(Core::GetDataLayer<PhysicsLayer>()->GetBox2DWorld())) {
