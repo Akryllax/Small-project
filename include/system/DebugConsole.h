@@ -3,10 +3,10 @@
 #include "AllegroManager.h"
 #include "CompositeRenderCommand.h"
 #include "DrawRectAlpha.h"
-#include "DrawRectOperation.h"
 #include "DrawTextCommand.h"
 #include "FIFOList.h"
 #include "Rect.h"
+#include "RendererLayer.h"
 #include "Screen.h"
 #include <allegro5/color.h>
 #include <box2d/b2_math.h>
@@ -15,8 +15,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <queue>
 #include <string>
+
+#undef ERROR
 
 namespace Akr::Debug {
 class DebugConsole : public IRenderable {
@@ -37,7 +38,7 @@ public:
     spdlog::trace("[DebugConsole] Generating render command");
 
     //! DEBT It recalculates every frame, should be done only once per screen resize
-    consoleRect = Math::Rect{.x = Screen::getScreenSize().x - width, .y = Screen::getScreenSize().y - height, .w = width, .h = height};
+    consoleRect = Math::Rect{Screen::getScreenSize().x - width, Screen::getScreenSize().y - height, width, height};
 
     spdlog::trace("[DebugConsole] ConsoleRect: x={}, y={}, w={}, h={}", consoleRect.x, consoleRect.y, consoleRect.w, consoleRect.h);
     auto composideOperation = std::make_shared<Renderer::CompositeRenderComand>();
@@ -93,7 +94,7 @@ private:
   static inline StringQueue logQueue_;
 
   static inline Math::Rect consoleRect =
-      Math::Rect{.x = Screen::getScreenSize().x - width, .y = Screen::getScreenSize().y - height, .w = width, .h = height};
+      Math::Rect{Screen::getScreenSize().x - width, Screen::getScreenSize().y - height, width, height};
 
   static constexpr uint8_t const maxMessagesPerQueue = 50;
 

@@ -3,6 +3,7 @@
 #include "IControllable.h"
 #include "UIElement.h"
 #include "Rect.h"
+#include <box2d/b2_math.h>
 #include <chrono>
 #include <functional>
 #include <string>
@@ -37,6 +38,9 @@ private:
 
   bool pressed_;
   bool mouseWasOverButton_;
+
+  b2Vec2 buttonDownPos_;
+  b2Vec2 buttonUpPos_;
 
   std::function<void()> onClick_;
 };

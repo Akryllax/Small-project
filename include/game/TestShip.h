@@ -2,22 +2,21 @@
 
 // C++ system headers
 #include <cassert>
-#include <memory>
 #include <chrono>
+#include <memory>
 
 // Other libraries' .h files
-#include <allegro5/allegro.h>
 #include "box2d/b2_body.h"
+#include <allegro5/allegro.h>
 
 // Your project's .h files
 #include "GObject.h"
 #include "IControllable.h"
 #include "IRenderable.h"
 #include "ISelectable.h"
-#include "PhysicsLayer.h"
-#include "Rect.h"
 #include "RenderCommand.h"
 #include "RigidBody.h"
+
 
 namespace Akr {
 
@@ -51,11 +50,17 @@ public:
   void ReleaseControl() override;
   void OnEvent() override;
   void OnRawInput(std::chrono::milliseconds const& delta) override;
-  void OnSelect() override;
-  void OnDeselect() override;
+  bool OnSelect() override {
+    // Implementation of OnSelect method
+    return true;
+  }
+  bool OnDeselect() override {
+    // Implementation of OnOnDeselect method
+    return true;
+  }
 
 private:
-  TestShip(TestShip const&) = delete;  // Deleted copy constructor
+  TestShip(TestShip const&) = delete;             // Deleted copy constructor
   TestShip& operator=(TestShip const&) = delete;  // Deleted copy assignment operator
 
   b2BodyDef starshipDef;

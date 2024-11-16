@@ -1,4 +1,5 @@
 #include "DevScene.h"
+#include "AllegroManager.h"
 #include "Button.h"
 #include "CoreManager.h"
 #include "DataLayer.h"
@@ -8,9 +9,12 @@
 #include "InputLayer.h"
 #include "Random.h"  // Add missing include statement
 #include "TestShip.h"
+// #include "Timers.h"
 #include "UIRectangle.h"
 #include "allegro5/color.h"
+#include <functional>
 #include <memory>
+
 
 namespace Akr::Game {
 
@@ -59,7 +63,6 @@ void DevScene::OnLoad() {
     ships[0]->GetBody()->SetLinearVelocity(b2Vec2(impulseX, impulseY));
   });
 
-
   /// ADD TO SCENE
 
   // Add the test ships to the scene
@@ -86,7 +89,7 @@ void DevScene::OnLoad() {
   // Debug::DebugConsole::Log("Fifth log line");
 };
 
-void DevScene::OnSave(){
+void DevScene::OnSave() {
 
 };
 
@@ -104,6 +107,16 @@ void DevScene::Tick(std::chrono::milliseconds const& delta) {
   auto frameCount = Akr::Core::GetFrameCount();
 
   debugRenderer.DrawCross(b2Vec2(200.f + 20 * static_cast<float>(frameCount) * 1.f / 60.f, 400.f), al_map_rgb(255, 255, 255));
+
+  int x, y;
+
+  al_get_window_position(Akr::AllegroManager::systemDisplay, &x, &y);
+
+  std::function<void()> logWindowPosition = [&]() {
+    Akr::Debug::DebugConsole::Log("Window Position " + std::to_string(x) + " " + std::to_string(y));
+  };
+
+  // Akr::Util::FrequencyTimer::CallFunctionAtFrequency(logWindowPosition, 1);
 };
 
 }  // namespace Akr::Game

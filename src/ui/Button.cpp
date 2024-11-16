@@ -1,18 +1,17 @@
 #include "Button.h"
-
 #include "AllegroManager.h"
-#include "RendererLayer.h"
 #include "CompositeRenderCommand.h"
-#include "RenderCommand.h"
-#include "DrawTextCommand.h"
-#include "DrawRectOperation.h"
 #include "Core.h"
+#include "DrawRectOperation.h"
+#include "DrawTextCommand.h"
+#include "RenderCommand.h"
+#include "RendererLayer.h"
 
 namespace Akr::UI {
 Button::Button(int x, int y, int width, int height, char const* label, std::uint8_t id)
     : UIElement(UIElement::Type::BUTTON, id),
-      buttonRect_({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}),
-      label_(label) {
+      label_(label),
+      buttonRect_({static_cast<float>(x), static_cast<float>(y), static_cast<float>(width), static_cast<float>(height)}) {
   pressed_ = false;
 
   textRect_ = Math::Rect::GetCenteredRect(buttonRect_, Renderer::DrawTextCommand::CalculateTextRect(Akr::AllegroManager::mainFont, label_));
@@ -35,11 +34,15 @@ void Button::OnRawInput(std::chrono::milliseconds const& delta) {
   bool isMouseOverButton = isMouseOver(mouseX, mouseY);
 
   // Check for mouse click
-  if (isMouseOverButton && mouseState.buttons & 1 && !pressed_) {
+  if (mouseState.buttons & 1 && !pressed_) {
     // Left mouse button is pressed while over the button
     // Handle button click event
-    pressed_ = true;
-    handleClick();
+    buttonDownPos_ = {static_cast<float>(mouseX), static_cast<float>(mouseY)};
+
+    if (isMouseOverButton) {
+      pressed_ = true;
+      handleClick();
+    }
   } else if (!(mouseState.buttons & 1)) {
     // Mouse button is released
     pressed_ = false;

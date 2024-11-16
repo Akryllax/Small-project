@@ -1,5 +1,11 @@
 #pragma once
 
+#include <climits>
+#include <memory>
+#include <vector>
+#include <allegro5/allegro.h>
+#include "box2d/b2_math.h"
+
 #include "Core.h"
 #include "DataLayer.h"
 #include "DebugRenderer.h"
@@ -8,11 +14,8 @@
 #include "ITickable.h"
 #include "InputController.h"
 #include "RendererLayer.h"
-#include "box2d/b2_math.h"
-#include <allegro5/allegro.h>
-#include <climits>
-#include <memory>
-#include <vector>
+#include "UIAction.h"
+#include "IndexedVector.h"
 
 namespace Akr {
 
@@ -31,99 +34,83 @@ public:
 
   using DataLayer::Initialize;
 
+  InputLayer() {
+    //!TECH_DEBT: This is a temporary solution to ensure that the selectedInputLayer_ is not null and static methods have something.
+    if(!selectedInputLayer_) selectedInputLayer_ = this;
+  }
+
   /**
    * @brief Executes tick for all input controllers.
    * @param delta Time delta.
    */
-  void Tick(std::chrono::milliseconds const& delta) override {
-    spdlog::trace("[InputLayer] Tick()");
-    for (auto controller : controllerList_) {
-      controller->Tick(delta);
-    }
-
-    for (auto rawControllable : rawControllables_) {
-      rawControllable->OnRawInput(delta);
-    }
-
-    for (auto controllerPtr : controllerPtrList_) {
-      controllerPtr->Tick(delta);
-    }
-
-    for (auto rawControllablePtr : rawControllablesPtrs_) {
-      rawControllablePtr->OnRawInput(delta);
-    }
-
-    if (invalidateControllerList_) {
-      controllerList_.clear();
-      invalidateControllerList_ = false;
-    }
-
-    if (invalidateRawControllables_) {
-      rawControllables_.clear();
-      invalidateRawControllables_ = false;
-    }
-
-    if (invalidateControllerPtrList_) {
-      controllerPtrList_.clear();
-      invalidateControllerPtrList_ = false;
-    }
-
-    if (invalidateRawControllablesPtrs_) {
-      rawControllablesPtrs_.clear();
-      invalidateRawControllablesPtrs_ = false;
-    }
-  }
+  void Tick(std::chrono::milliseconds const& delta) override;
 
   /**
    * @brief Adds an input controller.
    * @param controller Input controller to add.
    */
-  void AddController(std::shared_ptr<Akr::Input::InputController> controller) { this->controllerList_.push_back(controller); }
+  void AddController(std::shared_ptr<Akr::Input::InputController> controller);
 
-  void RegisterRawInputListener(std::shared_ptr<IControllable> controllable) { this->rawControllables_.push_back(controllable); };
+  void RegisterRawInputListener(std::shared_ptr<IControllable> controllable);
 
   /**
    * @brief Adds an input controller.
    * @param controller Input controller to add.
    */
-  void AddControllerPtr(Akr::Input::InputController* controller) { this->controllerPtrList_.push_back(controller); }
+  void AddControllerPtr(Akr::Input::InputController* controller);
 
-  void RegisterRawInputListenerPtr(Akr::IControllable* controllable) { this->rawControllablesPtrs_.push_back(controllable); };
+  void RegisterRawInputListenerPtr(Akr::IControllable* controllable);
 
   /**
    * @brief Clears all input controllers and raw input listeners.
    */
-  void ClearAllInputs() {
-    invalidateControllerList_ = true;
-    invalidateControllerPtrList_ = true;
-    invalidateRawControllables_ = true;
-    invalidateRawControllablesPtrs_ = true;
-  }
+  void ClearAllInputs();
 
   /**
    * @brief Clears all input controllers.
    */
-  void ClearControllers() { invalidateControllerList_ = true; }
+  void ClearControllers();
 
   /**
    * @brief Clears all input controller pointers.
    */
-  void ClearControllerPtrs() { invalidateControllerPtrList_ = true; }
+  void ClearControllerPtrs();
 
   /**
    * @brief Clears all raw input listeners.
    */
-  void ClearRawInputListeners() {
-    invalidateRawControllables_ = true;
-    invalidateRawControllablesPtrs_ = true;
-  }
+  void ClearRawInputListeners();
+
+#pragma region Static Interface
+  static void SelectInputLayer(InputLayer* _inputLayer);
+
+  static void AddControllerStatic(std::shared_ptr<Akr::Input::InputController> controller);
+
+  static void RegisterRawInputListenerStatic(std::shared_ptr<IControllable> controllable);
+
+  static void AddControllerPtrStatic(Akr::Input::InputController* controller);
+
+  static void RegisterRawInputListenerPtrStatic(Akr::IControllable* controllable);
+
+  static void ClearAllInputsStatic();
+
+  static void ClearControllersStatic();
+
+  static void ClearControllerPtrsStatic();
+
+  static void ClearRawInputListenersStatic();
+#pragma endregion
 
 private:
+  static inline InputLayer* selectedInputLayer_ = nullptr;
+
   std::vector<std::shared_ptr<Akr::Input::InputController>> controllerList_; /**< List of input controllers. */
   std::vector<std::shared_ptr<Akr::IControllable>> rawControllables_;
 
   std::vector<Akr::Input::InputController*> controllerPtrList_; /**< List of input controllers. */
   std::vector<Akr::IControllable*> rawControllablesPtrs_;
+
+  Akr::Util::IndexedVector<Akr::Input::UIAction> uiActions_; /**< Indexed vector of UI actions. */
 
   bool invalidateControllerList_ = false;       /**< Flag indicating if the controllerList_ vector is invalidated. */
   bool invalidateRawControllables_ = false;     /**< Flag indicating if the rawControllables_ vector is invalidated. */

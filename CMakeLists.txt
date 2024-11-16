@@ -75,6 +75,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include/render/operations/debug
     ${CMAKE_SOURCE_DIR}/include/system
     ${CMAKE_SOURCE_DIR}/include/ui
+    ${CMAKE_SOURCE_DIR}/include/util
     ${EXTERNAL_INCLUDES}
     # Add other necessary include directories here
 )
@@ -86,6 +87,8 @@ set(CORE_ENGINE_SRC_FILES
     ${CMAKE_SOURCE_DIR}/src/core/initializers/AllegroManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/initializers/CoreManager.cpp
     ${CMAKE_SOURCE_DIR}/src/core/Core.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/GameTimerLayer.cpp
+    ${CMAKE_SOURCE_DIR}/src/core/InputLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/core/RendererLayer.cpp
     ${CMAKE_SOURCE_DIR}/src/game/demo/DevScene.cpp
     ${CMAKE_SOURCE_DIR}/src/game/GObject.cpp

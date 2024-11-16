@@ -1,13 +1,15 @@
 #include "TestShip.h"
-#include "DebugConsole.h"
-
 #include "CompositeRenderCommand.h"
-#include "DrawBitmapOperation.h"
-#include "RendererLayer.h"
-#include "PhysicsLayer.h"
-#include "RendererLayer.h"
 #include "Core.h"
+#include "DebugConsole.h"
+#include "DebugRenderer.h"
+#include "DrawBitmapOperation.h"
+#include "ISelectable.h"
+#include "PhysicsLayer.h"
 #include "Rect.h"
+#include "RendererLayer.h"
+#include <allegro5/color.h>
+#include <wingdi.h>
 
 namespace Akr {
 
@@ -15,6 +17,7 @@ TestShip::TestShip(std::string const& name) : Game::GObject(name), RigidBody(nam
   starshipDef.type = b2_dynamicBody;
   SetBitmapResource(std::make_shared<BitmapResource>("1.png"));
   GetBitmapResource()->load();
+  uiBoundingRect_ = Math::Rect{-75, -75, 150, 150};
   assert(body);
   Akr::Core::GetDataLayer<Akr::RendererLayer>()->RegisterRenderablePtr(this);
 }
@@ -31,13 +34,15 @@ std::shared_ptr<Renderer::RenderCommand> TestShip::GenerateRenderCommand() {
 
   compositeCommand->QueueCommand(std::make_shared<Renderer::DrawBitmapOperation>(GetBitmapResource()->getBitmap(), rect));
 
-  #ifdef DEBUG
+#ifdef DEBUG
   Debug::DebugConsole::Log("Rendered ship: " + GetName());
+#endif
 
-  #endif
-
-  Akr::Core::GetDataLayer<Akr::RendererLayer>()->GetDebugRenderer().DrawArrowDebug(
-      this->GetBody()->GetPosition(), this->GetBody()->GetPosition() + this->GetBody()->GetLinearVelocity());
+  Akr::Renderer::DebugRenderer::DrawBoundingBoxStatic(
+      this->uiBoundingRect_ + this->GetBody()->GetPosition(),
+      (Akr::Game::ISelectable::GetSelected() == this) ? al_map_rgb(255, 255, 255) : al_map_rgb(125, 125, 125));  // Draw bounding box
+  Akr::Renderer::DebugRenderer::DrawArrowStatic(this->GetBody()->GetPosition(),
+                                                this->GetBody()->GetPosition() + this->GetBody()->GetLinearVelocity());
 
   return compositeCommand;
 }
@@ -56,15 +61,5 @@ void TestShip::OnEvent() {
 
 void TestShip::OnRawInput(std::chrono::milliseconds const& delta) {
   // Implementation of OnRawInput method
-}
-
-void TestShip::OnSelect() {
-  Debug::DebugConsole::Log("Selected ship: " + GetName());
-  // Implementation of OnSelect method
-}
-
-void TestShip::OnDeselect() {
-  Debug::DebugConsole::Log("Selected ship: " + GetName());
-  // Implementation of OnOnDeselect method
 }
 }  // namespace Akr
