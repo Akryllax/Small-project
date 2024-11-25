@@ -86,6 +86,8 @@ private:
      */
     static void LoadDevScene();
 
+    static void LoadSimpleDevScene();
+
     static void HandleEngineLoopTick();
 
     static void EngineTickFrame(std::chrono::milliseconds const&);

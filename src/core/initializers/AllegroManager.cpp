@@ -12,14 +12,16 @@
 #include "RendererLayer.h"
 #include "Scene.h"
 #include "Screen.h"
+#include "SimpleDevScene.h"
 #include "UIInputController.h"
 #include "allegro5/allegro_font.h"
+#include "allegro5/allegro_ttf.h"
 #include "allegro5/bitmap.h"
 #include "allegro5/display.h"
 #include "allegro5/events.h"
 #include "allegro5/timer.h"
 #include <memory>
-#include "allegro5/allegro_ttf.h"
+
 
 namespace Akr {
 
@@ -90,13 +92,20 @@ int AllegroManager::Run() {
 
   spdlog::trace("[AllegroManager] Run() triggered");
 
-  LoadDevScene();
+  LoadSimpleDevScene();
+  // LoadDevScene();
   // CoreManager::SetActiveScene(CoreManager::LoadScene(std::make_shared<Game::DevScene>()));
   // CoreManager::StartActiveScene();
 
   MainLoop();
 
   return 0;
+}
+
+void AllegroManager::LoadSimpleDevScene() {
+  auto simpleDevScene = std::make_shared<Akr::Game::SimpleDevScene>();
+
+  Akr::CoreManager::SetSimpleActiveScene(simpleDevScene);
 }
 
 int AllegroManager::Cleanup() {
@@ -206,7 +215,6 @@ void AllegroManager::LoadDevScene() {
   //   spdlog::trace("Reseting ship position!");
   //   testShip->GetBody()->SetTransform(b2Vec2(200, 200), 0);
   // });
-
 
   // auto loadDevScene1 = new Akr::UI::Button(0, 500, 200, 40, "Load DevScene1");
   // loadDevScene1->SetOnClick([&]() {

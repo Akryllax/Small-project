@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "GameLayer.h"
 #include "INamedObject.h"
+#include "ITickable.h"
 #include "box2d/b2_body.h"
 #include "box2d/b2_math.h"
 #include <memory>
@@ -14,7 +15,7 @@
 
 namespace Akr::Game {
 
-class GObject : public Common::INamedObject, private std::enable_shared_from_this<GObject> {
+class GObject : public Common::INamedObject, private std::enable_shared_from_this<GObject>, public ITickable {
 public:
   GObject();
   GObject(std::string const& name) : Common::INamedObject(name), name_(name){};

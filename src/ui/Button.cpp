@@ -4,8 +4,10 @@
 #include "Core.h"
 #include "DrawRectOperation.h"
 #include "DrawTextCommand.h"
+#include "Rect.h"
 #include "RenderCommand.h"
 #include "RendererLayer.h"
+#include <box2d/b2_math.h>
 
 namespace Akr::UI {
 Button::Button(int x, int y, int width, int height, char const* label, std::uint8_t id)
@@ -31,7 +33,7 @@ void Button::OnRawInput(std::chrono::milliseconds const& delta) {
   int mouseY = mouseState.y;
 
   // Check for mouse over
-  bool isMouseOverButton = isMouseOver(mouseX, mouseY);
+  bool isMouseOverButton = Akr::Math::Rect::Vec2Overlaps(b2Vec2{static_cast<float>(mouseX), static_cast<float>(mouseY)}, buttonRect_);
 
   // Check for mouse click
   if (mouseState.buttons & 1 && !pressed_) {

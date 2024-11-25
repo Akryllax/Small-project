@@ -1,7 +1,9 @@
 #pragma once
 
+#include "CoreManager.h"
 #include "Dev.h"
 #include "Scene.h"
+#include "SimpleScene.h"
 #include <memory>
 
 namespace Akr {
@@ -56,6 +58,8 @@ public:
 
   static void SetActiveScene(std::shared_ptr<Game::Scene> scene);
 
+  static void SetSimpleActiveScene(std::shared_ptr<Akr::Game::SimpleScene> scene);
+
   static void StartActiveScene();
 
   static bool IsASceneActive() { return activeScene_ != nullptr; }
@@ -83,6 +87,7 @@ public:
 private:
   inline static std::shared_ptr<Akr::Game::Scene> activeScene_;               /**< The currently active scene. */
   inline static std::vector<std::shared_ptr<Akr::Game::Scene>> loadedScenes_; /**< The currently active scene. */
+  inline static std::shared_ptr<Akr::Game::SimpleScene> simpleActiveScene_;
 };
 
 }  // namespace Akr

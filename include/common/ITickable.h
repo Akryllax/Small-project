@@ -1,9 +1,12 @@
 #pragma once
-#include <chrono>
 #include "spdlog/spdlog.h"
+#include <chrono>
+
 
 class ITickable {
- public:
-  virtual void Tick(const std::chrono::milliseconds& delta) {};
+public:
+  virtual void Start() {};
+  virtual void Stop() {};
+  virtual void Tick(std::chrono::milliseconds const& delta) {};
   virtual ~ITickable() = default;
 };

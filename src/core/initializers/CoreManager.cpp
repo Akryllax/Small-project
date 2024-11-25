@@ -28,7 +28,7 @@ int CoreManager::Initialize() {
   Akr::Core::GetInstance().AddDataLayer<Akr::PhysicsLayer>();
   Akr::Core::GetInstance().AddDataLayer<Akr::RendererLayer>();
 
-  //!DEBT Initialize the debug console, [nondiscard] is annoying but necessary
+  //! DEBT Initialize the debug console, [nondiscard] is annoying but necessary
   [[maybe_unused]]
   auto& debugConsole = Akr::Debug::DebugConsole::GetInstance();
 
@@ -61,7 +61,7 @@ void CoreManager::SetActiveScene(std::shared_ptr<Game::Scene> scene) {
     } else {
       // Scene loading failed
       spdlog::error("Failed to set active scene: Scene loading failed.");
-Debug::DebugConsole::LogError("Failed to set active scene: Scene loading failed.");
+      Debug::DebugConsole::LogError("Failed to set active scene: Scene loading failed.");
     }
   } else {
     // Scene is already loaded, set it as the active scene
@@ -89,4 +89,19 @@ void CoreManager::StartActiveScene() { CoreManager::activeScene_->Start(); };
 
 int CoreManager::Cleanup() { return 0; };
 
+void CoreManager::SetSimpleActiveScene(std::shared_ptr<Akr::Game::SimpleScene> scene) {
+  if (!simpleActiveScene_) {
+    simpleActiveScene_ = scene;
+    simpleActiveScene_->Load();
+  } else if (simpleActiveScene_ == scene) {
+    return;
+  } else {
+    simpleActiveScene_->Unload();
+    simpleActiveScene_ = scene;
+    simpleActiveScene_->Load();
+  }
+
+  Akr::Core::GetDataLayer<ActiveSceneLayer>()->SetsimpleActiveScene(simpleActiveScene_);
+  simpleActiveScene_->Start();
+}
 }  // namespace Akr

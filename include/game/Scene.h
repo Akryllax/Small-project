@@ -84,7 +84,7 @@ public:
    *
    * Calls the virtual OnStart() function.
    */
-  void Start() {
+  void Start() override {
     Debug::DebugConsole::Log("[Scene] Scene::Start called.");
     OnStart();
   };
